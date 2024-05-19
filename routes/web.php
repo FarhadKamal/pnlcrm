@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LeadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('login');
 });
+
+Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('guest');
+Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('guest');
+

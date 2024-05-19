@@ -1,0 +1,273 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
+
+html {
+  /* cursor: url("http://www.rw-designer.com/cursor-extern.php?id=21805"), auto !important; */
+  /* cursor: url("http://www.rw-designer.com/cursor-extern.php?id=30768"), auto !important; */
+  /* cursor: url("http://www.rw-designer.com/cursor-extern.php?id=202432"), auto !important; */
+}
+
+::selection {
+  color: #FFFFFF;
+  background: #3E5968;
+}
+
+body {
+  font-family: comfortaa;
+}
+
+.bg-offwhite {
+  background-color: #E3E3E3;
+}
+
+.bg-darkblue {
+  background-color: #3F4A60;
+}
+
+.btn-darkblue {
+  background-color: #3F4A60;
+  color: #FFFFFF;
+  border-bottom: 3px solid #3F4A60;
+  /* filter: drop-shadow(0 3px 0.1rem #3F4A60); */
+}
+
+.btn-darkblue:hover {
+  background-color: #FFFFFF;
+  color: #3F4A60;
+  font-weight: 500;
+  border-bottom: 3px solid #3F4A60;
+  /* filter: drop-shadow(0 3px 0.1rem #3F4A60); */
+}
+
+.fs-06rem {
+  font-size: 0.6rem;
+}
+
+.fs-07rem {
+  font-size: 0.7rem;
+}
+
+.fs-08rem {
+  font-size: 0.8rem;
+}
+
+.fs-09rem {
+  font-size: 0.9rem;
+}
+
+.w-80 {
+  width: 80% !important;
+}
+
+.w-90 {
+  width: 90% !important;
+}
+
+.mt-6 {
+  margin-top: 4rem;
+}
+
+.log-table th {
+  padding: 8px;
+  font-weight: 700;
+}
+
+.log-table td {
+  padding: 8px;
+}
+
+@keyframes navOpen {
+  from {
+    margin-left: -100%;
+  }
+
+  to {
+    margin-left: 0%;
+  }
+}
+
+@keyframes navClose {
+  from {
+    margin-left: 0%;
+  }
+
+  to {
+    margin-left: 100%;
+  }
+}
+
+.navOpen {
+  display: block;
+  animation-name: navOpen;
+  animation-duration: 1s;
+}
+
+.navClose {
+  display: none;
+  animation-name: navClose;
+  animation-duration: 1s;
+}
+
+.mobile-bottom-bar {
+  display: none;
+}
+
+#loadingGif {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+  object-fit: cover;
+  top: -0%;
+  display: none;
+}
+
+#loadingText {
+  position: fixed;
+  color: white;
+  top: 90%;
+  left: 40%;
+  display: none;
+}
+
+.stockReport {
+  padding: 2%;
+}
+
+#salesReportTable td {
+  padding: 6px;
+}
+
+.pdiReportTable td {
+  padding: 5px;
+}
+
+@media screen and (max-width: 767px) {
+  .mobile-bottom-bar {
+    display: flex;
+  }
+
+  .stageColumn {
+    display: none;
+  }
+
+  /* #leadColumn{
+    display: block;
+  } */
+  .salesStageFlex {
+    flex-direction: column !important;
+  }
+
+  .stockReport {
+    padding: 0px;
+  }
+
+  .stockReport table {
+    /* table-layout: fixed; */
+    width: auto;
+    overflow: scroll !important;
+  }
+
+  .stockReport td {
+    white-space: normal !important;
+    word-wrap: break-all;
+    padding: 0;
+  }
+}
+
+
+/* Data Table CSS Start  */
+
+.dataTables_length {
+  /* float: left; */
+  font-size: 0.8rem;
+}
+.dataTables_length select{
+  font-size: 0.8rem;
+  width: auto !important;
+}
+
+.dt-buttons {
+  float: right;
+  font-size: 0.8rem;
+}
+
+.dt-button {
+  background-color: #3F4A60;
+  color: #FFFFFF;
+  border-bottom: 3px solid #3F4A60;
+  border: none;
+  font-family: 'Comfortaa';
+}
+
+.dataTables_filter {
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.dataTables_filter input {
+  border: none;
+  border-bottom: 1px solid #3F4A60;
+  margin-bottom: 8px;
+  width: 20rem;
+  outline: none;
+}
+
+.dataTables_info {
+  font-size: 0.8rem;
+  /* float: left; */
+}
+
+.dataTables_paginate {
+  font-size: 0.8rem;
+  float: right;
+}
+
+.paginate_button {
+  margin-left: 2px;
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.paginate_button.current {
+  background-color: #3F4A60;
+  color: #FFFFFF;
+  padding: 4px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+/* Data Table CSS End  */
+
+
+/* Blink Animation  */
+.blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+.table-hover {
+  --mdb-table-hover-bg: rgba(79, 89, 109, 0.25) !important;
+}
+
+.create-lead-btn {
+  color: #111111;
+  background-color: #FFFFFF;
+  border: 2px solid #0B2E41;
+}
+
+.create-lead-btn:hover {
+  color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+}

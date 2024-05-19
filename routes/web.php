@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('login');
 });
+
+// Route::post('login', [Controller::class, 'authMe'])->name('login')->middleware('guest');
+
+
+Route::get('dashboard', function () {
+    return view('sales.dashboard');
+})->name('dashboard');

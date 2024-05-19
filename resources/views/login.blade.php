@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>CRM - REL MOTORS</title>
+    <title>CRM - PNL HOLDINGS LIMITED</title>
     <!-- Material Design Bootstrap -->
     <link rel="stylesheet" href="{{ asset('css/mdb.min.css') }}">
     <script src="{{ asset('js/mdb.min.js') }}"></script>
@@ -57,14 +57,13 @@
     </div>
 
     <div>
-        <img src="{{ asset('images/system/subaru_login_bg.jpg') }}" alt="" class="logInPage-img">
+        <img src="{{ asset('images/system/pnl_login_bg.jpg') }}" alt="" class="logInPage-img">
         <div class="logInPage-imgoverlay">
             <div class="loginpage-form-container">
                 <center>
                     <h3 class="text-white">PNL HOLDINGS LIMITED</h3>
                 </center>
-                {{-- <form action="{{ route('login') }}" method="POST" style="margin: 0 auto;" class="bg-white p-2"> --}}
-                    <form action="" method="POST" style="margin: 0 auto;" class="bg-white p-2">
+                <form action="{{ route('login') }}" method="POST" style="margin: 0 auto;" class="bg-white p-2">
                     @csrf
                     <center>
                         <h5 class="mb-1">Log In</h5>

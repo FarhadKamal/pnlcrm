@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadController;
 
@@ -20,4 +21,11 @@ Route::get('/', function () {
 
 Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('guest');
 Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('guest');
+
+// Route::post('login', [Controller::class, 'authMe'])->name('login')->middleware('guest');
+
+
+Route::get('dashboard', function () {
+    return view('sales.dashboard');
+})->name('dashboard');
 

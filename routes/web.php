@@ -18,6 +18,7 @@ use App\Http\Controllers\LeadController;
 Route::get('/', function () {
     return view('login');
 });
+Route::get('logout', [Controller::class, 'logoutMe'])->name('logout')->middleware('auth');
 
 Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('guest');
 Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('guest');

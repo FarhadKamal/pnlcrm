@@ -22,6 +22,8 @@ class Customer extends Model
         'trade_license',
         'contact_person',
         'contact_mobile',
-        'contact_email'
+        'contact_email',
+        'assign_to',
+        'is_active'
     ];
 }

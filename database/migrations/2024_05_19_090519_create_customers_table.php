@@ -28,7 +28,9 @@ class CreateCustomersTable extends Migration
             $table->string('contact_person');
             $table->string('contact_mobile');
             $table->string('contact_email')->nullable();
+            $table->string('assign_to')->nullable();
             $table->timestamps();
+            $table->boolean('is_active')->default(1);
 
         });
     }

@@ -82,6 +82,7 @@ class LeadController extends Controller
         $customerId = Customer::create($insert_data);
         $customerId = $customerId->id;
 
+        // for later
         // $domainName = URL::to('/');
         // $stoURL = $domainName . '/sales/';
         // $notifyUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions

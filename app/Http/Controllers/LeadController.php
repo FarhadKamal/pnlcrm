@@ -18,7 +18,11 @@ class LeadController extends Controller
 
     public function customerForm()
     {
-        $data['jitu'] = Customer::orderBy('customer_name', 'asc')->get();
-        return view('customerForm', $data);
+        // $data['divisionList'] = Fetch Division List
+        // $data['districtList'] = Fetch District List 
+        // $data['zoneList'] = Fetch Zone List 
+        // $data['leadSource'] = Fetch Source List 
+      
+        return view('sales.customerForm');
     }
 }

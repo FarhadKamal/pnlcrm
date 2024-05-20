@@ -405,7 +405,7 @@
 </head>
 
 <body class="antialiased">
-{{$jitu}}
+
 
 </body>
 

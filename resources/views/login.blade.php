@@ -63,7 +63,7 @@
                 <center>
                     <h3 class="text-white">PNL HOLDINGS LIMITED</h3>
                 </center>
-                <form action="#" method="POST" style="margin: 0 auto;" class="bg-white p-2">
+                <form action="{{ route('login') }}" method="POST" style="margin: 0 auto;" class="bg-white p-2">
                     @csrf
                     <center>
                         <h5 class="mb-1">Log In</h5>

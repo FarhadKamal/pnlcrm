@@ -36,11 +36,11 @@ class Controller extends BaseController
             }
             // return redirect()->route('sales');
             // Get the intended URL from the session or use a default
-            $intendedUrl = session('url.intended', route('sales'));
+            $intendedUrl = session('url.intended', route('home'));
 
             // If the intended URL is the login route, use the default sales route
             if ($intendedUrl == route('login')) {
-                $intendedUrl = route('sales');
+                $intendedUrl = route('home');
             }
 
             // Clear the intended URL from the session

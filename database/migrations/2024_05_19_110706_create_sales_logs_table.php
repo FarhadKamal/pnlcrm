@@ -15,6 +15,11 @@ class CreateSalesLogsTable extends Migration
     {
         Schema::create('sales_logs', function (Blueprint $table) {
             $table->id();
+            $table->integer('lead_id');
+            $table->string('log_stage');
+            $table->text('log_task');
+            $table->integer('log_by');
+            $table->text('log_next');
             $table->timestamps();
         });
     }
@@ -29,3 +34,6 @@ class CreateSalesLogsTable extends Migration
         Schema::dropIfExists('sales_logs');
     }
 }
+
+
+

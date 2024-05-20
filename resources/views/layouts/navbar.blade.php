@@ -127,7 +127,7 @@
                                 <a class="dropdown-item" href="#">Company List</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">User</a>
+                                <a class="dropdown-item" href="{{ route('users') }}">User</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="#">Designation</a>

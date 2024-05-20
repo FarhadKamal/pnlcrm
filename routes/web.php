@@ -22,6 +22,7 @@ Route::get('logout', [Controller::class, 'logoutMe'])->name('logout')->middlewar
 
 Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('guest');
 Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('guest');
+Route::post('/customerForm', [LeadController::class, 'storeCustomer'])->name('customerForm')->middleware('guest');
 
 // Route::post('login', [Controller::class, 'authMe'])->name('login')->middleware('guest');
 

@@ -19,14 +19,13 @@ class LeadController extends Controller
     public function customerForm()
     {
 
-        // $data['jitu'] = Customer::orderBy('customer_name', 'asc')->get();
-        return view('customerForm', $data);
+
 
         // $data['divisionList'] = Fetch Division List
-        // $data['districtList'] = Fetch District List 
-        // $data['zoneList'] = Fetch Zone List 
-        // $data['leadSource'] = Fetch Source List 
-      
+        // $data['districtList'] = Fetch District List
+        // $data['zoneList'] = Fetch Zone List
+        // $data['leadSource'] = Fetch Source List
+
         return view('sales.customerForm');
 
     }
@@ -34,27 +33,27 @@ class LeadController extends Controller
     public function storeCustomer(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'customerName' => 'required',
+            'clientName' => 'required',
             'groupName' => 'required',
-            'address' => 'required',
-            'zone' => 'required',
-            'district' => 'required',
-            'division' => 'required',
+            'clientAddress' => 'required',
+            'clientZone' => 'required',
+            'clientDistrict' => 'required',
+            'clientDivision' => 'required',
             'contactPerson' => 'required',
             'contactMobile' => 'required',
             'contactEmail' => 'nullable|email'
         ]);
         if ($validator->fails()) {
             $data['errors'] = $validator->errors()->all();
-            $data['customerName'] = $request->customerName;
+            $data['clientName'] = $request->clientName;
             $data['groupName'] = $request->groupName;
-            $data['address'] = $request->address;
-            $data['zone'] = $request->zone;
-            $data['district'] = $request->district;
-            $data['division'] = $request->division;
-            $data['tin'] = $request->tin;
-            $data['bin'] = $request->bin;
-            $data['trade_license'] = $request->trade_license;
+            $data['clientAddress'] = $request->clientAddress;
+            $data['clientZone'] = $request->clientZone;
+            $data['clientDistrict'] = $request->clientDistrict;
+            $data['clientDivision'] = $request->clientDivision;
+            $data['clientTIN'] = $request->clientTIN;
+            $data['clientBIN'] = $request->clientBIN;
+            $data['clientTL'] = $request->clientTL;
             $data['contactPerson'] = $request->contactPerson;
             $data['contactMobile'] = $request->contactMobile;
             $data['contactEmail'] = $request->contactEmail;
@@ -65,18 +64,18 @@ class LeadController extends Controller
 
 
         $insert_data = array(
-            'customer_name' => $request->leadName,
-            'group_name' => $request->leadEmail,
-            'address' => $request->leadPhone,
-            'zone' => $request->leadAddress,
-            'district' => $request->leadLocation,
-            'division' => $request->leadCategory,
-            'tin' => $request->leadSource,
-            'bin' => $request->refName,
-            'trade_license' => $request->leadSourceDetails,
-            'contact_person' => $request->contact_person,
-            'contact_mobile' => $request->contact_mobile,
-            'contact_email' => $request->contact_mobile,
+            'customer_name' => $request->clientName,
+            'group_name' => $request->groupName,
+            'address' => $request->clientAddress,
+            'zone' => $request->clientZone,
+            'district' => $request->clientDistrict,
+            'division' => $request->clientDivision,
+            'tin' => $request->clientTIN,
+            'bin' => $request->clientBIN,
+            'trade_license' => $request->clientTL,
+            'contact_person' => $request->contactPerson,
+            'contact_mobile' => $request->contactMobile,
+            'contact_email' => $request->contactEmail,
             'created_by' => Auth()->user()->id
         );
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\SalesLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LeadController extends Controller
 {
@@ -60,9 +61,6 @@ class LeadController extends Controller
             return back()->with('errorsData', $data);
         }
 
-        $interested = $request->interested;
-
-
         $insert_data = array(
             'customer_name' => $request->clientName,
             'group_name' => $request->groupName,
@@ -76,7 +74,8 @@ class LeadController extends Controller
             'contact_person' => $request->contactPerson,
             'contact_mobile' => $request->contactMobile,
             'contact_email' => $request->contactEmail,
-            'created_by' => Auth()->user()->id
+            // 'created_by' => Auth()->user()->id
+            'created_by' => 1
         );
 
         $customerId = Customer::create($insert_data);
@@ -99,14 +98,14 @@ class LeadController extends Controller
         //     });
         // }
 
-        $log_data = array(
-            'lead_id' => $customerId,
-            'log_stage' => 'Corporate Client',
-            'log_task' => 'New Corporate Client Creation',
-            'log_by' => Auth()->user()->id,
-            'log_next' => 'Corporate Client Creation'
-        );
-        SalesLog::create($log_data);
+        // $log_data = array(
+        //     'lead_id' => $customerId,
+        //     'log_stage' => 'Corporate Client',
+        //     'log_task' => 'New Corporate Client Creation',
+        //     'log_by' => Auth()->user()->id,
+        //     'log_next' => 'Corporate Client Creation'
+        // );
+        // SalesLog::create($log_data);
 
         return back()->with('success', 'Corporate Client Generation Success');
     }

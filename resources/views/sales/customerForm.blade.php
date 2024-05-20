@@ -1,5 +1,19 @@
 @include('layouts.navbar')
 
+<div>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: "<?= session('success') ?>",
+                showConfirmButton: false,
+                timer: 2000
+            })
+        </script>
+    @endif
+</div>
+
 <div class="container mb-3 mt-2">
     <center>
         <h4 class="mt-3">New Client Insertion Form</h4>

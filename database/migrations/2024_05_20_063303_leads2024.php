@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLeadsTable extends Migration
+class Leads2024 extends Migration
 {
     /**
      * Run the migrations.
@@ -15,6 +15,9 @@ class CreateLeadsTable extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
+            $table->integer('created_by');
+            $table->string('lead_source');
+            $table->text('product_requirement');
             $table->timestamps();
         });
     }

@@ -135,7 +135,7 @@
                 <label class="form-label">
                     Lead Source <span class="text-danger">*</span>
                 </label>
-                <select class="form-control fs-08rem" aria-label="Client Zone" name="clientZone" id="clientZone"
+                <select class="form-control fs-08rem" aria-label="Client Zone" name="leadSource" id="clientZone"
                     required>
                     <option selected disabled value="">Select One</option>
                     {{-- @foreach ($zoneList as $item)
@@ -153,10 +153,7 @@
                 <label class="form-label">
                     Product Requirement <span class="text-danger">*</span>
                 </label>
-                <textarea name="clientReq" id="clientReq" cols="30" rows="3" class="form-control" required> @if (session('errorsData'))
-{{ session('errorsData')['clientReq'] }}
-@endif
-</textarea>
+                <textarea name="clientReq" id="clientReq" cols="30" rows="3" class="form-control" required> @if (session('errorsData')){{ session('errorsData')['clientReq'] }} @endif</textarea>
             </div>
         </div>
         <center><button type="submit" class="btn btn-sm btn-darkblue fs-09rem mt-3">Insert New Client</button>

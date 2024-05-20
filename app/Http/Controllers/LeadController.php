@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\SalesLog;
+use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -42,7 +43,10 @@ class LeadController extends Controller
             'clientDivision' => 'required',
             'contactPerson' => 'required',
             'contactMobile' => 'required',
-            'contactEmail' => 'nullable|email'
+            'contactEmail' => 'nullable|email',
+            'contactPerson' => 'required',
+            'leadSource' => 'required',
+            'clientReq' => 'required'
         ]);
         if ($validator->fails()) {
             $data['errors'] = $validator->errors()->all();
@@ -58,10 +62,12 @@ class LeadController extends Controller
             $data['contactPerson'] = $request->contactPerson;
             $data['contactMobile'] = $request->contactMobile;
             $data['contactEmail'] = $request->contactEmail;
+            $data['leadSource'] = $request->leadSource;
+            $data['clientReq'] = $request->clientReq;
             return back()->with('errorsData', $data);
         }
 
-        $insert_data = array(
+        $insert_client_data = array(
             'customer_name' => $request->clientName,
             'group_name' => $request->groupName,
             'address' => $request->clientAddress,
@@ -78,7 +84,7 @@ class LeadController extends Controller
             'created_by' => 1
         );
 
-        $customerId = Customer::create($insert_data);
+        $customerId = Customer::create($insert_client_data);
         $customerId = $customerId->id;
 
         // for later
@@ -98,15 +104,31 @@ class LeadController extends Controller
         //     });
         // }
 
-        // $log_data = array(
-        //     'lead_id' => $customerId,
-        //     'log_stage' => 'Corporate Client',
-        //     'log_task' => 'New Corporate Client Creation',
-        //     'log_by' => Auth()->user()->id,
-        //     'log_next' => 'Corporate Client Creation'
-        // );
-        // SalesLog::create($log_data);
 
+        $insert_lead_data = array(
+            'lead_source' => $request->leadSource,
+            'product_requirement' => $request->clientReq,
+
+            'created_by' => 1
+        );
+
+        $leadId = Lead::create($insert_lead_data);
+        $leadId = $leadId->id;
+
+        $log_data = array(
+            'lead_id' => $leadId,
+            'log_stage' => 'Lead',
+            'log_task' => 'New Lead Creation',
+            'log_by' => 1,
+            'log_next' => 'Pump Selection'
+        );
+        SalesLog::create($log_data);
+
+
+
+
+
+//Auth()->user()->id,
         return back()->with('success', 'Corporate Client Generation Success');
     }
 

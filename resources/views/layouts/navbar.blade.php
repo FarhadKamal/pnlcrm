@@ -50,7 +50,7 @@
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Navbar brand -->
-            <a class="navbar-brand me-2" href="#">
+            <a class="navbar-brand me-2" href="{{ route('dashboard') }}">
                 <img src="{{ asset('images/system/logo.png') }}" class="rounded" height="43" alt="Subaru Logo"
                     loading="lazy" style="margin-top: -2px;" />
             </a>
@@ -60,7 +60,7 @@
             <div class="navbar-toggler">
                 <ul class="navbar-nav d-flex flex-row justify-content-evenly">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><button class="btn btn-sm create-lead-btn"><strong>New
+                        <a class="nav-link" href="{{ route('customerForm') }}"><button class="btn btn-sm create-lead-btn"><strong>New
                                     Customer</strong></button></a>
                     </li>
                 </ul>
@@ -76,7 +76,7 @@
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex">
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">Dashboard</a>
+                        <a class="nav-link text-white" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
@@ -163,7 +163,7 @@
                     <ul class="navbar-nav">
                         {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm')) --}}
                         <li class="nav-item">
-                            <a class="nav-link" href="#"><button class="btn btn-sm create-lead-btn"><strong>New
+                            <a class="nav-link" href="{{ route('customerForm') }}"><button class="btn btn-sm create-lead-btn"><strong>New
                                         Customer</strong></button></a>
                         </li>
                         {{-- @endif --}}
@@ -179,9 +179,9 @@
                                 id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown"
                                 aria-expanded="false">
                                 <img src="{{ asset('images/system/avatar.png') }}" class="rounded-circle"
-                                    height="30" alt="Portrait of a Woman" loading="lazy" />
+                                    height="30" alt="Profile Image" loading="lazy" />
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="left:-110px">
                                 <li>
                                     <a class="dropdown-item" href="#">My profile</a>
                                 </li>

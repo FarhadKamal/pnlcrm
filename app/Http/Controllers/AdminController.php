@@ -16,10 +16,11 @@ class AdminController extends Controller
     public function index()
     {
         // $data['users'] = User::with('department:id,dept_name', 'designation:id,desg_name', 'location:id,location_name')->get();
+        $data['users'] = User::get();
         // $data['designations'] = Designation::get();
         // $data['departments'] = Department::get();
         // $data['locations'] = SystemLocation::get();
-        return view('admin.users');
+        return view('admin.users', $data);
     }
 
     public function storeUser(Request $request)
@@ -64,4 +65,10 @@ class AdminController extends Controller
         return back()->with('success', 'New User Created');
     }
 
+    public function userInformation($userId)
+    {
+        // $data['userInfo'] = User::with('department:id,dept_name', 'designation:id,desg_name', 'location:id,location_name')->find($userId);
+        $data['userInfo'] = User::find($userId);
+        return view('admin.userInfo', $data);
+    }
 }

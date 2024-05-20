@@ -105,7 +105,7 @@
             </div>
         </div>
     </div>
-    @if (isset($users) && count($users > 0))
+    @if (isset($users) && count($users) > 0)
         <section class="row">
             @foreach ($users as $item)
                 <div class="col-md-3 ms-1 mt-3 row shadow-4">
@@ -120,9 +120,9 @@
                             </div>
                             <div class="ms-3">
                                 <h6 class="m-0 fs-09rem"><strong>{{ $item->user_name }}</strong></h6>
-                                <p class="m-0 fs-08rem">{{ $item->designation['desg_name'] }}</p>
-                                <p class="m-0 fs-08rem">{{ $item->department['dept_name'] }}</p>
-                                <p class="m-0 fs-08rem">{{ $item->location['location_name'] }}</p>
+                                <p class="m-0 fs-08rem">Admin </p>
+                                <p class="m-0 fs-08rem">IT </p>
+                                <p class="m-0 fs-08rem">Chattogram </p>
                             </div>
                         </div>
                     </div>
@@ -130,18 +130,18 @@
                         <a href="{{ route('userInfo', ['userId' => $item->id]) }}"><button
                                 class="btn btn-sm btn-success ps-2 pe-2 pt-1 pb-1 mb-1 fs-06rem"><i
                                     class="fas fa-eye"></i></button></a><br>
-                        <a href="{{ route('userEdit', ['userId' => $item->id]) }}"><button
+                        <a href="#"><button
                                 class="btn btn-sm btn-info ps-2 pe-2 pt-1 pb-1 mb-1 fs-06rem"><i
                                     class="fas fa-pencil"></i></button></a><br>
-                        <a href="{{ route('userPermission', ['userId' => $item->id]) }}"><button
+                        <a href="#"><button
                                 class="btn btn-sm btn-dark ps-2 pe-2 pt-1 pb-1 mb-1 fs-06rem"><i
                                     class="fas fa-key"></i></button></a><br>
                         @if ($item->is_active != 1)
-                            <a href="{{ route('activeUser', ['userId' => $item->id]) }}"><button
+                            <a href="#"><button
                                     class="btn btn-sm btn-success ps-2 pe-2 pt-1 pb-1 mb-1 fs-06rem"><i
                                         class="fas fa-user-check"></i></button></a>
                         @else
-                            <a href="{{ route('inactiveUser', ['userId' => $item->id]) }}"><button
+                            <a href="#"><button
                                     class="btn btn-sm btn-danger ps-2 pe-2 pt-1 pb-1 mb-1 fs-06rem"><i
                                         class="fas fa-trash"></i></button></a>
                         @endif

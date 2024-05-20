@@ -149,11 +149,11 @@
                 <label class="form-label">
                     Lead Source <span class="text-danger">*</span>
                 </label>
-                <select class="form-control fs-08rem" aria-label="Client Zone" name="leadSource" id="clientZone"
+                <select class="form-control fs-08rem" aria-label="Client Zone" name="leadSource" id="leadSource"
                     required>
                     <option selected disabled value="">Select One</option>
                     {{-- @foreach ($zoneList as $item)
-                    @if (session('errorsData') && session('errorsData')['clientZone'] == $item->id)
+                    @if (session('errorsData') && session('errorsData')['leadSource'] == $item->id)
                         <option value="{{ $item->id }}" selected>{{ $item->zoneName }}</option>
                     @else
                         <option value="{{ $item->id }}">{{ $item->zoneName }}</option>

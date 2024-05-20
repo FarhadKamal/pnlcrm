@@ -38,4 +38,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    public function department()
+    {
+        return $this->hasOne(Department::class, 'id', 'user_dept');
+    }
+    public function designation()
+    {
+        return $this->hasOne(Designation::class, 'id', 'user_desg');
+    }
+    public function location()
+    {
+        return $this->hasOne(SystemLocation::class, 'id', 'user_location');
+    }
 }

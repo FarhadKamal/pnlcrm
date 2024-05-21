@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\SalesLog;
 use App\Models\Lead;
+use App\Models\LeadSource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,7 +30,6 @@ class LeadController extends Controller
         // $data['leadSource'] = Fetch Source List
 
         return view('sales.customerForm');
-
     }
 
     public function storeCustomer(Request $request)
@@ -124,12 +124,19 @@ class LeadController extends Controller
         );
         SalesLog::create($log_data);
 
-
-
-
-
-//Auth()->user()->id,
+        //Auth()->user()->id,
         return back()->with('success', 'Corporate Client Generation Success');
     }
 
+
+    public function leadForm()
+    {
+        $data['companyList'] = Customer::get();
+        $data['sourceList'] = LeadSource::where(['is_active'=>1])->get();
+        return view('sales.leadForm', $data);
+    }
+
+    public function dealForm(){
+        return view('sales.dealForm');
+    }
 }

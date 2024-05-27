@@ -11,6 +11,13 @@ class Lead extends Model
     protected $fillable = [
         'created_by',
         'lead_source',
-        'product_requirement'
+        'product_requirement',
+        'lead_email',
+        'lead_phone',
+        'lead_source',
+        'is_won',
+        'is_lost',
+        'lost_reason',
+        'lost_description'
     ];
 }

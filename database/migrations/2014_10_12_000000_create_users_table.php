@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('user_signature')->nullable();
             $table->boolean('is_admin')->default(0);
             $table->boolean('is_active')->default(1);
+            $table->string('assign_to')->nullable();
             $table->timestamps();
         });
     }

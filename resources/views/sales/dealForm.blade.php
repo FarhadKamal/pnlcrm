@@ -215,8 +215,9 @@
 
 
         // console.log(e.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);
-
-        document.querySelector(".noPumpSelectedText").classList.add("d-none");
+        let allNoPumpBlink = document.querySelectorAll('.noPumpSelectedText');
+        allNoPumpBlink[activeModal].classList.add("d-none");
+        // document.querySelector(".noPumpSelectedText").classList.add("d-none");
     }
 
     function deleteSelectedRow(e) {

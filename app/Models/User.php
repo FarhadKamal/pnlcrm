@@ -27,7 +27,8 @@ class User extends Authenticatable
         'user_location',
         'user_signature',
         'is_admin',
-        'is_active'
+        'is_active',
+        'assign_to'
     ];
 
     /**

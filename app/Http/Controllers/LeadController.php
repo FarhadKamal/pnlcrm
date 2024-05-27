@@ -109,7 +109,7 @@ class LeadController extends Controller
         $insert_lead_data = array(
             'lead_source' => $request->leadSource,
             'product_requirement' => $request->clientReq,
-
+            'customer_id' => $customerId,
             'created_by' => 1
         );
 
@@ -132,13 +132,26 @@ class LeadController extends Controller
 
     public function leadForm()
     {
-        $userTag = Auth()->user()->id;
-        $data['companyList'] = Customer::where(['assign_to'=>$userTag])->get();
-        $data['sourceList'] = LeadSource::where(['is_active'=>1])->get();
+        $userTag = Auth()->user()->assign_to;
+        // $data['companyList'] = Customer::where(['assign_to'=>$userTag])->get();
+        $data['companyList'] = Customer::where('assign_to', 'like', "%{$userTag}%")->get();
+        $data['sourceList'] = LeadSource::where(['is_active' => 1])->get();
         return view('sales.leadForm', $data);
     }
 
-    public function dealForm(){
+    public function getSingleClientInfo($clientId)
+    {
+        $client = Customer::find($clientId);
+
+        if ($client) {
+            return response()->json($client);
+        } else {
+            return response()->json(['error' => 'Client not found'], 404);
+        }
+    }
+
+    public function dealForm()
+    {
         return view('sales.dealForm');
     }
 }

@@ -34,6 +34,7 @@ Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('
 Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('auth');
 Route::post('/customerForm', [LeadController::class, 'storeCustomer'])->name('customerForm')->middleware('auth');
 Route::get('newLeadForm', [LeadController::class, 'leadForm'])->name('newLeadForm')->middleware('auth');
+Route::get('getSingleClientInfo/{clientId}', [LeadController::class, 'getSingleClientInfo'])->name('getSingleClientInfo')->middleware('auth');
 Route::get('dealPage', [LeadController::class, 'dealForm'])->name('dealPage')->middleware('auth');
 
 

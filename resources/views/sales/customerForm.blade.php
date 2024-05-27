@@ -51,15 +51,13 @@
                 <select class="form-control fs-08rem" aria-label="Client Zone" name="clientDivision" id="clientDivision"
                     required>
                     <option selected disabled value="">Select One</option>
-                    {{-- @foreach ($zoneList as $item)
-                    @if (session('errorsData') && session('errorsData')['clientDivision'] == $item->id)
-                        <option value="{{ $item->id }}" selected>{{ $item->zoneName }}</option>
-                    @else
-                        <option value="{{ $item->id }}">{{ $item->zoneName }}</option>
-                    @endif
-                @endforeach --}}
-                    <option value="1">Division 1</option>
-                    <option value="2">Division 2</option>
+                    @foreach ($divisionList as $item)
+                        @if (session('errorsData') && session('errorsData')['clientDivision'] == $item->id)
+                            <option value="{{ $item->id }}" selected>{{ $item->div_name }}</option>
+                        @else
+                            <option value="{{ $item->id }}">{{ $item->div_name }}</option>
+                        @endif
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-3">
@@ -69,15 +67,13 @@
                 <select class="form-control fs-08rem" aria-label="Client Zone" name="clientDistrict" id="clientDistrict"
                     required>
                     <option selected disabled value="">Select One</option>
-                    {{-- @foreach ($zoneList as $item)
-                    @if (session('errorsData') && session('errorsData')['clientDistrict'] == $item->id)
-                        <option value="{{ $item->id }}" selected>{{ $item->zoneName }}</option>
-                    @else
-                        <option value="{{ $item->id }}">{{ $item->zoneName }}</option>
-                    @endif
-                @endforeach --}}
-                    <option value="1">District 1</option>
-                    <option value="2">District 2</option>
+                    @foreach ($districtList as $item)
+                        @if (session('errorsData') && session('errorsData')['clientDistrict'] == $item->id)
+                            <option value="{{ $item->id }}" selected>{{ $item->dist_name }}</option>
+                        @else
+                            <option value="{{ $item->id }}">{{ $item->dist_name }}</option>
+                        @endif
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-3">
@@ -87,15 +83,13 @@
                 <select class="form-control fs-08rem" aria-label="Client Zone" name="clientZone" id="clientZone"
                     required>
                     <option selected disabled value="">Select One</option>
-                    {{-- @foreach ($zoneList as $item)
-                    @if (session('errorsData') && session('errorsData')['clientZone'] == $item->id)
-                        <option value="{{ $item->id }}" selected>{{ $item->zoneName }}</option>
-                    @else
-                        <option value="{{ $item->id }}">{{ $item->zoneName }}</option>
-                    @endif
-                @endforeach --}}
-                    <option value="1">Zone 1</option>
-                    <option value="2">Zone 2</option>
+                    @foreach ($zoneList as $item)
+                        @if (session('errorsData') && session('errorsData')['clientZone'] == $item->id)
+                            <option value="{{ $item->id }}" selected>{{ $item->zone_name }}</option>
+                        @else
+                            <option value="{{ $item->id }}">{{ $item->zone_name }}</option>
+                        @endif
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-3"></div>
@@ -152,22 +146,23 @@
                 <select class="form-control fs-08rem" aria-label="Client Zone" name="leadSource" id="leadSource"
                     required>
                     <option selected disabled value="">Select One</option>
-                    {{-- @foreach ($zoneList as $item)
+                    @foreach ($leadSource as $item)
                     @if (session('errorsData') && session('errorsData')['leadSource'] == $item->id)
-                        <option value="{{ $item->id }}" selected>{{ $item->zoneName }}</option>
+                        <option value="{{ $item->id }}" selected>{{ $item->source_name }}</option>
                     @else
-                        <option value="{{ $item->id }}">{{ $item->zoneName }}</option>
+                        <option value="{{ $item->id }}">{{ $item->source_name }}</option>
                     @endif
-                @endforeach --}}
-                    <option value="1">Source 1</option>
-                    <option value="2">Source 2</option>
+                @endforeach
                 </select>
             </div>
             <div class="col-md-9">
                 <label class="form-label">
                     Product Requirement <span class="text-danger">*</span>
                 </label>
-                <textarea name="clientReq" id="clientReq" cols="30" rows="3" class="form-control" required> @if (session('errorsData')){{ session('errorsData')['clientReq'] }} @endif</textarea>
+                <textarea name="clientReq" id="clientReq" cols="30" rows="3" class="form-control" required> @if (session('errorsData'))
+{{ session('errorsData')['clientReq'] }}
+@endif
+</textarea>
             </div>
         </div>
         <center><button type="submit" class="btn btn-sm btn-darkblue fs-09rem mt-3">Insert New Client</button>

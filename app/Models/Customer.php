@@ -24,6 +24,7 @@ class Customer extends Model
         'contact_mobile',
         'contact_email',
         'assign_to',
+        'sap_id',
         'is_active'
     ];
 }

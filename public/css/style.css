@@ -271,3 +271,7 @@ body {
   color: #FFFFFF;
   border: 2px solid #FFFFFF;
 }
+
+.select2-results__option{
+  font-size: 0.7rem;
+}

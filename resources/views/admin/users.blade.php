@@ -41,53 +41,49 @@
                                     <input type="text" class="form-control fs-08rem" name="userName" id="userName"
                                         required>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Email <span class="text-danger">*</span></label>
                                     <input type="email" class="form-control fs-08rem" name="userEmail" id="userEmail"
                                         required>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Phone</label>
                                     <input type="number" class="form-control fs-08rem" name="userPhone" id="userPhone">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">User Tag <small>[Ex:BD-01]</small></label>
+                                    <input type="text" class="form-control fs-08rem" name="userTag" id="userTag">
                                 </div>
                                 <div class="col-md-3 mt-2">
                                     <label class="form-label">Designation <span class="text-danger">*</span></label>
                                     <select name="userDesg" id="userDesg" class="form-control  fs-08rem">
                                         <option value="" selected disabled>--Select One--</option>
-                                        {{-- @foreach ($designations as $item)
+                                        @foreach ($designations as $item)
                                             <option value="{{ $item->id }}">{{ $item->desg_name }}</option>
-                                        @endforeach --}}
-                                        <option value="1">Assistant Manager</option>
-                                        <option value="2">Senior Sales Executive</option>
-                                        <option value="3">Admin</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-3 mt-2">
                                     <label class="form-label">Department <span class="text-danger">*</span></label>
                                     <select name="userDept" id="userDept" class="form-control  fs-08rem">
                                         <option value="" selected disabled>--Select One--</option>
-                                        {{-- @foreach ($departments as $item)
+                                        @foreach ($departments as $item)
                                             <option value="{{ $item->id }}">{{ $item->dept_name }}</option>
-                                        @endforeach --}}
-                                        <option value="1">Business Developement</option>
-                                        <option value="2">Marketing</option>
-                                        <option value="3">IT</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-3 mt-2">
                                     <label class="form-label">Location <span class="text-danger">*</span></label>
                                     <select name="userLoc" id="userLoc" class="form-control  fs-08rem">
                                         <option value="" selected disabled>--Select One--</option>
-                                        {{-- @foreach ($locations as $item)
-                                            <option value="{{ $item->id }}">{{ $item->location_name }}</option>
-                                        @endforeach --}}
-                                        <option value="1">Chattogram</option>
-                                        <option value="2">Dhaka</option>
+                                        @foreach ($locations as $item)
+                                            <option value="{{ $item->id }}">{{ $item->loc_name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-3 mt-2">
-                                    <label class="form-label">User Signature <span class="text-danger"> [Max 5
-                                            mb]</span></label>
+                                    <label class="form-label">User Signature <small class="text-danger"> [Max 5
+                                            mb]</small></label>
                                     <input type="file" accept=".png,.jpg,.jpeg" class="form-control fs-08rem"
                                         name="userSignature" id="userSignature">
                                 </div>

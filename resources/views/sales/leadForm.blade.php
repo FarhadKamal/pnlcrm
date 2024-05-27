@@ -25,13 +25,15 @@
                 <label class="form-label">
                     Company Name <span class="text-danger">*</span>
                 </label>
-                <select class="form-control fs-08rem" aria-label="Client Zone" name="leadSource" id="clientZone" required>
+                <select class="form-select fs-08rem" aria-label="clientId" name="clientId" id="clientId"
+                    onchange="fetchClientInfo()" required>
                     <option selected disabled value="">Select One</option>
                     @foreach ($companyList as $item)
-                        @if (session('errorsData') && session('errorsData')['clientZone'] == $item->id)
-                            <option value="{{ $item->id }}" selected>{{ $item->customer_name }}</option>
+                        @if (session('errorsData') && session('errorsData')['clientId'] == $item->id)
+                            <option value="{{ $item->id }}" selected>{{ $item->customer_name }}-{{ $item->id }}
+                            </option>
                         @else
-                            <option value="{{ $item->id }}">{{ $item->customer_name }}</option>
+                            <option value="{{ $item->id }}">{{ $item->customer_name }}-{{ $item->id }}</option>
                         @endif
                     @endforeach
                 </select>
@@ -140,3 +142,74 @@
         </center>
     </form>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script>
+    $("#clientId").select2({
+        allowClear: true
+    });
+</script>
+
+<script>
+    function fetchClientInfo() {
+        let clientId = $('#clientId').val();
+
+        fetch('/getSingleClientInfo/?clientId=' + clientId).then(function(response) {
+            console.log(response.headers.values());
+            return response.json();
+        }).then(function(json) {
+
+        }).catch(function(err) {
+            console.log(err);
+        });
+    }
+
+
+    function fetchClientInfo() {
+        let clientId = $('#clientId').val();
+
+        fetch('/getSingleClientInfo/'+clientId)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(json => {
+                let groupName = json.group_name;
+                let address = json.address;
+                let division = json.division;
+                let district = json.district;
+                let zone = json.zone;
+                let tin = json.tin;
+                let bin = json.bin;
+                let trade = json.trade_license;
+                let contactPerson = json.contact_person;
+                let contactMobile = json.contact_mobile;
+                let contactEmail = json.contact_email;
+                
+                if(division == ''){
+                    division = 'N/A';
+                }
+                if(zone == 'none'){
+                    zone = 'N/A';
+                }
+
+                $('#groupName').text(groupName);
+                $('#address').text(address);
+                $('#division').text(division);
+                $('#district').text(district);
+                $('#zone').text(zone);
+                $('#tin').text(tin);
+                $('#bin').text(bin);
+                $('#trade').text(trade);
+                $('#contactPerson').text(contactPerson);
+                $('#contactMobile').text(contactMobile);
+                $('#contactEmail').text(contactEmail);
+
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>

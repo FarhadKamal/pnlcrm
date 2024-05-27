@@ -55,6 +55,11 @@ class AdminController extends Controller
         } else {
             $insert_data['user_phone'] = '';
         }
+        if (isset($request->userTag)) {
+            $insert_data['assign_to'] = $request->userTag;
+        } else {
+            $insert_data['assign_to'] = '';
+        }
 
         if (isset($request->userSignature)) {
             $signature = $request->file('userSignature');

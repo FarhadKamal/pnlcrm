@@ -26,6 +26,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.16/dist/sweetalert2.all.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.16/dist/sweetalert2.min.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -58,7 +60,8 @@
             <div class="navbar-toggler">
                 <ul class="navbar-nav d-flex flex-row justify-content-evenly">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('customerForm') }}"><button class="btn btn-sm create-lead-btn"><strong>New
+                        <a class="nav-link" href="{{ route('customerForm') }}"><button
+                                class="btn btn-sm create-lead-btn"><strong>New
                                     Customer</strong></button></a>
                     </li>
                 </ul>
@@ -161,7 +164,8 @@
                     <ul class="navbar-nav">
                         {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm')) --}}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('customerForm') }}"><button class="btn btn-sm create-lead-btn"><strong>New
+                            <a class="nav-link" href="{{ route('customerForm') }}"><button
+                                    class="btn btn-sm create-lead-btn"><strong>New
                                         Customer</strong></button></a>
                         </li>
                         {{-- @endif --}}

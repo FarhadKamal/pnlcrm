@@ -7,6 +7,7 @@ use App\Models\SalesLog;
 use App\Models\Lead;
 use App\Models\LeadSource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class LeadController extends Controller
@@ -131,7 +132,8 @@ class LeadController extends Controller
 
     public function leadForm()
     {
-        $data['companyList'] = Customer::get();
+        $userTag = Auth()->user()->id;
+        $data['companyList'] = Customer::where(['assign_to'=>$userTag])->get();
         $data['sourceList'] = LeadSource::where(['is_active'=>1])->get();
         return view('sales.leadForm', $data);
     }

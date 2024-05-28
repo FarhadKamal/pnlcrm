@@ -18,7 +18,7 @@
         <h4 class="mt-3">Lead Form</h4>
     </center>
     <hr>
-    <form action="{{ route('customerForm') }}" method="POST">
+    <form action="{{ route('newLeadForm') }}" method="POST">
         @csrf
         <div class="row">
             <div class="col-md-3">
@@ -116,7 +116,7 @@
                 <label class="form-label">
                     Lead Source <span class="text-danger">*</span>
                 </label>
-                <select class="form-control fs-08rem" aria-label="Client Zone" name="leadSource" id="leadSource"
+                <select class="form-control fs-08rem" aria-label="Lead Source" name="leadSource" id="leadSource"
                     required>
                     <option selected disabled value="">Select One</option>
                     @foreach ($sourceList as $item)

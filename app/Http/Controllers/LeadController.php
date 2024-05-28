@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\SalesLog;
 use App\Models\Lead;
+use App\Models\LeadDistrict;
+use App\Models\LeadDivision;
 use App\Models\LeadSource;
+use App\Models\LeadZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -22,15 +25,12 @@ class LeadController extends Controller
 
     public function customerForm()
     {
+        $data['divisionList'] = LeadDivision::get();
+        $data['districtList'] = LeadDistrict::get();
+        $data['zoneList'] = LeadZone::get();
+        $data['leadSource'] = LeadSource::get();
 
-
-
-        // $data['divisionList'] = Fetch Division List
-        // $data['districtList'] = Fetch District List
-        // $data['zoneList'] = Fetch Zone List
-        // $data['leadSource'] = Fetch Source List
-
-        return view('sales.customerForm');
+        return view('sales.customerForm', $data);
     }
 
     public function storeCustomer(Request $request)
@@ -110,7 +110,7 @@ class LeadController extends Controller
             'lead_source' => $request->leadSource,
             'product_requirement' => $request->clientReq,
             'customer_id' => $customerId,
-            'created_by' => 1
+            'created_by' =>  Auth()->user()->id
         );
 
         $leadId = Lead::create($insert_lead_data);
@@ -120,7 +120,7 @@ class LeadController extends Controller
             'lead_id' => $leadId,
             'log_stage' => 'Lead',
             'log_task' => 'New Lead Creation',
-            'log_by' => 1,
+            'log_by' => Auth()->user()->id,
             'log_next' => 'Pump Selection'
         );
         SalesLog::create($log_data);
@@ -148,6 +148,54 @@ class LeadController extends Controller
         } else {
             return response()->json(['error' => 'Client not found'], 404);
         }
+    }
+
+
+    public function storeLead(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'clientId' => 'required|numeric',
+            'contactPerson' => 'required',
+            'contactMobile' => 'required',
+            'contactEmail' => 'nullable|email',
+            'contactPerson' => 'required',
+            'leadSource' => 'required',
+            'clientReq' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            $data['clientId'] = $request->clientId;
+            $data['contactPerson'] = $request->contactPerson;
+            $data['contactMobile'] = $request->contactMobile;
+            $data['contactEmail'] = $request->contactEmail;
+            $data['leadSource'] = $request->leadSource;
+            $data['clientReq'] = $request->clientReq;
+            return back()->with('errorsData', $data);
+        }
+        $insert_lead_data = array(
+            'customer_id' => $request->clientId,
+            'created_by' => Auth()->user()->id,
+            'lead_source' => $request->leadSource,
+            'product_requirement' => $request->clientReq,
+            'lead_email' => $request->contactPerson,
+            'lead_phone' => $request->contactMobile,
+            'current_stage' => 'DEAL',
+            'current_subStage' => 'FORM'
+        );
+        $leadId = Lead::create($insert_lead_data);
+        $leadId = $leadId->id;
+
+        $log_data = array(
+            'lead_id' => $leadId,
+            'log_stage' => 'Lead',
+            'log_task' => 'New Lead Creation',
+            'log_by' => Auth()->user()->id,
+            'log_next' => 'Pump Selection'
+        );
+        SalesLog::create($log_data);
+
+        return $this->dealForm()->with('success', 'Corporate Client Generation Success');
+        //  back()->with('success', 'Corporate Client Generation Success');
     }
 
     public function dealForm($leadId)

@@ -15,7 +15,6 @@ class Lead extends Model
         'product_requirement',
         'lead_email',
         'lead_phone',
-        'lead_source',
         'current_stage',
         'current_subStage',
         'is_return',
@@ -24,4 +23,17 @@ class Lead extends Model
         'lost_reason',
         'lost_description'
     ];
+
+    public function clientInfo(){
+        return $this->hasOne(Customer::class, 'id', 'customer_id');
+    }
+
+    public function source()
+    {
+        return $this->hasOne(LeadSource::class, 'id', 'lead_source');
+    }
+    public function createdBy()
+    {
+        return $this->hasOne(User::class, 'id', 'created_by');
+    }
 }

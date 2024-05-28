@@ -19,7 +19,7 @@ class Leads2024 extends Migration
             $table->integer('created_by');
             $table->string('lead_source');
             $table->text('product_requirement');
-            $table->string('lead_email');
+            $table->string('lead_email')->nullable();
             $table->string('lead_phone');
             $table->string('current_stage');
             $table->string('current_subStage');

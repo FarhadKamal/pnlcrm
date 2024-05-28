@@ -150,6 +150,7 @@ class LeadController extends Controller
         }
     }
 
+
     public function storeLead(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -197,8 +198,11 @@ class LeadController extends Controller
         //  back()->with('success', 'Corporate Client Generation Success');
     }
 
-    public function dealForm()
+    public function dealForm($leadId)
     {
-        return view('sales.dealForm');
+
+        $data['reqList'] =Requirements::where('lead_id', $leadId)->get();
+
+        return view('sales.dealForm', $data);
     }
 }

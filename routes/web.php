@@ -37,6 +37,7 @@ Route::get('newLeadForm', [LeadController::class, 'leadForm'])->name('newLeadFor
 Route::post('newLeadForm', [LeadController::class, 'storeLead'])->name('newLeadForm')->middleware('auth');
 Route::get('getSingleClientInfo/{clientId}', [LeadController::class, 'getSingleClientInfo'])->name('getSingleClientInfo')->middleware('auth');
 Route::get('dealPage', [LeadController::class, 'dealForm'])->name('dealPage')->middleware('auth');
+// Route::get('dealPage/{leadId}', [SalesController::class, 'dealPage'])->name('dealPage')->middleware('auth');
 
 
 

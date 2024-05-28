@@ -46,23 +46,20 @@ class DealController extends Controller
 
 
         $insert_req_data = array(
-            'lead_id' => $request->clientName,
-            'type_of_use' => $request->clientName,
-            'suction_type' => $request->groupName,
-            'suction_pipe_dia' => $request->clientAddress,
-            'delivery_head' => $request->clientZone,
-            'delivery_pipe_dia' => $request->clientDistrict,
-            'horizontal_pipe_length' => $request->clientDivision,
-            'source_of_water' => $request->clientTIN,
-            'water_consumption' => $request->clientBIN,
-            'liquid_type' => $request->clientTL,
-            'pump_running_hour' => $request->contactPerson
+            'lead_id' => $request->lead_id,
+            'type_of_use' => $request->type_of_use,
+            'suction_type' => $request->suction_type,
+            'suction_pipe_dia' => $request->suction_pipe_dia,
+            'delivery_head' => $request->delivery_head,
+            'delivery_pipe_dia' => $request->delivery_pipe_dia,
+            'horizontal_pipe_length' => $request->horizontal_pipe_length,
+            'source_of_water' => $request->source_of_water,
+            'water_consumption' => $request->water_consumption,
+            'liquid_type' => $request->liquid_type,
+            'pump_running_hour' => $request->pump_running_hour
         );
 
         $reqlist = Requirements::create($insert_req_data);
-        $customerId = $customerId->id;
-
-
 
         //Auth()->user()->id,
         return back()->with('success', 'Requirement Generation Success');

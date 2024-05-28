@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\DealController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadController;
 
@@ -23,12 +24,8 @@ Route::get('login', [Controller::class, 'logoutMe'])->name('login')->middleware(
 Route::post('login', [Controller::class, 'authMe'])->name('login')->middleware('guest');
 Route::get('logout', [Controller::class, 'logoutMe'])->name('logout')->middleware('auth');
 
-Route::get('home', function () {
-    return view('sales.dashboard');
-})->name('home')->middleware('auth');
-Route::get('dashboard', function () {
-    return view('sales.dashboard');
-})->name('dashboard')->middleware('auth');
+Route::get('home', [Controller::class, 'salesStage'])->name('home')->middleware('auth');
+Route::get('dashboard', [Controller::class, 'salesStage'])->name('dashboard')->middleware('auth');
 
 Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('guest');
 Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('auth');
@@ -36,8 +33,8 @@ Route::post('/customerForm', [LeadController::class, 'storeCustomer'])->name('cu
 Route::get('newLeadForm', [LeadController::class, 'leadForm'])->name('newLeadForm')->middleware('auth');
 Route::post('newLeadForm', [LeadController::class, 'storeLead'])->name('newLeadForm')->middleware('auth');
 Route::get('getSingleClientInfo/{clientId}', [LeadController::class, 'getSingleClientInfo'])->name('getSingleClientInfo')->middleware('auth');
-Route::get('dealPage', [LeadController::class, 'dealForm'])->name('dealPage')->middleware('auth');
-// Route::get('dealPage/{leadId}', [SalesController::class, 'dealPage'])->name('dealPage')->middleware('auth');
+Route::get('dealPage/{leadId}', [LeadController::class, 'dealForm'])->name('dealPage')->middleware('auth');
+Route::post('requirement', [DealController::class, 'storeRequirement'])->name('requirement')->middleware('auth');
 
 
 

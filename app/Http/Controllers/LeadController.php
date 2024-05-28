@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\SalesLog;
 use App\Models\Lead;
 use App\Models\LeadSource;
+use App\Models\Requirements;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;

@@ -29,9 +29,11 @@
                     <div class="col-md-6">
                         <label for="">Type Of Use</label>
                         <select name="" id="" class="form-select fs-08rem p-1">
-                            <option value="">Domestic</option>
-                            <option value="">Industry</option>
-                            <option value="">Others</option>
+                            <option value="Domestic">Domestic</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Agricultural">Agricultural</option>
+                            <option value="Bore-hole">Tube Well</option>
+                            <option value="Any">Any</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -43,26 +45,34 @@
                     </div>
                     <div class="col-md-6">
                         <label for="">Delivery Head</label>
+                        <input type="number" class="form-control fs-08rem p-1" name="" id="">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="">Suction Pipe Dia (Inch)</label>
                         <select name="" id="" class="form-select fs-08rem p-1">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
+                            <option value="0.25">0.25</option>
+                            <option value="0.75">0.75</option>
+                            <option value="1.00">1.00</option>
+                            <option value="1.50">1.50</option>
+                            <option value="2.00">2.00</option>
+                            <option value="1.25">1.25</option>
+                            <option value="3.00">3.00</option>
+                            <option value="2.50">2.50</option>
+                            <option value="4.00">4.00</option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="">Suction Pipe Dia (MM)</label>
+                        <label for="">Delivery Pipe Dia (Inch)</label>
                         <select name="" id="" class="form-select fs-08rem p-1">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="">Delivery Pipe Dia (MM)</label>
-                        <select name="" id="" class="form-select fs-08rem p-1">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
+                            <option value="0.25">0.25</option>
+                            <option value="0.75">0.75</option>
+                            <option value="1.00">1.00</option>
+                            <option value="1.50">1.50</option>
+                            <option value="2.00">2.00</option>
+                            <option value="1.25">1.25</option>
+                            <option value="3.00">3.00</option>
+                            <option value="2.50">2.50</option>
+                            <option value="4.00">4.00</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -76,37 +86,40 @@
                     <div class="col-md-6">
                         <label for="">Source Of Water</label>
                         <select name="" id="" class="form-select fs-08rem p-1">
-                            <option value="">Reservoir</option>
-                            <option value="">Wasa</option>
-                            <option value="">River</option>
-                            <option value="">Deep Tube Well</option>
+                            <option value="Reservoir">Reservoir</option>
+                            <option value="Wasa">Wasa</option>
+                            <option value="River">River</option>
+                            <option value="Deep Tube Well">Deep Tube Well</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="">Water Consumption (m3/Day)</label>
-                        <select name="" id="" class="form-select fs-08rem p-1">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
-                            <option value="">4</option>
-                        </select>
+                        <input type="number" class="form-control fs-08rem p-1" name="" id="">
                     </div>
                     <div class="col-md-6">
                         <label for="">Liquid Type</label>
                         <select name="" id="" class="form-select fs-08rem p-1">
-                            <option value="">Clean Water</option>
-                            <option value="">Mud Water</option>
-                            <option value="">Salt Water</option>
-                            <option value="">Furnace</option>
+                            <option value="Clean Water">Clean Water</option>
+                            <option value="Mud Water">Mud Water</option>
+                            <option value="Salt Water">Salt Water</option>
+                            <option value="Furnace">Furnace</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="">Pump Running Hour/Day</label>
                         <select name="" id="" class="form-select fs-08rem p-1">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
-                            <option value="">4</option>
+                            <option value="2">2</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                            <option value="10">10</option>
+                            <option value="12">12</option>
+                            <option value="14">14</option>
+                            <option value="16">16</option>
+                            <option value="18">18</option>
+                            <option value="20">20</option>
+                            <option value="22">22</option>
+                            <option value="24">24</option>
                         </select>
                     </div>
                 </div>
@@ -116,7 +129,8 @@
                 <center>
                     <h6 class="text-primary fw-bold">Pump Selection</h6>
                     <button data-mdb-toggle="modal" data-mdb-target="#pumpSelectionModal"
-                        class="float-end btn btn-sm btn-primary fs-07rem p-1 m-1 modalBtn" onclick="setModalNumber(0)">Select Pump</button>
+                        class="float-end btn btn-sm btn-primary fs-07rem p-1 m-1 modalBtn"
+                        onclick="setModalNumber(0)">Select Pump</button>
                 </center>
                 @include('sales.modals.pumpSelectionModal')
                 <div class="selectedPumps border p-2">
@@ -141,7 +155,7 @@
                     </table>
                     <center><button class="btn btn-sm btn-darkblue fs-06rem p-1">Save Selected Pump</button></center>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -151,9 +165,11 @@
 
 <script>
     var activeModal = 0;
-    function setModalNumber(e){
+
+    function setModalNumber(e) {
         activeModal = e;
     }
+
     function updatePrice(e) {
         var row = e.parentElement.parentElement;
         row = row.querySelectorAll("td");
@@ -235,7 +251,7 @@
         let totalRequirementSection = clonedDiv.length;
         newSelectedTbody.innerHTML = '';
         let newModalBtn = clone.querySelector('.modalBtn');
-        newModalBtn.setAttribute("onclick", "setModalNumber("+(totalRequirementSection)+")");
+        newModalBtn.setAttribute("onclick", "setModalNumber(" + (totalRequirementSection) + ")");
         $('#fullDealForm').append(clone);
     }
 </script>

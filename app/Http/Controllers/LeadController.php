@@ -150,8 +150,11 @@ class LeadController extends Controller
         }
     }
 
-    public function dealForm()
+    public function dealForm($leadId)
     {
-        return view('sales.dealForm');
+
+        $data['reqList'] =Requirements::where('lead_id', $leadId)->get();
+
+        return view('sales.dealForm', $data);
     }
 }

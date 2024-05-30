@@ -72,12 +72,15 @@ class LeadController extends Controller
             return back()->with('errorsData', $data);
         }
 
+        $distName = LeadDistrict::find($request->clientDistrict);
+        $distName = $distName->dist_name;
+
         $insert_client_data = array(
             'customer_name' => $request->clientName,
             'group_name' => $request->groupName,
             'address' => $request->clientAddress,
             'zone' => $request->clientZone,
-            'district' => $request->clientDistrict,
+            'district' => $distName,
             'division' => $request->clientDivision,
             'tin' => $request->clientTIN,
             'bin' => $request->clientBIN,
@@ -85,8 +88,7 @@ class LeadController extends Controller
             'contact_person' => $request->contactPerson,
             'contact_mobile' => $request->contactMobile,
             'contact_email' => $request->contactEmail,
-            // 'created_by' => Auth()->user()->id
-            'created_by' => 1
+            'created_by' => Auth()->user()->id
         );
 
         $customerId = Customer::create($insert_client_data);
@@ -109,11 +111,13 @@ class LeadController extends Controller
         //     });
         // }
 
-
         $insert_lead_data = array(
             'lead_source' => $request->leadSource,
             'product_requirement' => $request->clientReq,
             'customer_id' => $customerId,
+            'lead_phone' => $request->contactMobile,
+            'current_stage' => 'LEAD',
+            'current_subStage' => 'ASSIGN',
             'created_by' =>  Auth()->user()->id
         );
 
@@ -125,7 +129,7 @@ class LeadController extends Controller
             'log_stage' => 'Lead',
             'log_task' => 'New Lead Creation',
             'log_by' => Auth()->user()->id,
-            'log_next' => 'Pump Selection'
+            'log_next' => 'Assign Sales Person'
         );
         SalesLog::create($log_data);
 
@@ -181,7 +185,7 @@ class LeadController extends Controller
             'created_by' => Auth()->user()->id,
             'lead_source' => $request->leadSource,
             'product_requirement' => $request->clientReq,
-            'lead_email' => $request->contactPerson,
+            'lead_email' => $request->contactEmail,
             'lead_phone' => $request->contactMobile,
             'current_stage' => 'DEAL',
             'current_subStage' => 'FORM'
@@ -198,14 +202,14 @@ class LeadController extends Controller
         );
         SalesLog::create($log_data);
 
-        return $this->dealForm()->with('success', 'Corporate Client Generation Success');
+        return $this->dealForm($leadId)->with('success', 'Corporate Client Generation Success');
         //  back()->with('success', 'Corporate Client Generation Success');
     }
 
     public function dealForm($leadId)
     {
-
-        $data['reqList'] =Requirements::where('lead_id', $leadId)->get();
+        $data['leadId'] = $leadId;
+        $data['reqList'] = Requirements::where('lead_id', $leadId)->get();
 
         return view('sales.dealForm', $data);
     }

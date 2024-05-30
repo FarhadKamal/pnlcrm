@@ -97,14 +97,16 @@
                                     <td class="p-1">Sr Sales</td>
                                     <td class="p-1">Dhaka</td>
                                     <td class="p-1"></td>
-                                    <td class="p-1 text-center"><button class="btn btn-darkblue fs-06rem p-1">Assign</button></td>
+                                    <td class="p-1 text-center"><button
+                                            class="btn btn-darkblue fs-06rem p-1">Assign</button></td>
                                 </tr>
                                 <tr>
                                     <td class="p-1">Nousahd</td>
                                     <td class="p-1">Sr Sales</td>
                                     <td class="p-1">Chattogram</td>
                                     <td class="p-1"></td>
-                                    <td class="p-1 text-center"><button class="btn btn-darkblue fs-06rem p-1">Assign</button></td>
+                                    <td class="p-1 text-center"><button
+                                            class="btn btn-darkblue fs-06rem p-1">Assign</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -118,19 +120,19 @@
 
 <script>
     function dataShowModal(data) {
-        // $('#leadModal_leadId').val(data.id);
-        $('#leadModalCompany').html('MM Trade');
-        $('#leadModalGroup').html('MM Group');
-        $('#leadModalAddress').html('Pahartoli');
-        $('#leadModalPerson').html('Mr Kamrul');
-        $('#leadModalPhone').html('01844556655');
-        $('#leadModalZone').html('Pahartoli');
-        $('#leadModalDistrict').html('Chattogram');
-        $('#leadModalDivision').html('Chattogram');
-        $('#leadModalSource').html('Phone Call');
-        $('#leadModalPR').html('Need a submersible pump');
-        $('#leadModalCreatedBy').html('Noushad Malek');
-        
+        console.log(data);
+        $('#leadModal_leadId').val(data.id);
+        $('#leadModalCompany').html(data.client_info['customer_name']);
+        $('#leadModalGroup').html(data.client_info['group_name']);
+        // $('#leadModalAddress').html('Pahartoli');
+        $('#leadModalPerson').html(data.client_info['contact_person']);
+        $('#leadModalPhone').html(data.client_info['contact_mobile']);
+        // $('#leadModalZone').html('Pahartoli');
+        $('#leadModalDistrict').html(data.client_info['district']);
+        // $('#leadModalDivision').html('Chattogram');
+        $('#leadModalSource').html(data.source['source_name']);
+        $('#leadModalPR').html(data.product_requirement);
+        $('#leadModalCreatedBy').html(data.created_by['user_name']);
 
         // $("#assign_to").selectedIndex = 0;
 

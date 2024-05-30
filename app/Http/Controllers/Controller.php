@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -66,5 +68,36 @@ class Controller extends BaseController
     {
         Auth::logout();
         return redirect()->route('/');
+    }
+
+
+    public function salesStage()
+    {
+        //Lead Stage 
+        // if (Helper::permissionCheck(Auth()->user()->id, 'leadAssign')) {
+        $data['leadStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
+        $data['assignList'] = User::with('designation:id,desg_name', 'location:id,loc_name')->get();
+        $data['leadButtonLabel'] = 'Assign';
+        // } elseif (Helper::permissionCheck(Auth()->user()->id, 'leadStageAll')) {
+        //     $data['leadStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
+        //     $data['assignList'] = User::with('designation:id,desg_name', 'location:id,location_name')->get();
+        //     $data['leadButtonLabel'] = 'Details';
+        // } elseif (Helper::permissionCheck(Auth()->user()->id, 'leadStage')) {
+        //     $data['leadStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name')->where(['current_stage' => 'LEAD', 'created_by' => Auth()->user()->id])->get();
+        //     $data['leadButtonLabel'] = 'Details';
+        // }
+
+
+        //Deal Stage
+        // if (Helper::permissionCheck(Auth()->user()->id, 'dealApprove')) {
+        $data['dealStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DEAL')->get();
+        // } elseif (Helper::permissionCheck(Auth()->user()->id, 'dealStageAll')) {
+
+        //     $data['dealStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name', 'assignTo:id,user_name')->where(['current_stage' => 'DEAL'])->get();
+        // } elseif (Helper::permissionCheck(Auth()->user()->id, 'dealStage')) {
+        //     $data['dealStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name', 'assignTo:id,user_name')->where(['current_stage' => 'DEAL', 'assign_to' => Auth()->user()->id])->get();
+        // }
+
+        return view('sales.dashboard', $data);
     }
 }

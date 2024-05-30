@@ -22,6 +22,7 @@
     <hr>
     <div id="fullDealForm">
         @if (count($reqList) > 0)
+            <?php $modalNo = 0; ?>
             @foreach ($reqList as $item)
                 <div class="row justify-content-evenly requirementSlectionDiv mb-2 mt-2">
                     <div class="col-md-4 bg-white rounded shadow p-1">
@@ -221,7 +222,7 @@
                             <h6 class="text-primary fw-bold">Pump Selection</h6>
                             <button data-mdb-toggle="modal" data-mdb-target="#pumpSelectionModal"
                                 class="float-end btn btn-sm btn-primary fs-07rem p-1 m-1 modalBtn"
-                                onclick="setModalNumber(0)">Select Pump</button>
+                                onclick="setModalNumber({{ $modalNo }})">Select Pump</button>
                         </center>
                         @include('sales.modals.pumpSelectionModal')
                         <div class="selectedPumps border p-2">
@@ -250,6 +251,7 @@
 
                     </div>
                 </div>
+                <?php  $modalNo++ ?>
             @endforeach
         @else
             <div class="row justify-content-evenly requirementSlectionDiv mb-2 mt-2">
@@ -506,7 +508,7 @@
         let newSelectedTbody = clone.querySelector('#selectedPumpsTbody');
         let totalRequirementSection = clonedDiv.length;
         newSelectedTbody.innerHTML = '';
-        
+
         let checkSign = clone.querySelector('.fa-check');
         checkSign.remove();
         // checkSign.classList.remove('fa-check');

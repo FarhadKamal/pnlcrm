@@ -24,6 +24,8 @@ Route::get('login', [Controller::class, 'logoutMe'])->name('login')->middleware(
 Route::post('login', [Controller::class, 'authMe'])->name('login')->middleware('guest');
 Route::get('logout', [Controller::class, 'logoutMe'])->name('logout')->middleware('auth');
 
+
+// Dashboard Route 
 Route::get('home', [Controller::class, 'salesStage'])->name('home')->middleware('auth');
 Route::get('dashboard', [Controller::class, 'salesStage'])->name('dashboard')->middleware('auth');
 

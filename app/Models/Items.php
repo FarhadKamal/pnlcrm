@@ -12,6 +12,7 @@ class Items extends Model
         'old_code',
         'new_code',
         'mat_name',
+        'brand_name',
         'itm_group',
         'phase',
         'lead_phone',
@@ -20,8 +21,8 @@ class Items extends Model
         'suction_dia',
         'delivery_dia',
         'capacity',
-        'head',
-        'price'
+        'head'
+
 
     ];
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Requirements;
-
+use App\Models\PumpChoice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -64,4 +64,61 @@ class DealController extends Controller
         //Auth()->user()->id,
         return back()->with('success', 'Requirement Generation Success');
     }
+
+    public function storePumpChoice(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lead_id' => 'required',
+            'req_id' => 'required',
+            'product_id' => 'required|numeric',
+            'pump_head' => 'nullable',
+            'unit_price' => 'nullable',
+            'qty' => 'required',
+            'discount_price' => 'nullable',
+            'net_price' => 'nullable'
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            $data['lead_id'] = $request->lead_id;
+            $data['req_id'] = $request->req_id;
+            $data['product_id'] = $request->product_id;
+            $data['pump_head'] = $request->pump_head;
+            $data['unit_price'] = $request->unit_price;
+            $data['qty'] = $request->qty;
+            $data['discount_price'] = $request->discount_price;
+            $data['net_price'] = $request->net_price;
+            return back()->with('errorsData', $data);
+        }
+        $insert_choice_data = array(
+            'lead_id' => $request->lead_id,
+            'req_id' => $request->req_id,
+            'product_id' => $request->product_id,
+            'pump_head' => $request->pump_head,
+            'unit_price' => $request->unit_price,
+            'qty' => $request->qty,
+            'discount_price' => $request->discount_price,
+            'net_price' => $request->net_price
+
+        );
+        PumpChoice::create($insert_lead_data);
+
+
+
+
+        return $this->dealForm($leadId)->with('success', 'Pump chocie data saved!');
+        //  back()->with('success', 'Corporate Client Generation Success');
+    }
+
+
+    public function dealForm($leadId,$reqId)
+    {
+        $data['leadId'] = $leadId;
+        $data['reqList'] = Requirements::where('lead_id', $leadId)->get();
+        $data['reqList'] = PumpChoice::where(['lead_id'=> $leadId,'req_id' => $reqId])->get();
+        return view('sales.dealForm', $data);
+    }
+
+
+
+
 }

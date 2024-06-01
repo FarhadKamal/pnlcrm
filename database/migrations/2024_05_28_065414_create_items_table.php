@@ -18,6 +18,7 @@ class CreateItemsTable extends Migration
             $table->integer('old_code')->nullable();
             $table->integer('new_code');
             $table->string('mat_name');
+            $table->string('brand_name');
             $table->string('itm_group')->nullable();
             $table->string('phase')->nullable();
             $table->double('kw')->default(0);;
@@ -26,7 +27,7 @@ class CreateItemsTable extends Migration
             $table->double('delivery_dia')->default(0);
             $table->string('capacity');
             $table->string('head')->default(0);
-            $table->double('price')->default(0);
+
             $table->timestamps();
         });
     }

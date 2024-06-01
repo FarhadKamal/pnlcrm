@@ -143,28 +143,13 @@
     </form>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 <script>
     $("#clientId").select2({
-        allowClear: true
+        allowClear: false
     });
 </script>
 
 <script>
-    function fetchClientInfo() {
-        let clientId = $('#clientId').val();
-
-        fetch('/getSingleClientInfo/?clientId=' + clientId).then(function(response) {
-            console.log(response.headers.values());
-            return response.json();
-        }).then(function(json) {
-
-        }).catch(function(err) {
-            console.log(err);
-        });
-    }
-
-
     function fetchClientInfo() {
         let clientId = $('#clientId').val();
 

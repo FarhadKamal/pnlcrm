@@ -37,7 +37,7 @@ Route::post('newLeadForm', [LeadController::class, 'storeLead'])->name('newLeadF
 Route::get('getSingleClientInfo/{clientId}', [LeadController::class, 'getSingleClientInfo'])->name('getSingleClientInfo')->middleware('auth');
 Route::get('dealPage/{leadId}', [LeadController::class, 'dealForm'])->name('dealPage')->middleware('auth');
 Route::post('requirement', [DealController::class, 'storeRequirement'])->name('requirement')->middleware('auth');
-
+Route::post('getSelectionPumpInfo', [DealController::class, 'getFilterPumpInfo'])->name('getSelectionPumpInfo')->middleware('auth');
 
 
 

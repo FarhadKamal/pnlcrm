@@ -13,7 +13,7 @@ use App\Models\LeadSource;
 use App\Models\Requirements;
 
 use App\Models\LeadZone;
-
+use App\Models\PumpChoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -212,6 +212,7 @@ class LeadController extends Controller
     {
         $data['leadId'] = $leadId;
         $data['reqList'] = Requirements::where('lead_id', $leadId)->get();
+        $data['selectedPumpList'] = PumpChoice::with('productInfo:id,mat_name,brand_name,hp,head')->where('lead_id', $leadId)->get();
         $data['allPumpHP'] = Items::distinct()->orderBy('hp', 'ASC')->get('hp');
         $data['allPumpPhase'] = Items::distinct()->orderBy('phase', 'ASC')->get('phase');
         $data['allPumpModel'] = Items::distinct()->orderBy('mat_name', 'ASC')->get('mat_name');

@@ -137,10 +137,9 @@
                     fetchData.forEach(element => {
 
                         let html = '<tr>';
-                        html += '<td class="d-none"><input name="selectedPumpId" value="' + element.id +
-                            '" /></td>';
+                        html += '<td class="d-none">'+element.id+'</td>';
                         html += '<td class="p-1">' + element.mat_name + '</td>';
-                        html += '<td class="p-1">Pedrollo</td>';
+                        html += '<td class="p-1">'+element.brand+'</td>';
                         html += '<td class="p-1">' + element.hp + '</td>';
                         html += '<td class="p-1">' + element.head + '</td>';
                         html += '<td class="p-1">' + element.price + '</td>';

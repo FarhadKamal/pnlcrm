@@ -18,4 +18,9 @@ class PumpChoice extends Model
         'discount_price',
         'net_price'
     ];
+
+    public function productInfo()
+    {
+        return $this->hasOne(Items::class, 'id', 'product_id');
+    }
 }

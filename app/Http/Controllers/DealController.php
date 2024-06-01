@@ -66,88 +66,6 @@ class DealController extends Controller
         return back()->with('success', 'Requirement Generation Success');
     }
 
-
-    public function getFilterPumpInfo2(Request $request)
-    {
-        $data = $request->json()->all();
-        $filterBrand = $data['filterBrand'];
-        $filterHP = $data['filterHP'];
-        $filterModel = $data['filterModel'];
-        $filterHead = $data['filterHead'];
-        $filterPhase = $data['filterPhase'];
-
-        $condition = [];
-        if ($filterHP != 'all') {
-            $condition['hp'] = $filterHP;
-        }
-        if ($filterModel != 'all') {
-            $condition['mat_name'] = $filterModel;
-        }
-        if ($filterHead != 'all') {
-            $condition['head'] = $filterHead;
-        }
-        if ($filterPhase != 'all') {
-            $condition['phase'] = $filterPhase;
-        }
-
-        $itemInfo = Items::where($condition)->get();
-        $responseData = [];
-        foreach ($itemInfo as $item) {
-            $itemCode = $item->new_code;
-
-            // Use curl to fetch price and stock data from external API
-            $ch = curl_init();
-            $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode;
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-            // Optional: Set headers if required by the external API
-            // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-
-            $response = curl_exec($ch);
-            $curlError = curl_error($ch);
-            curl_close($ch);
-
-            if ($curlError) {
-                // Handle curl error (e.g., log the error)
-                error_log("Error fetching price and stock data from external API: " . $curlError);
-                continue; // Skip to the next item if there's a curl error
-            }
-
-            $responseData = json_decode($response);
-
-            // Check for successful response and extract data (handle potential errors)
-            if (isset($responseData->status) && $responseData->status === 'success') {
-                $price = $responseData->price ?? null;
-                $stock = $responseData->stock ?? null;
-            } else {
-                // Handle external API error (e.g., log the error or return a default value)
-                $price = null;
-                $stock = null;
-                // You might log the error for debugging purposes
-                // ...
-            }
-
-            // Create a new object with pump information and price/stock data
-            $pumpData = [
-                'id' => $item->id,
-                'mat_name' => $item->mat_name,
-                'brand' => 'Pedrollo', // Assuming brand is always 'Pedrollo'
-                'hp' => $item->hp,
-                'head' => $item->head,
-                'price' => $price,
-                'stock' => $stock,
-            ];
-
-            $responseData[] = $pumpData;
-        }
-        $responseAll = [
-            'status' => 'success',
-            'data' => $responseData,
-        ];
-        return response()->json($responseAll);
-    }
-
     public function getFilterPumpInfo(Request $request)
     {
         $data = $request->json()->all();
@@ -158,6 +76,9 @@ class DealController extends Controller
         $filterPhase = $data['filterPhase'];
 
         $condition = [];
+        if ($filterBrand != 'all') {
+            $condition['brand_name'] = $filterBrand;
+        }
         if ($filterHP != 'all') {
             $condition['hp'] = $filterHP;
         }
@@ -213,7 +134,7 @@ class DealController extends Controller
             $pumpData = [
                 'id' => $item->id,
                 'mat_name' => $item->mat_name,
-                'brand' => 'Pedrollo', // Assuming brand is always 'Pedrollo'
+                'brand' => $item->brand_name,
                 'hp' => $item->hp,
                 'head' => $item->head,
                 'price' => $price,
@@ -233,59 +154,51 @@ class DealController extends Controller
 
     public function storePumpChoice(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'lead_id' => 'required',
-            'req_id' => 'required',
-            'product_id' => 'required|numeric',
-            'pump_head' => 'nullable',
-            'unit_price' => 'nullable',
-            'qty' => 'required',
-            'discount_price' => 'nullable',
-            'net_price' => 'nullable'
-        ]);
-        if ($validator->fails()) {
-            $data['errors'] = $validator->errors()->all();
-            $data['lead_id'] = $request->lead_id;
-            $data['req_id'] = $request->req_id;
-            $data['product_id'] = $request->product_id;
-            $data['pump_head'] = $request->pump_head;
-            $data['unit_price'] = $request->unit_price;
-            $data['qty'] = $request->qty;
-            $data['discount_price'] = $request->discount_price;
-            $data['net_price'] = $request->net_price;
-            return back()->with('errorsData', $data);
+        // $validator = Validator::make($request->all(), [
+        //     'lead_id' => 'required',
+        //     'req_id' => 'required',
+        //     'product_id' => 'required|numeric',
+        //     // 'pump_head' => 'nullable',
+        //     'product_unitPrice' => 'nullable',
+        //     'product_qty' => 'required',
+        //     'product_discountAmt' => 'nullable',
+        //     'product_netPrice' => 'nullable'
+        // ]);
+
+        // if ($validator->fails()) {
+        //     $data['errors'] = $validator->errors()->all();
+        //     $data['lead_id'] = $request->lead_id;
+        //     $data['req_id'] = $request->req_id;
+        //     $data['product_id'] = $request->product_id;
+        //     // $data['pump_head'] = $request->pump_head;
+        //     $data['product_unitPrice'] = $request->product_unitPrice;
+        //     $data['product_qty'] = $request->product_qty;
+        //     $data['product_discountAmt'] = $request->product_discountAmt;
+        //     $data['product_netPrice'] = $request->product_netPrice;
+        //     return back()->with('errorsData', $data);
+        // }
+
+        $leadId = $request->lead_id;
+        $reqId = $request->req_id;
+        $data = [];
+        if (isset($request->product_id) && count($request->product_id) > 0) {
+            foreach ($request->product_id as $key => $item) {
+                $eachItem = [
+                    'lead_id' => $leadId,
+                    'req_id' => $reqId,
+                    'product_id' => $item,
+                    'unit_price' => $request->product_unitPrice[$key],
+                    'qty' => $request->product_qty[$key],
+                    'discount_price' => $request->product_discountAmt[$key],
+                    'net_price' => $request->product_netPrice[$key],
+                ];
+                $data[] = $eachItem;
+            }
+            PumpChoice::insert($data);
+            return back()->with('success', 'Pump chocie data saved!');
+        } else {
+            PumpChoice::where(['lead_id' => $leadId, 'req_id' => $reqId])->delete();
+            return back()->with('success', 'Pump chocie data saved!');
         }
-        $insert_choice_data = array(
-            'lead_id' => $request->lead_id,
-            'req_id' => $request->req_id,
-            'product_id' => $request->product_id,
-            'pump_head' => $request->pump_head,
-            'unit_price' => $request->unit_price,
-            'qty' => $request->qty,
-            'discount_price' => $request->discount_price,
-            'net_price' => $request->net_price
-
-        );
-        PumpChoice::create($insert_lead_data);
-
-
-
-
-        return $this->dealForm($leadId)->with('success', 'Pump chocie data saved!');
-        //  back()->with('success', 'Corporate Client Generation Success');
     }
-
-
-    public function dealForm($leadId,$reqId)
-    {
-        $data['leadId'] = $leadId;
-        $data['reqList'] = Requirements::where('lead_id', $leadId)->get();
-        $data['reqList'] = PumpChoice::where(['lead_id'=> $leadId,'req_id' => $reqId])->get();
-        return view('sales.dealForm', $data);
-    }
-
-
-
-
-
 }

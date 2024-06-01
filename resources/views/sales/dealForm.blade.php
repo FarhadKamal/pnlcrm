@@ -22,14 +22,24 @@
     <hr>
     <div id="fullDealForm">
         @if (count($reqList) > 0)
-            <?php $modalNo = 0; ?>
+            <?php $modalNo = 0;
+            $showFlag = true; ?>
             @foreach ($reqList as $item)
                 <div class="row justify-content-evenly requirementSlectionDiv mb-2 mt-2">
                     <div class="col-md-4 bg-white rounded shadow p-1">
                         <center>
-                            <h6 class="text-primary fw-bold">Client Requirement <i
-                                    class="fas fa-check text-success blink"></i></h6>
+                            <div class="row">
+                                <h6 class="text-primary fw-bold col-md-6">Client Requirement <i
+                                        class="fas fa-check text-success blink"></i></h6>
+                                <form action="" method="POST" class="col-md-6">
+                                    @csrf
+                                    <input type="hidden" name="req_id" value="{{ $item->id }}">
+                                    <button class="btn btn-sm btn-danger fs-06rem p-1">Delete
+                                        Requirement</button>
+                                </form>
+                            </div>
                         </center>
+
                         <form action="{{ route('requirement') }}" method="POST">
                             @csrf
                             <input type="hidden" name="lead_id" value="{{ $leadId }}">
@@ -226,8 +236,23 @@
                         </center>
                         @include('sales.modals.pumpSelectionModal')
                         <div class="selectedPumps border p-2">
-                            <p class="badge blink noPumpSelectedText bg-danger text-center">No Pump Selected Yet</p>
-                            <form action="" method="POST">
+
+                            @foreach ($selectedPumpList as $seletedItem)
+                                @if ($seletedItem->req_id == $item->id)
+                                    <?php $showFlag = false;
+                                    break; ?>
+                                @else
+                                    <?php $showFlag = true; ?>
+                                @endif
+                            @endforeach
+
+                            @if ($showFlag == true)
+                                <p class="badge blink noPumpSelectedText bg-danger text-center">No Pump
+                                    Selected Yet
+                                </p>
+                            @endif
+
+                            <form action="{{ route('storeSelectedPump') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="lead_id" value="{{ $leadId }}">
                                 <input type="hidden" name="req_id" value="{{ $item->id }}">
@@ -247,7 +272,39 @@
                                         </tr>
                                     </thead>
                                     <tbody id="selectedPumpsTbody">
-
+                                        @foreach ($selectedPumpList as $seletedItem)
+                                            @if ($seletedItem->req_id == $item->id)
+                                                <tr>
+                                                    <td class='d-none'><input name='product_id[]'
+                                                            value='{{ $seletedItem->prduct_id }}'>
+                                                    </td>
+                                                    <td class='d-none'><input name='product_unitPrice[]'
+                                                            value='{{ $seletedItem->unit_price }}'></td>
+                                                    <td class='d-none'><input name='product_qty[]'
+                                                            value='{{ $seletedItem->qty }}'></td>
+                                                    <td class='d-none'><input name='product_discountAmt[]'
+                                                            value='{{ $seletedItem->discount_price }}'></td>
+                                                    <td class='d-none'><input name='product_netPrice[]'
+                                                            value='{{ $seletedItem->net_price }}'></td>
+                                                    <td class='p-1'>{{ $seletedItem['productInfo']->mat_name }}
+                                                    </td>
+                                                    <td class='p-1'>{{ $seletedItem['productInfo']->brand_name }}
+                                                    </td>
+                                                    <td class='p-1'>{{ $seletedItem['productInfo']->hp }}</td>
+                                                    <td class='p-1'>{{ $seletedItem['productInfo']->head }}</td>
+                                                    <td class='p-1'>{{ $seletedItem['productInfo']->head }}</td>
+                                                    <td class='p-1'>{{ $seletedItem->unit_price }}</td>
+                                                    <td class='p-1'>{{ $seletedItem->qty }}</td>
+                                                    <td class='p-1'>{{ $seletedItem->qty }}</td>
+                                                    <td class='p-1'>{{ $seletedItem->discount_price }}</td>
+                                                    <td class='p-1'>{{ $seletedItem->net_price }}</td>
+                                                    <td class='p-1 text-center' style='cursor: pointer'
+                                                        onclick='deleteSelectedRow(this,{{ $modalNo }})'>
+                                                        <i class='fas fa-trash text-danger'></i>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
                                     </tbody>
                                 </table>
                                 <center><button class="btn btn-sm btn-darkblue fs-06rem p-1">Save Selected
@@ -484,7 +541,11 @@
         }
 
         let html = "<tr>";
-        html += "<td class='d-none'><input name='productId[]' value='" + productId + "'></td>";
+        html += "<td class='d-none'><input name='product_id[]' value='" + productId + "'>" + productId + "</td>";
+        html += "<td class='d-none'><input name='product_unitPrice[]' value='" + productUP + "'></td>";
+        html += "<td class='d-none'><input name='product_qty[]' value='" + productQty + "'></td>";
+        html += "<td class='d-none'><input name='product_discountAmt[]' value='" + discountAmount + "'></td>";
+        html += "<td class='d-none'><input name='product_netPrice[]' value='" + productTotalPrice + "'></td>";
         html += "<td class='p-1'>" + productName + "</td>";
         html += "<td class='p-1'>" + productBrand + "</td>";
         html += "<td class='p-1 text-center'>" + productHP + "</td>";

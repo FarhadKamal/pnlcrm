@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Items;
 use Illuminate\Http\Request;
 
 use App\Models\Requirements;
@@ -65,6 +66,171 @@ class DealController extends Controller
         return back()->with('success', 'Requirement Generation Success');
     }
 
+
+    public function getFilterPumpInfo2(Request $request)
+    {
+        $data = $request->json()->all();
+        $filterBrand = $data['filterBrand'];
+        $filterHP = $data['filterHP'];
+        $filterModel = $data['filterModel'];
+        $filterHead = $data['filterHead'];
+        $filterPhase = $data['filterPhase'];
+
+        $condition = [];
+        if ($filterHP != 'all') {
+            $condition['hp'] = $filterHP;
+        }
+        if ($filterModel != 'all') {
+            $condition['mat_name'] = $filterModel;
+        }
+        if ($filterHead != 'all') {
+            $condition['head'] = $filterHead;
+        }
+        if ($filterPhase != 'all') {
+            $condition['phase'] = $filterPhase;
+        }
+
+        $itemInfo = Items::where($condition)->get();
+        $responseData = [];
+        foreach ($itemInfo as $item) {
+            $itemCode = $item->new_code;
+
+            // Use curl to fetch price and stock data from external API
+            $ch = curl_init();
+            $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            // Optional: Set headers if required by the external API
+            // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+
+            $response = curl_exec($ch);
+            $curlError = curl_error($ch);
+            curl_close($ch);
+
+            if ($curlError) {
+                // Handle curl error (e.g., log the error)
+                error_log("Error fetching price and stock data from external API: " . $curlError);
+                continue; // Skip to the next item if there's a curl error
+            }
+
+            $responseData = json_decode($response);
+
+            // Check for successful response and extract data (handle potential errors)
+            if (isset($responseData->status) && $responseData->status === 'success') {
+                $price = $responseData->price ?? null;
+                $stock = $responseData->stock ?? null;
+            } else {
+                // Handle external API error (e.g., log the error or return a default value)
+                $price = null;
+                $stock = null;
+                // You might log the error for debugging purposes
+                // ...
+            }
+
+            // Create a new object with pump information and price/stock data
+            $pumpData = [
+                'id' => $item->id,
+                'mat_name' => $item->mat_name,
+                'brand' => 'Pedrollo', // Assuming brand is always 'Pedrollo'
+                'hp' => $item->hp,
+                'head' => $item->head,
+                'price' => $price,
+                'stock' => $stock,
+            ];
+
+            $responseData[] = $pumpData;
+        }
+        $responseAll = [
+            'status' => 'success',
+            'data' => $responseData,
+        ];
+        return response()->json($responseAll);
+    }
+
+    public function getFilterPumpInfo(Request $request)
+    {
+        $data = $request->json()->all();
+        $filterBrand = $data['filterBrand'];
+        $filterHP = $data['filterHP'];
+        $filterModel = $data['filterModel'];
+        $filterHead = $data['filterHead'];
+        $filterPhase = $data['filterPhase'];
+
+        $condition = [];
+        if ($filterHP != 'all') {
+            $condition['hp'] = $filterHP;
+        }
+        if ($filterModel != 'all') {
+            $condition['mat_name'] = $filterModel;
+        }
+        if ($filterHead != 'all') {
+            $condition['head'] = $filterHead;
+        }
+        if ($filterPhase != 'all') {
+            $condition['phase'] = $filterPhase;
+        }
+
+        $itemInfo = Items::where($condition)->get();
+
+        $responseDataAll = [];
+        foreach ($itemInfo as $item) {
+            $itemCode = $item->new_code;
+
+            // **External API Call (using curl for flexibility)**
+            $ch = curl_init();
+            $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            // **Optional: Authentication headers (if required by external API)**
+            // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer YOUR_API_KEY'));
+
+            $response = curl_exec($ch);
+            $curlError = curl_error($ch);
+            curl_close($ch);
+
+            if ($curlError) {
+                // Handle curl error (log the error and consider returning a default value)
+                error_log("Error fetching price and stock data from external API: " . $curlError);
+                $price = null;
+                $stock = null;
+                continue; // Skip to the next item
+            }
+
+            $responseData = json_decode($response);
+            if ($responseData->price != null) {
+                $price = $responseData->price;
+            } else {
+                $price = null;
+            }
+            if ($responseData->stock != null) {
+                $stock = $responseData->stock;
+            } else {
+                $stock = null;
+            }
+            // Create a new object with pump information and price/stock data
+            $pumpData = [
+                'id' => $item->id,
+                'mat_name' => $item->mat_name,
+                'brand' => 'Pedrollo', // Assuming brand is always 'Pedrollo'
+                'hp' => $item->hp,
+                'head' => $item->head,
+                'price' => $price,
+                'stock' => $stock
+            ];
+
+            $responseDataAll[] = $pumpData;
+        }
+
+        $response = [
+            'status' => 'success',
+            'data' => $responseDataAll,
+        ];
+
+        return response()->json($response);
+    }
+
     public function storePumpChoice(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -117,6 +283,7 @@ class DealController extends Controller
         $data['reqList'] = PumpChoice::where(['lead_id'=> $leadId,'req_id' => $reqId])->get();
         return view('sales.dealForm', $data);
     }
+
 
 
 

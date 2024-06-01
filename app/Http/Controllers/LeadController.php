@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Items;
 use App\Models\SalesLog;
 use App\Models\Lead;
 use App\Models\LeadDistrict;
@@ -15,6 +16,7 @@ use App\Models\LeadZone;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class LeadController extends Controller
@@ -210,6 +212,10 @@ class LeadController extends Controller
     {
         $data['leadId'] = $leadId;
         $data['reqList'] = Requirements::where('lead_id', $leadId)->get();
+        $data['allPumpHP'] = Items::distinct()->orderBy('hp', 'ASC')->get('hp');
+        $data['allPumpPhase'] = Items::distinct()->orderBy('phase', 'ASC')->get('phase');
+        $data['allPumpModel'] = Items::distinct()->orderBy('mat_name', 'ASC')->get('mat_name');
+        $data['allPumpHead'] = Items::distinct()->orderBy('head', 'ASC')->get('head');
 
         return view('sales.dealForm', $data);
     }

@@ -227,31 +227,38 @@
                         @include('sales.modals.pumpSelectionModal')
                         <div class="selectedPumps border p-2">
                             <p class="badge blink noPumpSelectedText bg-danger text-center">No Pump Selected Yet</p>
-                            <table class="table fs-07rem table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="p-1 text-center">Product</th>
-                                        <th class="p-1 text-center">Brand</th>
-                                        <th class="p-1 text-center">HP</th>
-                                        <th class="p-1 text-center">Head (M)</th>
-                                        <th class="p-1 text-center">Unit Price</th>
-                                        <th class="p-1 text-center">Qty.</th>
-                                        <th class="p-1 text-center">Discount</th>
-                                        <th class="p-1 text-center">Net Price</th>
-                                        <th class="p-1 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="selectedPumpsTbody">
+                            <form action="" method="POST">
+                                @csrf
+                                <input type="hidden" name="lead_id" value="{{ $leadId }}">
+                                <input type="hidden" name="req_id" value="{{ $item->id }}">
+                                <table class="table fs-07rem table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="p-1 text-center">Product</th>
+                                            <th class="p-1 text-center">Brand</th>
+                                            <th class="p-1 text-center">HP</th>
+                                            <th class="p-1 text-center">Head (M)</th>
+                                            <th class="p-1 text-center">Unit Price</th>
+                                            <th class="p-1 text-center">Qty.</th>
+                                            <th class="p-1 text-center">Discount(%)</th>
+                                            <th class="p-1 text-center">Discount(TK)</th>
+                                            <th class="p-1 text-center">Net Price</th>
+                                            <th class="p-1 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="selectedPumpsTbody">
 
-                                </tbody>
-                            </table>
-                            <center><button class="btn btn-sm btn-darkblue fs-06rem p-1">Save Selected Pump</button>
-                            </center>
+                                    </tbody>
+                                </table>
+                                <center><button class="btn btn-sm btn-darkblue fs-06rem p-1">Save Selected
+                                        Pump</button>
+                                </center>
+                            </form>
                         </div>
 
                     </div>
                 </div>
-                <?php  $modalNo++ ?>
+                <?php $modalNo++; ?>
             @endforeach
         @else
             <div class="row justify-content-evenly requirementSlectionDiv mb-2 mt-2">
@@ -398,7 +405,8 @@
                                     <th class="p-1 text-center">Head (M)</th>
                                     <th class="p-1 text-center">Unit Price</th>
                                     <th class="p-1 text-center">Qty.</th>
-                                    <th class="p-1 text-center">Discount</th>
+                                    <th class="p-1 text-center">Discount(%)</th>
+                                    <th class="p-1 text-center">Discount(TK)</th>
                                     <th class="p-1 text-center">Net Price</th>
                                     <th class="p-1 text-center">Action</th>
                                 </tr>
@@ -426,20 +434,26 @@
 
     function setModalNumber(e) {
         activeModal = e;
+        $('#filterPumpList').empty();
+        $('#filterBrand').prop('selectedIndex', 0);
+        $('#filterHP').prop('selectedIndex', 0);
+        $('#filterModel').prop('selectedIndex', 0);
+        $('#filterHead').prop('selectedIndex', 0);
+        $('#filterPhase').prop('selectedIndex', 0);
     }
 
     function updatePrice(e) {
         var row = e.parentElement.parentElement;
         row = row.querySelectorAll("td");
         let productUP = row[5].innerText;
-        let productQty = row[6].querySelector('input');
+        let productQty = row[7].querySelector('input');
         productQty = productQty.value;
-        let productDiscountPercentage = row[7].querySelector('input');
+        let productDiscountPercentage = row[8].querySelector('input');
         productDiscountPercentage = productDiscountPercentage.value;
         let totalPrice = (Number(productUP) * Number(productQty));
         let discountAmount = totalPrice * (Number(productDiscountPercentage) / 100);
         let productTotalPrice = totalPrice - discountAmount;
-        row[8].innerText = productTotalPrice;
+        row[9].innerText = productTotalPrice;
     }
 
     function addCart(e) {
@@ -451,9 +465,9 @@
         let productHP = row[3].innerText;
         let productHead = row[4].innerText;
         let productUP = row[5].innerText;
-        let productQty = row[6].querySelector('input');
+        let productQty = row[7].querySelector('input');
         productQty = productQty.value;
-        let productDiscountPercentage = row[7].querySelector('input');
+        let productDiscountPercentage = row[8].querySelector('input');
         productDiscountPercentage = productDiscountPercentage.value;
         let totalPrice = (Number(productUP) * Number(productQty));
         let discountAmount = totalPrice * (Number(productDiscountPercentage) / 100);
@@ -477,10 +491,12 @@
         html += "<td class='p-1 text-center'>" + productHead + "</td>";
         html += "<td class='p-1 text-end'>" + productUP + "</td>";
         html += "<td class='p-1 text-center'>" + productQty + "</td>";
+        html += "<td class='p-1 text-end'>" + productDiscountPercentage + "</td>";
         html += "<td class='p-1 text-end'>" + discountAmount + "</td>";
         html += "<td class='p-1 text-end'>" + productTotalPrice + "</td>";
         html +=
-            "<td class='p-1 text-center' style='cursor: pointer' onclick='deleteSelectedRow(this)'><i class='fas fa-trash text-danger' ></i></td>";
+            "<td class='p-1 text-center' style='cursor: pointer' onclick='deleteSelectedRow(this," + activeModal +
+            ")'><i class='fas fa-trash text-danger' ></i></td>";
         html += "</tr>";
 
         let allSelctedPumpTobody = document.querySelectorAll('#selectedPumpsTbody');
@@ -494,11 +510,14 @@
         // document.querySelector(".noPumpSelectedText").classList.add("d-none");
     }
 
-    function deleteSelectedRow(e) {
+    function deleteSelectedRow(e, modalId) {
         e.parentElement.remove();
-        let totalTr = $('#selectedPumpsTbody')[0].children.length;
+        let allSelctedPumpTobody = document.querySelectorAll('#selectedPumpsTbody');
+        let totalTr = allSelctedPumpTobody[modalId].children.length;
+        // let totalTr = $('#selectedPumpsTbody')[modalId].children.length;
         if (totalTr < 1) {
-            document.querySelector(".noPumpSelectedText").classList.remove("d-none");
+            let allNoPumpBlink = document.querySelectorAll('.noPumpSelectedText');
+            allNoPumpBlink[modalId].classList.remove("d-none");
         }
     }
 

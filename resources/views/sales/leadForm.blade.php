@@ -161,6 +161,7 @@
                 return response.json();
             })
             .then(json => {
+                
                 let groupName = json.group_name;
                 let address = json.address;
                 let division = json.division;

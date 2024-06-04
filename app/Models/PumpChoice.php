@@ -16,6 +16,7 @@ class PumpChoice extends Model
         'unit_price',
         'qty',
         'discount_price',
+        'discount_percentage',
         'net_price'
     ];
 

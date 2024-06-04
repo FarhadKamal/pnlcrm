@@ -126,7 +126,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                // console.log(data); 
+                 console.log(data.ip);
                 if (data.status === 'success') {
                     let fetchData = data.data;
                     if (fetchData.length < 1) {

@@ -28,6 +28,8 @@ class Leads2024 extends Migration
             $table->integer('is_lost')->default(0);
             $table->string('lost_reason')->nullable();
             $table->text('lost_description')->nullable();
+            $table->integer('need_credit_approval')->default(0);
+            $table->integer('need_discount_approval')->default(0);
 
             $table->timestamps();
         });

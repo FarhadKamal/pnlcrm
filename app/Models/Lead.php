@@ -21,7 +21,9 @@ class Lead extends Model
         'is_won',
         'is_lost',
         'lost_reason',
-        'lost_description'
+        'lost_description',
+        'need_credit_approval',
+        'need_discount_approval'
     ];
 
     public function clientInfo(){
@@ -35,5 +37,10 @@ class Lead extends Model
     public function createdBy()
     {
         return $this->hasOne(User::class, 'id', 'created_by');
+    }
+
+    public function selectedPump()
+    {
+        return $this->hasMany(PumpChoice::class, 'lead_id', 'id');
     }
 }

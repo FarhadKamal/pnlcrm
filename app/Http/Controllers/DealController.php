@@ -11,6 +11,7 @@ use App\Models\PumpChoice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+
 class DealController extends Controller
 {
     //
@@ -116,9 +117,23 @@ class DealController extends Controller
         foreach ($itemInfo as $item) {
             $itemCode = $item->new_code;
 
+
+            $IP =  $this->getClientIp($request);
+            //$IP = "192.168.1.226";
+            $parts = explode('.', $IP);
+            $subnet = $parts[0] . '.' . $parts[1] . '.' . $parts[2];
+
+
+
             // **External API Call (using curl for flexibility)**
             $ch = curl_init();
-            $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
+
+            if( $subnet=="192.168.1"){
+                $url = "http://192.168.1.226:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
+            }
+            else{
+                $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
+            }
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
@@ -165,6 +180,7 @@ class DealController extends Controller
         $response = [
             'status' => 'success',
             'data' => $responseDataAll,
+            'ip'=> $IP
         ];
 
         return response()->json($response);
@@ -186,6 +202,7 @@ class DealController extends Controller
                     'unit_price' => $request->product_unitPrice[$key],
                     'qty' => $request->product_qty[$key],
                     'discount_price' => $request->product_discountAmt[$key],
+                    'discount_percentage' => $request->discount_percentage[$key],
                     'net_price' => $request->product_netPrice[$key],
                 ];
                 $data[] = $eachItem;
@@ -209,11 +226,17 @@ class DealController extends Controller
             return back()->with('errorsData', $data);
         }
 
-        $leadInfo = Lead::find($request->lead_id);
-        $leadInfo->current_stage = 'QUOTATION';
+
+        //$leadInfo=Lead::with('selectedPump:id,')->where(['assign_to'=>$userTag])->get();
+ +      $leadInfo->current_stage = 'QUOTATION';
         $leadInfo->current_subStage = 'APPROVE';
         $leadInfo->save();
 
         return redirect()->route('home');
+    }
+
+    public function getClientIp(Request $request) {
+       // $clientIp = $request->ip(); // This gets the client's IP address
+        return $request->ip();
     }
 }

@@ -17,7 +17,8 @@
     <center>
         <h4 class="mt-3">Requirement & Pump Selection Form</h4>
         <h6>Total Requirement <span class="bg-darkblue text-white p-2 rounded blink">{{ count($reqList) }}</span> And
-            Total Pump Selection <span><span class="bg-darkblue text-white p-2 rounded blink">0</span></span></h6>
+            Total Pump Selection <span><span
+                    class="bg-darkblue text-white p-2 rounded blink">{{ count($selectedPumpList) }}</span></span></h6>
     </center>
     <hr>
     <div id="fullDealForm">
@@ -31,7 +32,7 @@
                             <div class="row">
                                 <h6 class="text-primary fw-bold col-md-6">Client Requirement <i
                                         class="fas fa-check text-success blink"></i></h6>
-                                <form action="" method="POST" class="col-md-6">
+                                <form action="{{ route('deleteDealRequirement') }}" method="POST" class="col-md-6">
                                     @csrf
                                     <input type="hidden" name="req_id" value="{{ $item->id }}">
                                     <button class="btn btn-sm btn-danger fs-06rem p-1">Delete
@@ -276,7 +277,7 @@
                                             @if ($seletedItem->req_id == $item->id)
                                                 <tr>
                                                     <td class='d-none'><input name='product_id[]'
-                                                            value='{{ $seletedItem->prduct_id }}'>
+                                                            value='{{ $seletedItem->product_id }}'>
                                                     </td>
                                                     <td class='d-none'><input name='product_unitPrice[]'
                                                             value='{{ $seletedItem->unit_price }}'></td>
@@ -484,6 +485,18 @@
     </div>
     <center><button class="btn btn-sm btn-darkblue p-1 mt-3" onclick="addNewRequirement()">Add Another
             Requirement</button></center>
+    <form action="{{ route('dealFormSubmission') }}" method="POST" id="dealSubmitForm">
+        @csrf
+        <input type="hidden" name="lead_id" value="{{ $leadId }}">
+        <label for="">Payment Type</label>
+        <select name="dealPaymentType" id="dealPaymentType" class="form-select" style="width: 50%" required>
+            <option value="" selected disabled>--Select One--</option>
+            <option value="Credit">Credit</option>
+            <option value="Cash">Cash</option>
+        </select>
+        <center><button class="btn btn-sm btn-success p-1 mt-3" onclick="saveReqPump(event)">Save and Create
+                Quotation</button></center>
+    </form>
 </div>
 
 <script>
@@ -562,20 +575,14 @@
 
         let allSelctedPumpTobody = document.querySelectorAll('#selectedPumpsTbody');
         allSelctedPumpTobody[activeModal].innerHTML += html;
-        // $('#selectedPumpsTbody').append(html);
-
-
-        // console.log(e.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);
         let allNoPumpBlink = document.querySelectorAll('.noPumpSelectedText');
         allNoPumpBlink[activeModal].classList.add("d-none");
-        // document.querySelector(".noPumpSelectedText").classList.add("d-none");
     }
 
     function deleteSelectedRow(e, modalId) {
         e.parentElement.remove();
         let allSelctedPumpTobody = document.querySelectorAll('#selectedPumpsTbody');
         let totalTr = allSelctedPumpTobody[modalId].children.length;
-        // let totalTr = $('#selectedPumpsTbody')[modalId].children.length;
         if (totalTr < 1) {
             let allNoPumpBlink = document.querySelectorAll('.noPumpSelectedText');
             allNoPumpBlink[modalId].classList.remove("d-none");
@@ -590,15 +597,93 @@
         newSelectedTbody.innerHTML = '';
 
         let checkSign = clone.querySelector('.fa-check');
-        checkSign.remove();
-        // checkSign.classList.remove('fa-check');
-        // checkSign.classList.remove('text-success');
-        // checkSign.classList.add('fa-trash');
-        // checkSign.classList.add('text-danger');
-        // console.log(checkSign);
+        if (checkSign) {
+            checkSign.remove();
+        }
 
         let newModalBtn = clone.querySelector('.modalBtn');
         newModalBtn.setAttribute("onclick", "setModalNumber(" + (totalRequirementSection) + ")");
         $('#fullDealForm').append(clone);
+    }
+
+    function saveReqPump(event) {
+        event.preventDefault();
+        let reqList = '<?php echo count($reqList); ?>';
+        // First Check How Many Requirement Saved 
+        if (reqList < 1) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Requirement Error!',
+                text: "No requirement is saved. Please save requrirement and releted pump selection.",
+                showConfirmButton: false,
+                timer: 5000
+            });
+            return;
+        } else {
+            let pumpList = '<?php echo count($selectedPumpList); ?>';
+            // Second Check How Many Pump Selection Saved 
+            if (pumpList < 1) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Pump Selection Error!',
+                    text: "No pump selection is saved. Please save releted pump selection.",
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                return;
+            } else {
+                // Third Check All Requirement Has The Pump Selection
+                let reqInfo = JSON.parse('<?php echo $reqList; ?>');
+                let pumpSelectionInfo = JSON.parse('<?php echo $selectedPumpList; ?>');
+
+                let found = false;
+                for (let i = 0; i < reqInfo.length; i++) {
+                    let currentReqId = reqInfo[i].id;
+                    // console.log(currentReqId);
+                    for (let j = 0; j < pumpSelectionInfo.length; j++) {
+                        let currentPumpId = pumpSelectionInfo[j].req_id;
+                        // console.log(currentPumpId);
+                        if (currentReqId === currentPumpId) {
+                            found = true;
+                            break; // Exit the inner loop if a match is found
+                        } else {
+                            found = false;
+                        }
+                    }
+                    if (found) {
+                        // break;
+                    } else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Pump Selection Empty!',
+                            text: "No pump selection is saved for one of the requirement",
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                        return;
+                    }
+                }
+                let paymentType = $('#dealPaymentType').val();
+                if (paymentType == '' || paymentType == null) {
+                    found = false;
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Payment Type Error!',
+                        text: "No Payment Type Selected",
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return;
+                }
+                if (found) {
+                    //Final Submit The Deal Form
+                    document.querySelector('#dealSubmitForm').submit();
+                }
+            }
+        }
     }
 </script>

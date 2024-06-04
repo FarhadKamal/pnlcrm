@@ -196,14 +196,10 @@
         }
 
         @media print {
+
             .pagebreak {
                 page-break-before: always;
                 clear: both;
-            }
-
-            .quotDiv .pagebreakAvoid {
-                page-break-inside: avoid;
-                margin-top: 50px;
             }
 
             .headerContainer {
@@ -211,6 +207,11 @@
                 top: 0;
                 width: 100%;
                 margin-top: 15px;
+            }
+
+            .quotDiv .pagebreakAvoid {
+                page-break-inside: avoid;
+                margin-top: 50px;
             }
 
             .footerContainer {
@@ -402,6 +403,7 @@
             <p>PNL Holdings Limited</p>
             <p>E-mail: afzal@pnlholdings.com</p>
         </div>
+        
         <div class="footerContainer">
             <p class="text-primary fw-bold">PNL HOLDINGS LIMITED, Head Office: Pedrollo Plaza, 5 Jubilee Road,
                 Chattogram-400. Phone: +88 031 621531-35</p>

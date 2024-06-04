@@ -283,8 +283,10 @@
                                                             value='{{ $seletedItem->unit_price }}'></td>
                                                     <td class='d-none'><input name='product_qty[]'
                                                             value='{{ $seletedItem->qty }}'></td>
-                                                    <td class='d-none'><input name='product_discountAmt[]'
-                                                            value='{{ $seletedItem->discount_price }}'></td>
+                                                    <td class='d-none'><input name='product_discountPercentage[]'
+                                                            value='{{ $seletedItem->discount_percentage }}'></td>
+                                                            <td class='d-none'><input name='product_discountAmt[]'
+                                                                value='{{ $seletedItem->discount_price }}'></td>
                                                     <td class='d-none'><input name='product_netPrice[]'
                                                             value='{{ $seletedItem->net_price }}'></td>
                                                     <td class='p-1'>{{ $seletedItem['productInfo']->mat_name }}
@@ -296,7 +298,7 @@
                                                     <td class='p-1'>{{ $seletedItem['productInfo']->head }}</td>
                                                     <td class='p-1'>{{ $seletedItem->unit_price }}</td>
                                                     <td class='p-1'>{{ $seletedItem->qty }}</td>
-                                                    <td class='p-1'>{{ $seletedItem->qty }}</td>
+                                                    <td class='p-1'>{{ $seletedItem->discount_percentage }}</td>
                                                     <td class='p-1'>{{ $seletedItem->discount_price }}</td>
                                                     <td class='p-1'>{{ $seletedItem->net_price }}</td>
                                                     <td class='p-1 text-center' style='cursor: pointer'
@@ -557,6 +559,7 @@
         html += "<td class='d-none'><input name='product_id[]' value='" + productId + "'>" + productId + "</td>";
         html += "<td class='d-none'><input name='product_unitPrice[]' value='" + productUP + "'></td>";
         html += "<td class='d-none'><input name='product_qty[]' value='" + productQty + "'></td>";
+        html += "<td class='d-none'><input name='product_discountPercentage[]' value='" + discountPercentage + "'></td>";
         html += "<td class='d-none'><input name='product_discountAmt[]' value='" + discountAmount + "'></td>";
         html += "<td class='d-none'><input name='product_netPrice[]' value='" + productTotalPrice + "'></td>";
         html += "<td class='p-1'>" + productName + "</td>";

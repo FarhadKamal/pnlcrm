@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\DealController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\QuotationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,8 +38,12 @@ Route::post('newLeadForm', [LeadController::class, 'storeLead'])->name('newLeadF
 Route::get('getSingleClientInfo/{clientId}', [LeadController::class, 'getSingleClientInfo'])->name('getSingleClientInfo')->middleware('auth');
 Route::get('dealPage/{leadId}', [LeadController::class, 'dealForm'])->name('dealPage')->middleware('auth');
 Route::post('requirement', [DealController::class, 'storeRequirement'])->name('requirement')->middleware('auth');
+Route::post('deleteDealRequirement', [DealController::class, 'deleteDealRequirement'])->name('deleteDealRequirement')->middleware('auth');
 Route::post('getSelectionPumpInfo', [DealController::class, 'getFilterPumpInfo'])->name('getSelectionPumpInfo')->middleware('auth');
 Route::post('storeSelectedPump', [DealController::class, 'storePumpChoice'])->name('storeSelectedPump')->middleware('auth');
+Route::post('dealFormSubmission', [DealController::class, 'submitTheDeal'])->name('dealFormSubmission')->middleware('auth');
+
+Route::get('quotationCheck/{leadId}', [QuotationController::class, 'viewQuotation'])->name('quotationCheck')->middleware('auth');
 
 
 // Admin Routes 
@@ -51,5 +56,3 @@ Route::get('inactiveUser/{userId}', [AdminController::class, 'userMakeInactive']
 Route::get('activeUser/{userId}', [AdminController::class, 'userMakeActive'])->name('activeUser')->middleware('auth');
 // Route::get('userPermission/{userId}', [AdminController::class, 'userPermissions'])->name('userPermission')->middleware('auth');
 // Route::post('userPermissions', [AdminController::class, 'storeUserPermission'])->name('userPermissions')->middleware('auth');
-
-

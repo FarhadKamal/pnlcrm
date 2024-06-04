@@ -98,6 +98,9 @@ class Controller extends BaseController
         //     $data['dealStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name', 'assignTo:id,user_name')->where(['current_stage' => 'DEAL', 'assign_to' => Auth()->user()->id])->get();
         // }
 
+        // QUOTATION Stage 
+        $data['quotationStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->get();
+
         return view('sales.dashboard', $data);
     }
 }

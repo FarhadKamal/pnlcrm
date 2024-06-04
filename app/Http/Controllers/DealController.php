@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Items;
+use App\Models\Lead;
 use Illuminate\Http\Request;
 
 use App\Models\Requirements;
@@ -63,7 +64,24 @@ class DealController extends Controller
         $reqlist = Requirements::create($insert_req_data);
 
         //Auth()->user()->id,
-        return back()->with('success', 'Requirement Generation Success');
+        return back()->with('success', 'Requirement saved success');
+    }
+
+    public function deleteDealRequirement(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'req_id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        }
+        $getReqInfo = Requirements::find($request->req_id);
+        $leadId = $getReqInfo->lead_id;
+        $reqId = $request->req_id;
+        Requirements::where(['id' => $reqId])->delete();
+        PumpChoice::where(['lead_id' => $leadId, 'req_id' => $reqId])->delete();
+        return back()->with('success', 'Requirement is deleted!');
     }
 
     public function getFilterPumpInfo(Request $request)
@@ -154,34 +172,12 @@ class DealController extends Controller
 
     public function storePumpChoice(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'lead_id' => 'required',
-        //     'req_id' => 'required',
-        //     'product_id' => 'required|numeric',
-        //     // 'pump_head' => 'nullable',
-        //     'product_unitPrice' => 'nullable',
-        //     'product_qty' => 'required',
-        //     'product_discountAmt' => 'nullable',
-        //     'product_netPrice' => 'nullable'
-        // ]);
-
-        // if ($validator->fails()) {
-        //     $data['errors'] = $validator->errors()->all();
-        //     $data['lead_id'] = $request->lead_id;
-        //     $data['req_id'] = $request->req_id;
-        //     $data['product_id'] = $request->product_id;
-        //     // $data['pump_head'] = $request->pump_head;
-        //     $data['product_unitPrice'] = $request->product_unitPrice;
-        //     $data['product_qty'] = $request->product_qty;
-        //     $data['product_discountAmt'] = $request->product_discountAmt;
-        //     $data['product_netPrice'] = $request->product_netPrice;
-        //     return back()->with('errorsData', $data);
-        // }
 
         $leadId = $request->lead_id;
         $reqId = $request->req_id;
         $data = [];
         if (isset($request->product_id) && count($request->product_id) > 0) {
+            PumpChoice::where(['lead_id' => $leadId, 'req_id' => $reqId])->delete();
             foreach ($request->product_id as $key => $item) {
                 $eachItem = [
                     'lead_id' => $leadId,
@@ -200,5 +196,24 @@ class DealController extends Controller
             PumpChoice::where(['lead_id' => $leadId, 'req_id' => $reqId])->delete();
             return back()->with('success', 'Pump chocie data saved!');
         }
+    }
+
+    public function submitTheDeal(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lead_id' => 'required|numeric',
+            'dealPaymentType' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        }
+
+        $leadInfo = Lead::find($request->lead_id);
+        $leadInfo->current_stage = 'QUOTATION';
+        $leadInfo->current_subStage = 'APPROVE';
+        $leadInfo->save();
+
+        return redirect()->route('home');
     }
 }

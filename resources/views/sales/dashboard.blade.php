@@ -15,7 +15,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-10">
-                                <h6 class="card-title">
+                                <h6 class="card-title fs-09rem">
                                     {{ $item['clientInfo']->customer_name }}
                                 </h6>
                             </div>
@@ -48,7 +48,7 @@
             @if (count($dealStage) <= 0)
                 <p class="text-danger">No Deal Found</p>
             @endif
-            @foreach ($leadStage as $item)
+            @foreach ($dealStage as $item)
                 <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
                     <div class="card-body">
                         {{-- @if ($item->current_subStage == 'APPROVE')
@@ -62,7 +62,7 @@
                         @endif --}}
                         <div class="row">
                             <div class="col-10">
-                                <h6 class="card-title">
+                                <h6 class="card-title fs-09rem">
                                     {{ $item['clientInfo']->customer_name }}
                                 </h6>
                             </div>
@@ -80,7 +80,7 @@
                             <a href="{{ route('dealPage', ['leadId' => $item->id]) }}">
                                 <button type="button"
                                     class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Requirement &
-                                    Selection</button>
+                                    Choice</button>
                             </a>
                         </div>
                     </div>
@@ -91,9 +91,13 @@
         <!----------------------------Quotation Column---------------- -->
         <div class="col-sm p-1 stageColumn" id="dealColumn">
             <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 ">Quotation</h6>
-            <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
-                <div class="card-body">
-                    {{-- @if ($item->current_subStage == 'APPROVE')
+            @if (count($quotationStage) <= 0)
+                <p class="text-danger">No Quotation Stage Found</p>
+            @endif
+            @foreach ($quotationStage as $item)
+                <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
+                    <div class="card-body">
+                        {{-- @if ($item->current_subStage == 'APPROVE')
                             <small class="badge badge-info blink p-1 m-0 ">Waiting for Approval</small>
                         @endif
                         @if ($item->current_subStage == 'CHECK')
@@ -102,23 +106,31 @@
                         @if ($item->current_subStage == 'FORM')
                             <small class="badge badge-info blink p-1 m-0 ">Waiting for Dealing</small>
                         @endif --}}
-                    <div class="row">
-                        <div class="col-10">
-                            <h6 class="card-title">
-                                MM Trade
-                            </h6>
+                        <div class="row">
+                            <div class="col-10">
+                                <h6 class="card-title fs-09rem">
+                                    {{ $item['clientInfo']->customer_name }}
+                                </h6>
+                            </div>
+                        </div>
+                        <small class="card-text mb-1"><b>Group:</b> {{ $item['clientInfo']->group_name }}</small><br>
+                        <small class="card-text mb-1"><b>District:</b>
+                            {{ $item['clientInfo']->district }}</small><br>
+                        <small class="card-text mb-1"><b>Contact:</b>
+                            {{ $item['clientInfo']->contact_person }}</small><br>
+                        <small class="card-text mb-1"><b>Phone:</b>
+                            {{ $item['clientInfo']->contact_mobile }}</small><br>
+                        <small class="card-text mb-1"><b>Source:</b> {{ $item['source']->source_name }}</small><br>
+                        <small class="card-text mb-1"><b>Created By:</b> {{ $item['createdBy']->user_name }}</small>
+                        <div>
+                            <a href="{{ route('quotationCheck', ['leadId' => $item->id]) }}">
+                                <button type="button"
+                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Approve</button>
+                            </a>
                         </div>
                     </div>
-                    <small class="card-text mb-1"><b>Group:</b> MM Group</small><br>
-                    {{-- <small class="card-text mb-1"><b>Intersted In:</b> {{ $interested }}</small><br> --}}
-                    <small class="card-text mb-1"><b>District:</b>
-                        Chattogram</small><br>
-                    <small class="card-text mb-1"><b>Contact:</b> Mr. Jitu</small><br>
-                    <small class="card-text mb-1"><b>Phone:</b> 01844556655</small><br>
-                    <small class="card-text mb-1"><b>Source:</b> Mr. Jitu</small><br>
-                    <small class="card-text mb-1"><b>Created By:</b> Noushad</small>
                 </div>
-            </div>
+            @endforeach
         </div>
 
 

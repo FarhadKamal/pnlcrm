@@ -23,6 +23,6 @@ class QuotationController extends Controller
         $data['pumpInfo'] = PumpChoice::with('productInfo:id,mat_name,phase,brand_name,hp,head,kw')->where('lead_id', $leadId)->get();
         $data['desgName'] = Designation::find(Auth()->user()->user_desg);
         $data['deptName'] = Department::find(Auth()->user()->user_dept);
-        return view('sales.quotation', $data);
+        return view('sales.quotation2', $data);
     }
 }

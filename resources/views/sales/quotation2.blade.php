@@ -210,7 +210,7 @@
             }
 
             #section-to-print .quotContainer {
-                margin-top: -80px;
+                margin-top: -90px;
             }
         }
     </style>

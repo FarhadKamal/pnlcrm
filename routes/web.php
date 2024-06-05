@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DealController;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,7 @@ Route::post('dealFormSubmission', [DealController::class, 'submitTheDeal'])->nam
 
 Route::get('quotationCheck/{leadId}', [QuotationController::class, 'viewQuotation'])->name('quotationCheck')->middleware('auth');
 
+Route::get('transaction/{leadId}', [BookingController::class, 'transactionForm'])->name('transaction')->middleware('auth');
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

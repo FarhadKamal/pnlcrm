@@ -206,6 +206,7 @@ class LeadController extends Controller
 
         return $this->dealForm($leadId)->with('success', 'Corporate Client Generation Success');
         //  back()->with('success', 'Corporate Client Generation Success');
+        // return redirect()->route('dealPage/'.$leadId);
     }
 
     public function dealForm($leadId)

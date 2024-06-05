@@ -128,10 +128,9 @@ class DealController extends Controller
             // **External API Call (using curl for flexibility)**
             $ch = curl_init();
 
-            if( $subnet=="192.168.1"){
+            if ($subnet == "192.168.1") {
                 $url = "http://192.168.1.226:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
-            }
-            else{
+            } else {
                 $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
             }
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -180,7 +179,7 @@ class DealController extends Controller
         $response = [
             'status' => 'success',
             'data' => $responseDataAll,
-            'ip'=> $IP
+            'ip' => $IP
         ];
 
         return response()->json($response);
@@ -202,7 +201,7 @@ class DealController extends Controller
                     'unit_price' => $request->product_unitPrice[$key],
                     'qty' => $request->product_qty[$key],
                     'discount_price' => $request->product_discountAmt[$key],
-                    'discount_percentage' => $request->discount_percentage[$key],
+                    'discount_percentage' => $request->product_discountPercentage[$key],
                     'net_price' => $request->product_netPrice[$key],
                 ];
                 $data[] = $eachItem;
@@ -227,16 +226,17 @@ class DealController extends Controller
         }
 
 
-        //$leadInfo=Lead::with('selectedPump:id,')->where(['assign_to'=>$userTag])->get();
- +      $leadInfo->current_stage = 'QUOTATION';
+        $leadInfo = Lead::find($request->lead_id);
+        $leadInfo->current_stage = 'QUOTATION';
         $leadInfo->current_subStage = 'APPROVE';
         $leadInfo->save();
 
         return redirect()->route('home');
     }
 
-    public function getClientIp(Request $request) {
-       // $clientIp = $request->ip(); // This gets the client's IP address
+    public function getClientIp(Request $request)
+    {
+        // $clientIp = $request->ip(); // This gets the client's IP address
         return $request->ip();
     }
 }

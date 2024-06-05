@@ -612,7 +612,7 @@
     function saveReqPump(event) {
         event.preventDefault();
         let reqList = '<?php echo count($reqList); ?>';
-        // First Check How Many Requirement Saved 
+        // First Check How Many Requirement Saved
         if (reqList < 1) {
             Swal.fire({
                 position: 'top-end',
@@ -625,7 +625,7 @@
             return;
         } else {
             let pumpList = '<?php echo count($selectedPumpList); ?>';
-            // Second Check How Many Pump Selection Saved 
+            // Second Check How Many Pump Selection Saved
             if (pumpList < 1) {
                 Swal.fire({
                     position: 'top-end',

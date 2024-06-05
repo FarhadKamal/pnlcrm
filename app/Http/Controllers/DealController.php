@@ -217,6 +217,7 @@ class DealController extends Controller
 
     public function submitTheDeal(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'lead_id' => 'required|numeric',
             'dealPaymentType' => 'required'
@@ -226,17 +227,45 @@ class DealController extends Controller
             return back()->with('errorsData', $data);
         }
 
+        $leadId = $request->lead_id;
+        $choiceInfo=PumpChoice::where(['lead_id'=>$leadId])->get();
 
-        //$leadInfo=Lead::with('selectedPump:id,')->where(['assign_to'=>$userTag])->get();
- +      $leadInfo->current_stage = 'QUOTATION';
-        $leadInfo->current_subStage = 'APPROVE';
-        $leadInfo->save();
 
+        $payment_type=$request->dealPaymentType;
+        $need_credit_approval=0;
+        $need_discount_approval=0;
+        $need_top_approval=0;
+
+        if($payment_type=='Credit')
+        $need_credit_approval=1;
+
+        foreach ($choiceInfo as $row) {
+            $proposed_discount=$row->discount_percentage;
+            $trade_discount=$row->productInfo->TradDiscontInfo->trade_discount;
+
+            if($proposed_discount>$trade_discount)
+            $need_discount_approval=1;
+
+            if($proposed_discount>($trade_discount+3))
+            $need_top_approval=1;
+        }
+
+
+        $update_data = array(
+            'payment_type' => $payment_type,
+            'need_credit_approval' => $need_credit_approval,
+            'need_discount_approval' => $need_discount_approval,
+            'need_top_approval' => $need_top_approval
+        );
+
+        Lead::where('id', $leadId)->update($update_data);
         return redirect()->route('home');
     }
 
     public function getClientIp(Request $request) {
        // $clientIp = $request->ip(); // This gets the client's IP address
-        return $request->ip();
+        //return $request->ip();
+        return "192.168.1.226";
+
     }
 }

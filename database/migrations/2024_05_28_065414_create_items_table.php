@@ -25,9 +25,10 @@ class CreateItemsTable extends Migration
             $table->double('hp')->default(0);;
             $table->double('suction_dia')->default(0);
             $table->double('delivery_dia')->default(0);
-            $table->string('capacity');
-            $table->string('head')->default(0);
-
+            $table->string('min_capacity');
+            $table->string('max_capacity');
+            $table->string('min_head')->default(0);
+            $table->string('max_head')->default(0);
             $table->timestamps();
         });
     }

@@ -20,9 +20,14 @@ class Items extends Model
         'hp',
         'suction_dia',
         'delivery_dia',
-        'capacity',
-        'head'
-
-
+        'min_capacity',
+        'max_capacity',
+        'min_head',
+        'max_head'
     ];
+
+    public function TradDiscontInfo()
+    {
+        return $this->hasOne(BrandDiscount::class, 'brand_name', 'brand_name');
+    }
 }

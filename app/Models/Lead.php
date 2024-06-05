@@ -23,7 +23,9 @@ class Lead extends Model
         'lost_reason',
         'lost_description',
         'need_credit_approval',
-        'need_discount_approval'
+        'need_discount_approval',
+        'need_top_approval',
+        'payment_type'
     ];
 
     public function clientInfo(){

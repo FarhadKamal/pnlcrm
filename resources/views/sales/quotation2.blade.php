@@ -297,11 +297,11 @@
                                             @if ($itemPump->req_id == $itemReq->id)
                                                 <tr class="tableRow">
                                                     <td class="table1RowCol1">
-                                                        <p class="colText">{{ $itemPump['productInfo']->brand_name }}
+                                                        <p class="colText">{{ $itemPump->productInfo->brand_name }}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="">{{ $itemPump['productInfo']->mat_name }}
+                                                        <p class="">{{ $itemPump->productInfo->mat_name }}
 
                                                         </p>
                                                     </td>
@@ -311,12 +311,13 @@
                                             </td> --}}
                                                     <td class="table1RowCol1">
                                                         <p class="text-center colText">HP:
-                                                            {{ $itemPump['productInfo']->hp }}, KW:
-                                                            {{ $itemPump['productInfo']->kw }}</p>
+                                                            {{ $itemPump->productInfo->hp }}, KW:
+                                                            {{ $itemPump->productInfo->kw }}</p>
                                                     </td>
                                                     <td class="table1RowCol1">
                                                         <p class="text-center colText">
-                                                            {{ $itemPump['productInfo']->head }}</p>
+                                                            Min {{ $itemPump->productInfo->min_head }} -
+                                                            Max {{ $itemPump->productInfo->max_head }}</p>
                                                     </td>
                                                     <td class="table1RowCol1">
                                                         <p class="text-end colText">
@@ -436,6 +437,53 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="container mt-5 mb-5 p-4 shadow-4 border border-3">
+    <form action="" method="POST">
+        @csrf
+        @if ($leadInfo->need_credit_approval)
+            <label for="">Credit Approval</label><br>
+            <select name="" id="" required>
+                <option value="" selected disabled>--Select One--</option>
+                <option value="">Approved</option>
+                <option value="">Not Approved</option>
+            </select>
+            <br>
+        @endif
+        @if ($leadInfo->need_discount_approval)
+            <label for="">Discount Approval</label>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="p-1 text-center">Brand</th>
+                        <th class="p-1 text-center">Model</th>
+                        <th class="p-1 text-center">Deal Discount (%)</th>
+                        <th class="p-1 text-center">Trade Discount (%)</th>
+                        <th class="p-1 text-center"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($pumpInfo as $item)
+                        <?php
+                        $proposed_discount = $item->discount_percentage;
+                        $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
+                        if ($proposed_discount > $trade_discount) {
+                        }
+                        ?>
+                        <tr>
+                            <td class="p-1 text-center">{{ $item->productInfo->brand_name }}</td>
+                            <td class="p-1 text-center">{{ $item->productInfo->mat_name }}</td>
+                            <td class="p-1 text-center">{{ $proposed_discount }}</td>
+                            <td class="p-1 text-center">{{ $trade_discount }}</td>
+                            <td class="p-1 text-center"></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+        <center><button class="btn btn-sm btn-darkblue">Submit Approval</button></center>
+    </form>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"

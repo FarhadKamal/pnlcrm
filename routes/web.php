@@ -56,5 +56,9 @@ Route::get('userEdit/{userId}', [AdminController::class, 'userInformationEdit'])
 Route::post('editUsers', [AdminController::class, 'updateUserInformation'])->name('editUsers')->middleware('auth');
 Route::get('inactiveUser/{userId}', [AdminController::class, 'userMakeInactive'])->name('inactiveUser')->middleware('auth');
 Route::get('activeUser/{userId}', [AdminController::class, 'userMakeActive'])->name('activeUser')->middleware('auth');
-// Route::get('userPermission/{userId}', [AdminController::class, 'userPermissions'])->name('userPermission')->middleware('auth');
-// Route::post('userPermissions', [AdminController::class, 'storeUserPermission'])->name('userPermissions')->middleware('auth');
+
+Route::get('permissions', [AdminController::class, 'permissionList'])->name('permissions')->middleware('auth');
+Route::post('permissions', [AdminController::class, 'storePermission'])->name('permissions')->middleware('auth');
+Route::get('userPermission/{userId}', [AdminController::class, 'userPermissions'])->name('userPermission')->middleware('auth');
+Route::post('userPermissions', [AdminController::class, 'storeUserPermission'])->name('userPermissions')->middleware('auth');
+

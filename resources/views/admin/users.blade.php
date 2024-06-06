@@ -129,8 +129,7 @@
                         <a href="{{ route('userEdit', ['userId' => $item->id]) }}"><button
                                 class="btn btn-sm btn-info ps-2 pe-2 pt-1 pb-1 mb-1 fs-06rem"><i
                                     class="fas fa-pencil"></i></button></a><br>
-                                    {{-- route('userPermission', ['userId' => $item->id]) --}}
-                        <a href="#"><button
+                        <a href="{{ route('userPermission', ['userId' => $item->id]) }}"><button
                                 class="btn btn-sm btn-dark ps-2 pe-2 pt-1 pb-1 mb-1 fs-06rem"><i
                                     class="fas fa-key"></i></button></a><br>
                         @if ($item->is_active != 1)

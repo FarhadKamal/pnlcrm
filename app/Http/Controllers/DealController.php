@@ -94,99 +94,115 @@ class DealController extends Controller
         $filterHead = $data['filterHead'];
         $filterPhase = $data['filterPhase'];
 
-        $condition = [];
+        $query = Items::query();
+
         if ($filterBrand != 'all') {
-            $condition['brand_name'] = $filterBrand;
+            $query->where('brand_name', $filterBrand);
         }
         if ($filterHP != 'all') {
-            $condition['hp'] = $filterHP;
+            $query->where('hp', $filterHP);
         }
         if ($filterModel != 'all') {
-            $condition['mat_name'] = $filterModel;
+            $query->where('mat_name', $filterModel);
         }
-        if ($filterHead != 'all') {
-            $condition['head'] = $filterHead;
+        if ($filterHead) {
+            $query->where(function ($q) use ($filterHead) {
+                $q->where('min_head', '<=', $filterHead)
+                    ->where('max_head', '>=', $filterHead);
+            });
         }
         if ($filterPhase != 'all') {
-            $condition['phase'] = $filterPhase;
+            $query->where('phase', $filterPhase);
         }
 
-        $itemInfo = Items::where($condition)->get();
+        $itemInfo = $query->get();
 
-        $responseDataAll = [];
-        foreach ($itemInfo as $item) {
-            $itemCode = $item->new_code;
-
-
-            $IP =  $this->getClientIp($request);
-            //$IP = "192.168.1.226";
-            $parts = explode('.', $IP);
-            $subnet = $parts[0] . '.' . $parts[1] . '.' . $parts[2];
+        if (count($itemInfo) > 0) {
+            $responseDataAll = [];
+            foreach ($itemInfo as $item) {
+                $itemCode = $item->new_code;
 
 
+                $IP =  $this->getClientIp($request);
+                //$IP = "192.168.1.226";
+                $parts = explode('.', $IP);
+                $subnet = $parts[0] . '.' . $parts[1] . '.' . $parts[2];
 
-            // **External API Call (using curl for flexibility)**
-            $ch = curl_init();
+                // **External API Call (using curl for flexibility)**
+                $ch = curl_init();
 
-            if ($subnet == "192.168.1") {
-                $url = "http://192.168.1.226:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
-            } else {
-                $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
+                if ($subnet == "192.168.1") {
+                    $url = "http://192.168.1.226:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
+                } else {
+                    $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
+                }
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                // **Optional: Authentication headers (if required by external API)**
+                // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer YOUR_API_KEY'));
+
+                $response = curl_exec($ch);
+                $curlError = curl_error($ch);
+                curl_close($ch);
+
+                if ($curlError) {
+                    // Handle curl error (log the error and consider returning a default value)
+                    error_log("Error fetching price and stock data from external API: " . $curlError);
+                    $price = null;
+                    $stock = null;
+                    continue; // Skip to the next item
+                }
+
+                $responseData = json_decode($response);
+                if ($responseData->price != null) {
+                    $price = $responseData->price;
+                } else {
+                    $price = null;
+                }
+                if ($responseData->stock != null) {
+                    $stock = $responseData->stock;
+                } else {
+                    $stock = null;
+                }
+                // Create a new object with pump information and price/stock data
+                $pumpData = [
+                    'id' => $item->id,
+                    'mat_name' => $item->mat_name,
+                    'brand' => $item->brand_name,
+                    'hp' => $item->hp,
+                    'head' => 'min ' . $item->min_head . '- max ' . $item->max_head,
+                    'price' => $price,
+                    'stock' => $stock
+                ];
+
+                $responseDataAll[] = $pumpData;
             }
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-            // **Optional: Authentication headers (if required by external API)**
-            // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer YOUR_API_KEY'));
-
-            $response = curl_exec($ch);
-            $curlError = curl_error($ch);
-            curl_close($ch);
-
-            if ($curlError) {
-                // Handle curl error (log the error and consider returning a default value)
-                error_log("Error fetching price and stock data from external API: " . $curlError);
-                $price = null;
-                $stock = null;
-                continue; // Skip to the next item
-            }
-
-            $responseData = json_decode($response);
-            if ($responseData->price != null) {
-                $price = $responseData->price;
-            } else {
-                $price = null;
-            }
-            if ($responseData->stock != null) {
-                $stock = $responseData->stock;
-            } else {
-                $stock = null;
-            }
-            // Create a new object with pump information and price/stock data
-            $pumpData = [
-                'id' => $item->id,
-                'mat_name' => $item->mat_name,
-                'brand' => $item->brand_name,
-                'hp' => $item->hp,
-                'head' => $item->head,
-                'price' => $price,
-                'stock' => $stock
+            $response = [
+                'status' => 'success',
+                'data' => $responseDataAll,
+                'ip' => $IP
             ];
-
-            $responseDataAll[] = $pumpData;
+        } else {
+            $response = [
+                'status' => 'null'
+            ];
         }
-
-        $response = [
-            'status' => 'success',
-            'data' => $responseDataAll,
-            'ip' => $IP
-        ];
 
         return response()->json($response);
     }
 
     public function storePumpChoice(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'lead_id' => 'required|numeric',
+            'req_id' => 'required|numeric'
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        }
 
         $leadId = $request->lead_id;
         $reqId = $request->req_id;
@@ -227,42 +243,41 @@ class DealController extends Controller
         }
 
         $leadId = $request->lead_id;
-        $choiceInfo=PumpChoice::where(['lead_id'=>$leadId])->get();
+        $choiceInfo = PumpChoice::where(['lead_id' => $leadId])->get();
 
 
-        $payment_type=$request->dealPaymentType;
-        $need_credit_approval=0;
-        $need_discount_approval=0;
-        $need_top_approval=0;
+        $payment_type = $request->dealPaymentType;
+        $need_credit_approval = 0;
+        $need_discount_approval = 0;
+        $need_top_approval = 0;
 
-        if($payment_type=='Credit')
-        $need_credit_approval=1;
-
-        foreach ($choiceInfo as $row) {
-            $proposed_discount=$row->discount_percentage;
-            $trade_discount=$row->productInfo->TradDiscontInfo->trade_discount;
-
-            if($proposed_discount>$trade_discount)
-            $need_discount_approval=1;
-
-            if($proposed_discount>($trade_discount+3))
-            $need_top_approval=1;
+        if ($payment_type == 'Credit') {
+            $need_credit_approval = 1;
         }
 
-      
-        // $leadInfo->current_stage = 'QUOTATION';
-        // $leadInfo->current_subStage = 'APPROVE';
-       
+        foreach ($choiceInfo as $row) {
+            $proposed_discount = $row->discount_percentage;
+            $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
 
-        $update_data = array(
-            'payment_type' => $payment_type,
-            'need_credit_approval' => $need_credit_approval,
-            'need_discount_approval' => $need_discount_approval,
-            'need_top_approval' => $need_top_approval
-        );
+            if ($proposed_discount > $trade_discount)
+                $need_discount_approval = 1;
 
+            if ($proposed_discount > ($trade_discount + 3))
+                $need_top_approval = 1;
+        }
 
-        Lead::where('id', $leadId)->update($update_data);
+        $leadInfo = Lead::find($leadId);
+        $leadInfo->payment_type = $payment_type;
+        $leadInfo->need_credit_approval = $need_credit_approval;
+        $leadInfo->need_discount_approval = $need_discount_approval;
+        $leadInfo->need_top_approval = $need_top_approval;
+        $leadInfo->current_stage = 'QUOTATION';
+        if ($need_credit_approval || $need_discount_approval) {
+            $leadInfo->current_subStage = 'APPROVE';
+        }else{
+            $leadInfo->current_subStage = 'SUBMIT';
+        }
+        $leadInfo->save();
         return redirect()->route('home');
     }
 
@@ -271,6 +286,5 @@ class DealController extends Controller
     {
         // $clientIp = $request->ip(); // This gets the client's IP address
         return $request->ip();
-
     }
 }

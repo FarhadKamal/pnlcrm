@@ -474,8 +474,9 @@
 
                             </tbody>
                         </table>
-                        <center><button class="btn btn-sm btn-darkblue fs-06rem p-1">Save Selected Pump</button>
-                        </center>
+                        {{-- <center><button class="btn btn-sm btn-darkblue fs-06rem p-1">Save Selected Pump</button>
+                        </center> --}}
+                        <center><h5 class="text-danger">Please save the requirement first.</h5></center>
                     </div>
 
                 </div>

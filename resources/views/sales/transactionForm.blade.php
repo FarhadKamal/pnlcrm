@@ -18,35 +18,43 @@
         <h4 class="mt-3">Booking Transaction Form</h4>
     </center>
     <div class="bg-darkblue">
-        <h5 class="text-center text-white fs-5 p-3 m-0">Payment Mood: Cash</h5>
+        <h5 class="text-center text-white fs-5 p-3 m-0">Payment Mood: {{ $leadInfo->payment_type }}</h5>
     </div>
     <hr>
     <div class="row">
-        <div class="col-md-3">
-            <h6 class="text-center"><kbd>Insert Transaction Form</kbd></h6>
-            <form action="" method="POST" enctype="multipart/form-data" class="m-4">
-                @csrf
-                <div class="mb-1">
-                    <label class="form-label m-0">Deposit Date</label>
-                    <input type="text" name="transactionDate" id="transactionDate" class="form-control fs-08rem"
-                        required>
-                </div>
-                <div class="mb-1">
-                    <label class="form-label m-0">Amount</label>
-                    <input name="transactionAmount" type="number" class="form-control lh-sm" required>
-                </div>
-                <div class="mb-1">
-                    <label class="form-label m-0">Attachment</label>
-                    <input name="transactionFile" type="file" accept="image/png, image/jpeg, image/jpg, .pdf"
-                        class="form-control lh-sm" required>
-                </div>
-                <div>
-                    <input name="transactionLead" value="{{ $leadId }}" hidden>
-                    <button type="submit" class="btn btn-darkblue btn-sm w-100 mt-2">Save Transaction</button>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-8">
+        @if ($leadInfo->payment_type == 'Cash')
+            <div class="col-md-3">
+                <h6 class="text-center"><kbd>Insert Transaction Form</kbd></h6>
+                <form action="" method="POST" enctype="multipart/form-data" class="m-4">
+                    @csrf
+                    <div class="mb-1">
+                        <label class="form-label m-0">Deposit Date</label>
+                        <input type="text" name="transactionDate" id="transactionDate" class="form-control fs-08rem"
+                            required>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label m-0">Amount</label>
+                        <input name="transactionAmount" type="number" class="form-control lh-sm" required>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label m-0">Attachment</label>
+                        <input name="transactionFile" type="file" accept="image/png, image/jpeg, image/jpg, .pdf"
+                            class="form-control lh-sm" required>
+                    </div>
+                    <div>
+                        <input name="transactionLead" value="{{ $leadId }}" hidden>
+                        <button type="submit" class="btn btn-darkblue btn-sm w-100 mt-2">Save Transaction</button>
+                    </div>
+                </form>
+            </div>
+        @endif
+
+        @if ($leadInfo->payment_type == 'Cash')
+            <?php $rowClass = 'col-md-8'; ?>
+        @else
+            <?php $rowClass = 'col-md-12'; ?>
+        @endif
+        <div class="{{ $rowClass }}">
             <table class="table table-bordered fs-08rem">
                 <thead>
                     <tr>
@@ -77,25 +85,38 @@
         </div>
     </div>
 
-    <div class="row mt-5 mb-3 container m-auto">
-        <h6 class="text-center"><kbd>Booking Transaction List</kbd></h6>
-        <table class="table table-bordered fs-08rem log-table text-center">
-            <thead>
-                <tr>
-                    <th>SL.</th>
-                    <th>Deposit Date</th>
-                    <th>Taka</th>
-                    <th>Attachment</th>
-                    <th>Statement Date</th>
-                    <th>Statement Remarks</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-               
-            </tbody>
-        </table>
+    @if ($leadInfo->payment_type == 'Cash')
+        <div class="row mt-5 mb-3 container m-auto">
+            <h6 class="text-center"><kbd>Booking Transaction List</kbd></h6>
+            <table class="table table-bordered fs-08rem log-table text-center">
+                <thead>
+                    <tr>
+                        <th>SL.</th>
+                        <th>Deposit Date</th>
+                        <th>Taka</th>
+                        <th>Attachment</th>
+                        <th>Statement Date</th>
+                        <th>Statement Remarks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    @endif
+
+
+    <div>
+        <form action="" method="POST">
+            @csrf
+            <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}">
+            <center><button class="btn btn-sm btn-darkblue">Proceed For Delivery</button></center>
+        </form>
     </div>
+
+
 </div>
 
 <script>

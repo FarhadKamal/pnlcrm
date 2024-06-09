@@ -286,5 +286,6 @@ class DealController extends Controller
     {
         // $clientIp = $request->ip(); // This gets the client's IP address
         return $request->ip();
+        //return "192.168.1.129";
     }
 }

@@ -445,7 +445,7 @@
         <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
         @if ($leadInfo->need_credit_approval)
             <label for="">Credit Approval</label><br>
-            <select name="" id="" required>
+            <select name="credit_approved" id="" required>
                 <option value="1" selected>Approved</option>
                 <option value="0">Not Approved</option>
             </select>
@@ -484,7 +484,7 @@
                             <td class="p-1 text-center">{{ $item->qty }}</td>
                             <td class="p-1 text-center">{{ $proposed_discount }}</td>
                             <td class="p-1 text-end">{{ $item->net_price }}</td>
-                            <td class="p-1 text-center"><input type="number" min="0" name=""
+                            <td class="p-1 text-center"><input type="number" min="0" name="set_discount[]"
                                     onkeyup="updatePrice(this)" value="{{ $proposed_discount }}" required /></td>
                             <td class="p-1 text-end">{{ $item->net_price }}</td>
                         </tr>

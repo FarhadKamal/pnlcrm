@@ -14,7 +14,7 @@ MySQL - 5.7.31 : Database - pnlsale
 /*Data for the table `brand_discounts` */
 
 insert  into `brand_discounts`(`id`,`brand_name`,`trade_discount`,`created_at`,`updated_at`) values (1,'PEDROLLO',7,NULL,NULL);
-insert  into `brand_discounts`(`id`,`brand_name`,`trade_discount`,`created_at`,`updated_at`) values (2,'BGFLOW',10,NULL,NULL);
+insert  into `brand_discounts`(`id`,`brand_name`,`trade_discount`,`created_at`,`updated_at`) values (2,'BGFlow',10,NULL,NULL);
 insert  into `brand_discounts`(`id`,`brand_name`,`trade_discount`,`created_at`,`updated_at`) values (3,'ITAP',11,NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

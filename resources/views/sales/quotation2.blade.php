@@ -297,11 +297,11 @@
                                             @if ($itemPump->req_id == $itemReq->id)
                                                 <tr class="tableRow">
                                                     <td class="table1RowCol1">
-                                                        <p class="colText">{{ $itemPump['productInfo']->brand_name }}
+                                                        <p class="colText">{{ $itemPump->productInfo->brand_name }}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="">{{ $itemPump['productInfo']->mat_name }}
+                                                        <p class="">{{ $itemPump->productInfo->mat_name }}
 
                                                         </p>
                                                     </td>
@@ -311,12 +311,13 @@
                                             </td> --}}
                                                     <td class="table1RowCol1">
                                                         <p class="text-center colText">HP:
-                                                            {{ $itemPump['productInfo']->hp }}, KW:
-                                                            {{ $itemPump['productInfo']->kw }}</p>
+                                                            {{ $itemPump->productInfo->hp }}, KW:
+                                                            {{ $itemPump->productInfo->kw }}</p>
                                                     </td>
                                                     <td class="table1RowCol1">
                                                         <p class="text-center colText">
-                                                            {{ $itemPump['productInfo']->head }}</p>
+                                                            Min {{ $itemPump->productInfo->min_head }} -
+                                                            Max {{ $itemPump->productInfo->max_head }}</p>
                                                     </td>
                                                     <td class="table1RowCol1">
                                                         <p class="text-end colText">
@@ -438,10 +439,67 @@
     </div>
 </div>
 
+<div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(0,84,166, 0.2)">
+    <form action="{{ route('preQuotationApprove') }}" method="POST">
+        @csrf
+        <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
+        @if ($leadInfo->need_credit_approval)
+            <label for="">Credit Approval</label><br>
+            <select name="" id="" required>
+                <option value="1" selected>Approved</option>
+                <option value="0">Not Approved</option>
+            </select>
+            <br>
+        @endif
+        @if ($leadInfo->need_discount_approval)
+            <label for="">Discount Approval</label>
+            <table class="table table-bordered border-dark">
+                <thead>
+                    <tr>
+                        <th class="p-1 text-center">Brand</th>
+                        <th class="p-1 text-center">Model</th>
+                        <th class="p-1 text-center">Unit Price (TK)</th>
+                        <th class="p-1 text-center">Trade Discount (%)</th>
+                        <th class="p-1 text-center">Qty.</th>
+                        <th class="p-1 text-center">Deal Discount (%)</th>
+                        <th class="p-1 text-center">Net Price (TK)</th>
+                        <th class="p-1 text-center">Set New Discount (%)</th>
+                        <th class="p-1 text-center">New Net Price (TK)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($pumpInfo as $item)
+                        <?php
+                        $proposed_discount = $item->discount_percentage;
+                        $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
+                        if ($proposed_discount > $trade_discount) {
+                        }
+                        ?>
+                        <tr>
+                            <td class="d-none"><input name="approvePumpChoice[]" value="{{ $item->id }}"></td>
+                            <td class="p-1 text-center">{{ $item->productInfo->brand_name }}</td>
+                            <td class="p-1 text-center">{{ $item->productInfo->mat_name }}</td>
+                            <td class="p-1 text-end">{{ $item->unit_price }}</td>
+                            <td class="p-1 text-center">{{ $trade_discount }}</td>
+                            <td class="p-1 text-center">{{ $item->qty }}</td>
+                            <td class="p-1 text-center">{{ $proposed_discount }}</td>
+                            <td class="p-1 text-end">{{ $item->net_price }}</td>
+                            <td class="p-1 text-center"><input type="number" min="0" name=""
+                                    onkeyup="updatePrice(this)" value="{{ $proposed_discount }}" required /></td>
+                            <td class="p-1 text-end">{{ $item->net_price }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+        <center><button class="btn btn-sm btn-darkblue">Submit Approval</button></center>
+    </form>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
     integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
+{{-- <script>
     setInterval(function() {
         $.ajax({
             type: "GET",
@@ -465,4 +523,20 @@
         });
 
     }, 1000 * 60 * 0.01);
+</script> --}}
+
+
+<script>
+    function updatePrice(e) {
+        var row = e.parentElement.parentElement;
+        row = row.querySelectorAll("td");
+        let productUP = row[3].innerText;
+        let productQty = row[5].innerText;
+        let productNewDiscountPercentage = row[8].querySelector('input');
+        productDiscountPercentage = productNewDiscountPercentage.value;
+        let totalPrice = (Number(productUP) * Number(productQty));
+        let discountAmount = totalPrice * (Number(productDiscountPercentage) / 100);
+        let productTotalPrice = totalPrice - discountAmount;
+        row[9].innerText = productTotalPrice;
+    }
 </script>

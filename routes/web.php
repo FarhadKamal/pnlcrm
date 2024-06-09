@@ -7,6 +7,7 @@ use App\Http\Controllers\DealController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\QuotationController;
+use Faker\Guesser\Name;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +46,7 @@ Route::post('storeSelectedPump', [DealController::class, 'storePumpChoice'])->na
 Route::post('dealFormSubmission', [DealController::class, 'submitTheDeal'])->name('dealFormSubmission')->middleware('auth');
 
 Route::get('quotationCheck/{leadId}', [QuotationController::class, 'viewQuotation'])->name('quotationCheck')->middleware('auth');
+Route::post('preQuotationApprove', [QuotationController::class, 'preQuotationApprove'])->name('preQuotationApprove')->middleware('auth');
 
 Route::get('transaction/{leadId}', [BookingController::class, 'transactionForm'])->name('transaction')->middleware('auth');
 
@@ -56,5 +58,9 @@ Route::get('userEdit/{userId}', [AdminController::class, 'userInformationEdit'])
 Route::post('editUsers', [AdminController::class, 'updateUserInformation'])->name('editUsers')->middleware('auth');
 Route::get('inactiveUser/{userId}', [AdminController::class, 'userMakeInactive'])->name('inactiveUser')->middleware('auth');
 Route::get('activeUser/{userId}', [AdminController::class, 'userMakeActive'])->name('activeUser')->middleware('auth');
-// Route::get('userPermission/{userId}', [AdminController::class, 'userPermissions'])->name('userPermission')->middleware('auth');
-// Route::post('userPermissions', [AdminController::class, 'storeUserPermission'])->name('userPermissions')->middleware('auth');
+
+Route::get('permissions', [AdminController::class, 'permissionList'])->name('permissions')->middleware('auth');
+Route::post('permissions', [AdminController::class, 'storePermission'])->name('permissions')->middleware('auth');
+Route::get('userPermission/{userId}', [AdminController::class, 'userPermissions'])->name('userPermission')->middleware('auth');
+Route::post('userPermissions', [AdminController::class, 'storeUserPermission'])->name('userPermissions')->middleware('auth');
+

@@ -42,12 +42,13 @@
                         </div>
                         <div class="col-md-2">
                             <label for="">Head</label>
-                            <select name="filterHead" id="filterHead" class="form-select fs-07rem p-1">
+                            <input type="number" class="form-control fs-07rem p-1" name="filterHead" id="filterHead">
+                            {{-- <select name="filterHead" id="filterHead" class="form-select fs-07rem p-1">
                                 <option value="all">All Head</option>
                                 @foreach ($allPumpHead as $item)
                                     <option value="{{ $item->head }}">{{ $item->head }}</option>
                                 @endforeach
-                            </select>
+                            </select> --}}
                         </div>
                         <div class="col-md-2">
                             <label for="">Phase</label>
@@ -101,6 +102,8 @@
 </script> --}}
 <script>
     function filterItem() {
+        document.getElementById("loadingGif").style.display = "block";
+        document.getElementById("loadingText").style.display = "block";
         $('#filterPumpList').empty();
         let filterBrand = $('#filterBrand').val();
         let filterHP = $('#filterHP').val();
@@ -126,7 +129,9 @@
             })
             .then(response => response.json())
             .then(data => {
-                 console.log(data.ip);
+                document.getElementById("loadingGif").style.display = "none";
+                document.getElementById("loadingText").style.display = "none";
+                //  console.log(data);
                 if (data.status === 'success') {
                     let fetchData = data.data;
                     if (fetchData.length < 1) {
@@ -137,9 +142,9 @@
                     fetchData.forEach(element => {
 
                         let html = '<tr>';
-                        html += '<td class="d-none">'+element.id+'</td>';
+                        html += '<td class="d-none">' + element.id + '</td>';
                         html += '<td class="p-1">' + element.mat_name + '</td>';
-                        html += '<td class="p-1">'+element.brand+'</td>';
+                        html += '<td class="p-1">' + element.brand + '</td>';
                         html += '<td class="p-1">' + element.hp + '</td>';
                         html += '<td class="p-1">' + element.head + '</td>';
                         html += '<td class="p-1">' + element.price + '</td>';
@@ -159,6 +164,9 @@
                         $('#filterPumpList').append(html);
                     });
 
+                } else if (data.status === 'null') {
+                    let html = '<tr><td colspan="9" class="text-danger">No Data Found</td></tr>';
+                    $('#filterPumpList').append(html);
                 } else {
                     console.error('Error:', data.message);
                 }

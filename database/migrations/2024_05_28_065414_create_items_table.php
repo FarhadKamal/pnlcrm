@@ -27,8 +27,8 @@ class CreateItemsTable extends Migration
             $table->double('delivery_dia')->default(0);
             $table->string('min_capacity');
             $table->string('max_capacity');
-            $table->string('min_head')->default(0);
-            $table->string('max_head')->default(0);
+            $table->double('min_head')->default(0);
+            $table->double('max_head')->default(0);
             $table->timestamps();
         });
     }

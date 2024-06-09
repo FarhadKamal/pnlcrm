@@ -154,6 +154,9 @@
                             <li>
                                 <a class="dropdown-item" href="#">Lead Source</a>
                             </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('permissions') }}">Permissions</a>
+                            </li>
                         </ul>
                     </li>
                     {{-- @endif --}}
@@ -204,7 +207,10 @@
     </nav>
     <!-- Navbar -->
 
-
+    <div>
+        <img src="{{ asset('images/system/droplet.gif') }}" alt="" id="loadingGif">
+        <h1 id="loadingText">Loading...</h1>
+    </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 

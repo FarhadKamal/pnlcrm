@@ -25,4 +25,8 @@ class QuotationController extends Controller
         $data['deptName'] = Department::find(Auth()->user()->user_dept);
         return view('sales.quotation2', $data);
     }
+
+    public function preQuotationApprove(Request $request){
+
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Customer;
 use App\Models\Items;
 use App\Models\SalesLog;
@@ -14,6 +15,7 @@ use App\Models\Requirements;
 
 use App\Models\LeadZone;
 use App\Models\PumpChoice;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -137,6 +139,55 @@ class LeadController extends Controller
 
         //Auth()->user()->id,
         return back()->with('success', 'Corporate Client Generation Success');
+    }
+
+    function workLoadCheck()
+    {
+        $assignList = User::with('designation:id,desg_name', 'location:id,loc_name')->get();
+
+        $html = '';
+        foreach ($assignList as $item) {
+
+            if (Helper::permissionCheck($item->id, 'salesPerson')) {
+                $workLoad = DB::select('SELECT COUNT(leads.id) AS count, leads.current_stage FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE customers.assign_to LIKE "%' . $item->assign_to . '%"  AND leads.current_stage != "WON" AND leads.current_stage != "LOST" GROUP BY leads.current_stage');
+                $html .= '<tr>';
+                $html .= '<td class="p-1">' . $item->user_name . '</td>';
+                $html .= '<td class="p-1">' . $item['designation']->desg_name . '</td>';
+                $html .= '<td class="p-1">' . $item['location']->loc_name . '</td>';
+                $html .= '<td class="p-1">';
+                foreach ($workLoad as $loads) {
+                    $html .= '<small>' . $loads->current_stage . ' Satge: <span class="bg-info p-2 text-white">' . $loads->count . '</span></small>';
+                }
+                $html .= '</td>';
+                $html .= '<td class="p-1"><input type="radio" name="assign_to" value="' . $item->assign_to . '" ><button type="submit" class="btn btn-sm btn-darkblue p-1 fs-06rem float-end">Assign</button></td>';
+                $html .= '</tr>';
+            }
+        }
+        return response()->json($html);
+    }
+
+    function assignLeadToSales(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadModal_leadId' => 'required|numeric',
+            'assign_to' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        } else {
+            $leadInfo = Lead::find($request->leadModal_leadId);
+            $customerId = $leadInfo->customer_id;
+            $leadInfo->current_stage = "DEAL";
+            $leadInfo->current_subStage = "FORM";
+            $leadInfo->save();
+            $customerInfo = Customer::find($customerId);
+            $customerInfo->assign_to = $request->assign_to;
+            $customerInfo->save();
+
+            return back()->with('success', 'Lead Assign Success');
+        }
     }
 
 

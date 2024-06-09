@@ -76,7 +76,7 @@
                     <center>
                         <h6>LEAD ASSIGN</h6>
                     </center>
-                    <form action="#" method="POST">
+                    <form action="{{ route('assignLead') }}" method="POST">
                         @csrf
                         <input type="text" name="leadModal_leadId" id="leadModal_leadId" hidden>
                         <table class="table table-hover table-bordered fs-08rem p-0 m-0" id="workLoadTable">
@@ -91,23 +91,7 @@
                             </thead>
 
                             <tbody id="workLoadTableTbody">
-                                {{-- DUMMY DATA  --}}
-                                <tr>
-                                    <td class="p-1">Jitu</td>
-                                    <td class="p-1">Sr Sales</td>
-                                    <td class="p-1">Dhaka</td>
-                                    <td class="p-1"></td>
-                                    <td class="p-1 text-center"><button
-                                            class="btn btn-darkblue fs-06rem p-1">Assign</button></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-1">Nousahd</td>
-                                    <td class="p-1">Sr Sales</td>
-                                    <td class="p-1">Chattogram</td>
-                                    <td class="p-1"></td>
-                                    <td class="p-1 text-center"><button
-                                            class="btn btn-darkblue fs-06rem p-1">Assign</button></td>
-                                </tr>
+                                
                             </tbody>
                         </table>
                     </form>
@@ -148,20 +132,26 @@
         aTag.appendChild(btn);
         editDiv.appendChild(aTag);
 
-        // workLoadCheck();
+        workLoadCheck();
     }
 </script>
-{{-- 
+
 <script>
     function workLoadCheck() {
         $('#workLoadTableTbody').empty();
-        $.ajax({
-            type: "GET",
-            url: "/workLoadCheck",
-            success: function(data) {
-                document.getElementById('workLoadTableTbody').innerHTML = data;
+        fetch('/workLoadCheck')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(json => {
+                document.getElementById('workLoadTableTbody').innerHTML = json;
 
-            }
-        });
-    }
-</script> --}}
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+</script>

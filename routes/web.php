@@ -35,9 +35,13 @@ Route::get('dashboard', [Controller::class, 'salesStage'])->name('dashboard')->m
 Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('guest');
 Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('auth');
 Route::post('/customerForm', [LeadController::class, 'storeCustomer'])->name('customerForm')->middleware('auth');
+Route::get('/workLoadCheck', [LeadController::class, 'workLoadCheck'])->name('workLoadCheck')->middleware('auth');
+Route::post('assignLead', [LeadController::class, 'assignLeadToSales'])->name('assignLead')->middleware('auth');
+
 Route::get('newLeadForm', [LeadController::class, 'leadForm'])->name('newLeadForm')->middleware('auth');
 Route::post('newLeadForm', [LeadController::class, 'storeLead'])->name('newLeadForm')->middleware('auth');
 Route::get('getSingleClientInfo/{clientId}', [LeadController::class, 'getSingleClientInfo'])->name('getSingleClientInfo')->middleware('auth');
+
 Route::get('dealPage/{leadId}', [LeadController::class, 'dealForm'])->name('dealPage')->middleware('auth');
 Route::post('requirement', [DealController::class, 'storeRequirement'])->name('requirement')->middleware('auth');
 Route::post('deleteDealRequirement', [DealController::class, 'deleteDealRequirement'])->name('deleteDealRequirement')->middleware('auth');
@@ -63,4 +67,3 @@ Route::get('permissions', [AdminController::class, 'permissionList'])->name('per
 Route::post('permissions', [AdminController::class, 'storePermission'])->name('permissions')->middleware('auth');
 Route::get('userPermission/{userId}', [AdminController::class, 'userPermissions'])->name('userPermission')->middleware('auth');
 Route::post('userPermissions', [AdminController::class, 'storeUserPermission'])->name('userPermissions')->middleware('auth');
-

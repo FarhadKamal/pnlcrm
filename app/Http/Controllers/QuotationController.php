@@ -75,5 +75,23 @@ class QuotationController extends Controller
 
     public function topQuotationApprove(Request $request){
 
+
+        $lead_id=$request->lead_id;
+        $approvePumpChoice =$request->approvePumpChoice;
+        $set_discount =$request->set_discount;
+
+        foreach ($approvePumpChoice as $key => $id) {
+            $pumpInfo = PumpChoice::find($id);
+            $pumpInfo->discount_percentage = $set_discount[$key];
+            $pumpInfo->discount_price = $set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01;
+            $pumpInfo->net_price =(($pumpInfo->qty  * $pumpInfo->unit_price) - ($set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01));
+            $pumpInfo->save();
+        }
+
+        $leadInfo = Lead::find($lead_id);
+        $leadInfo->need_top_approval = 2;
+        $leadInfo->current_subStage ='SUBMIT';
+        $leadInfo->save();
+        return redirect()->route('home');
     }
 }

@@ -23,7 +23,7 @@ class QuotationController extends Controller
         $data['pumpInfo'] = PumpChoice::where('lead_id', $leadId)->get();
         $data['desgName'] = Designation::find(Auth()->user()->user_desg);
         $data['deptName'] = Department::find(Auth()->user()->user_dept);
-        return view('sales.quotation2', $data);
+        return view('sales.quotation', $data);
     }
 
     public function preQuotationApprove(Request $request){
@@ -70,6 +70,10 @@ class QuotationController extends Controller
         $leadInfo->need_top_approval = $need_top_approval;
         $leadInfo->current_subStage =$current_subStage;
         $leadInfo->save();
-        //return redirect()->route('dashboard');
+        return redirect()->route('home');
+    }
+
+    public function topQuotationApprove(Request $request){
+
     }
 }

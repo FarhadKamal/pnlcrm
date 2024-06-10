@@ -51,6 +51,7 @@ Route::post('dealFormSubmission', [DealController::class, 'submitTheDeal'])->nam
 
 Route::get('quotationCheck/{leadId}', [QuotationController::class, 'viewQuotation'])->name('quotationCheck')->middleware('auth');
 Route::post('preQuotationApprove', [QuotationController::class, 'preQuotationApprove'])->name('preQuotationApprove')->middleware('auth');
+Route::post('topQuotationApprove', [QuotationController::class, 'topQuotationApprove'])->name('topQuotationApprove')->middleware('auth');
 
 Route::get('transaction/{leadId}', [BookingController::class, 'transactionForm'])->name('transaction')->middleware('auth');
 

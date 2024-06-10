@@ -105,6 +105,10 @@
                             <small class="badge badge-info blink p-1 m-0 ">Waiting for Approval</small>
                             <?php $buttonLabel = 'Approve'; ?>
                         @endif
+                        @if ($item->current_subStage == 'MANAGEMENT')
+                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Top Management</small>
+                            <?php $buttonLabel = 'Managmement'; ?>
+                        @endif
                         @if ($item->current_subStage == 'SUBMIT')
                             <small class="badge badge-info blink p-1 m-0 ">Waiting for Submit</small>
                             <?php $buttonLabel = 'Submit'; ?>

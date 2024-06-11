@@ -21,41 +21,8 @@
         <h5 class="text-center text-white fs-5 p-3 m-0">Payment Mood: {{ $leadInfo->payment_type }}</h5>
     </div>
     <hr>
-    <div class="row">
-        @if ($leadInfo->payment_type == 'Cash')
-            <div class="col-md-3">
-                <h6 class="text-center"><kbd>Insert Transaction Form</kbd></h6>
-                <form action="{{ route('insertTransaction') }}" method="POST" enctype="multipart/form-data" class="m-4">
-                    @csrf
-                    <div class="mb-1">
-                        <label class="form-label m-0">Deposit Date</label>
-                        <input type="text" name="transactionDate" id="transactionDate" class="form-control fs-08rem"
-                            required>
-                    </div>
-                    <div class="mb-1">
-                        <label class="form-label m-0">Amount</label>
-                        <input name="transactionAmount" type="number" class="form-control lh-sm" required>
-                    </div>
-                    {{-- <div class="mb-1">
-                        <label class="form-label m-0">Attachment</label>
-                        <input name="transactionFile" type="file" accept="image/png, image/jpeg, image/jpg, .pdf"
-                            class="form-control lh-sm" required>
-                    </div> --}}
-                    <div>
-                        <input name="transactionLead" value="{{ $leadId }}" hidden>
-                        <input name="transactionQuotation" value="{{ $quotationInfo[0]->id }}" hidden>
-                        <button type="submit" class="btn btn-darkblue btn-sm w-100 mt-2">Save Transaction</button>
-                    </div>
-                </form>
-            </div>
-        @endif
-
-        @if ($leadInfo->payment_type == 'Cash')
-            <?php $rowClass = 'col-md-8'; ?>
-        @else
-            <?php $rowClass = 'col-md-12'; ?>
-        @endif
-        <div class="{{ $rowClass }}">
+    <div class="row d-none">
+        <div class="col-md-12">
             <table class="table table-bordered fs-08rem">
                 <thead>
                     <tr>
@@ -144,16 +111,26 @@
                             <td class="p-1">{{ $sl }}</td>
                             <td class="p-1">{{ date('d-M-Y', strtotime($item->deposit_date)) }}</td>
                             <td class="p-1">{{ number_format((float) $item->pay_amount, 2, '.', ',') }}</td>
-                            @if ($item->deposited_date)
-                                <td class="p-1">{{ date('d-M-Y', strtotime($item->deposited_date)) }}</td>
-                            @else
-                                <td class="p-1"></td>
-                            @endif
-                            <td class="p-1">{{ $item->deposited_remarks }}</td>
                             @if ($item->is_verified == 0)
-                                <td class="p-1"><button class="btn btn-sm btn-danger badge">unverified</button></td>
+                                <form action="{{ route('verifiedTransaction') }}" method="POST"
+                                    id="verifyTransactionForm">
+                                    @csrf
+                                    <input type="hidden" name="transactionId" value="{{ $item->id }}">
+                                    <td>
+                                        <input type="text" class="flatpickr form-control p-1 fs-07rem"
+                                            name="depositedDate" id="depositedDate" required>
+                                    </td>
+                                    <td>
+                                        <textarea name="depositedRemarks" id="depositedRemarks" cols="30" rows="2"></textarea>
+                                    </td>
+                                    <td><button class="btn btn-darkblue btn-sm fs-06rem mt-2">Click Here To
+                                            Verify</button>
+                                    </td>
+                                </form>
                             @else
-                                <td class="p-1"><button class="btn btn-sm btn-success badge">verified</button></td>
+                                <td>{{ date('d-M-Y', strtotime($item->deposited_date)) }}</td>
+                                <td>{{ $item->deposited_remarks }}</td>
+                                <td><button class="btn btn-sm btn-success badge">verified</button></td>
                             @endif
                         </tr>
                     @endforeach
@@ -163,16 +140,16 @@
     @endif
 
 
-    <div>
-        <form action="" method="POST">
+    <div class="container">
+        <form action="{{ route('accountsClearance') }}" method="POST" id="AccountsClearanceForm">
             @csrf
             <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}">
+            <input type="hidden" name="quotation_id" value="{{ $leadInfo->id }}">
+            <label for="" class="fs-08rem">Clearance Remarks</label>
+            <textarea name="clearRemark" id="clearRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
             @if ($leadInfo->accounts_clearance == 0)
-                <center>
-                    <h5 class="badge badge-danger">Waiting For Accounts Clearance</h5>
-                </center>
-            @else
-                <center><button class="btn btn-sm btn-darkblue">Proceed For Delivery</button></center>
+            <br>
+                <center><button class="btn btn-sm btn-darkblue">Proceed Accounts Clearance</button></center>
             @endif
         </form>
     </div>
@@ -182,12 +159,66 @@
 
 <script>
     $(function() {
-        $("#transactionDate").datepicker({
+        $(".flatpickr").datepicker({
             autoclose: true,
             todayHighlight: true,
             format: 'dd-M-yyyy',
-            // startDate: new Date(),
+            minDate: 0,
             defaultDate: "+1w",
         }).datepicker('update', new Date());
+    });
+</script>
+
+<script>
+    $('#verifyTransactionForm').submit(function(e, params) {
+        var localParams = params || {};
+
+        if (!localParams.send) {
+            e.preventDefault();
+        }
+        var form = e;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Once verified, you will not be able to undo it!",
+            icon: "warning",
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm transaction',
+            // denyButtonText: `Don't save`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                form.delegateTarget.submit()
+            } else {
+                Swal.fire('Transaction is not verified', '', 'info')
+            }
+        })
+    });
+</script>
+
+<script>
+    $('#AccountsClearanceForm').submit(function(e, params) {
+        var localParams = params || {};
+
+        if (!localParams.send) {
+            e.preventDefault();
+        }
+        var form = e;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Once cleared, you will not be able to undo it!",
+            icon: "warning",
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm clearance',
+            // denyButtonText: `Don't save`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                form.delegateTarget.submit()
+            } else {
+                Swal.fire('Clearance is not succeed', '', 'info')
+            }
+        })
     });
 </script>

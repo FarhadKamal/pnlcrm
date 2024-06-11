@@ -52,9 +52,20 @@ Route::post('dealFormSubmission', [DealController::class, 'submitTheDeal'])->nam
 Route::get('quotationCheck/{leadId}', [QuotationController::class, 'viewQuotation'])->name('quotationCheck')->middleware('auth');
 Route::post('preQuotationApprove', [QuotationController::class, 'preQuotationApprove'])->name('preQuotationApprove')->middleware('auth');
 Route::post('topQuotationApprove', [QuotationController::class, 'topQuotationApprove'])->name('topQuotationApprove')->middleware('auth');
+Route::get('quotationReferenceCheck', [QuotationController::class, 'quotationReferenceCheck'])->name('quotationReferenceCheck')->middleware('auth');
+Route::post('submitQuotation', [QuotationController::class, 'submitQuotation'])->name('submitQuotation')->middleware('auth');
+Route::post('quotationAccept', [QuotationController::class, 'acceptLeadQuotation'])->name('quotationAccept')->middleware('auth');
+// Route::post('quotationNotAccept', [SalesController::class, 'notAcceptLeadQuotation'])->name('quotationNotAccept')->middleware('auth');
 
+Route::get('newSapForm/{leadId}', [BookingController::class, 'newSapForm'])->name('newSapForm')->middleware('auth');
+Route::post('newSapInsertion', [BookingController::class, 'insertNewSapID'])->name('newSapInsertion')->middleware('auth');
+Route::get('creditSetForm/{leadId}', [BookingController::class, 'creditSetForm'])->name('creditSetForm')->middleware('auth');
+Route::post('creditSetInsertion', [BookingController::class, 'insertCredit'])->name('creditSetInsertion')->middleware('auth');
 Route::get('transaction/{leadId}', [BookingController::class, 'transactionForm'])->name('transaction')->middleware('auth');
-
+Route::post('insertTransaction', [BookingController::class, 'storeTransaction'])->name('insertTransaction')->middleware('auth');
+Route::get('verifyTransaction/{leadId}', [BookingController::class, 'verifyTransaction'])->name('verifyTransaction')->middleware('auth');
+Route::post('verifiedTransaction', [BookingController::class, 'verifyTheTransaction'])->name('verifiedTransaction')->middleware('auth');
+Route::post('accountsClearance', [BookingController::class, 'accountsCleared'])->name('accountsClearance')->middleware('auth');
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');
 Route::post('users', [AdminController::class, 'storeUser'])->name('users')->middleware('auth');

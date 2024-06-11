@@ -19,6 +19,7 @@ class Leads2024 extends Migration
             $table->integer('created_by');
             $table->string('lead_source');
             $table->text('product_requirement');
+            $table->string('lead_person');
             $table->string('lead_email')->nullable();
             $table->string('lead_phone');
             $table->string('current_stage');
@@ -32,9 +33,8 @@ class Leads2024 extends Migration
             $table->integer('need_discount_approval')->default(0);
             $table->integer('need_top_approval')->default(0);
             $table->string('payment_type')->nullable();
-
-
-
+            $table->integer('accounts_clearance')->default(0);
+            $table->integer('is_outstanding')->default(0);
             $table->timestamps();
         });
     }

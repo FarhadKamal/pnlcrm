@@ -219,7 +219,6 @@ class LeadController extends Controller
             'contactPerson' => 'required',
             'contactMobile' => 'required',
             'contactEmail' => 'nullable|email',
-            'contactPerson' => 'required',
             'leadSource' => 'required',
             'clientReq' => 'required'
         ]);
@@ -238,6 +237,7 @@ class LeadController extends Controller
             'created_by' => Auth()->user()->id,
             'lead_source' => $request->leadSource,
             'product_requirement' => $request->clientReq,
+            'lead_person' => $request->contactPerson,
             'lead_email' => $request->contactEmail,
             'lead_phone' => $request->contactMobile,
             'current_stage' => 'DEAL',

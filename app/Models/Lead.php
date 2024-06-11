@@ -13,6 +13,7 @@ class Lead extends Model
         'customer_id',
         'lead_source',
         'product_requirement',
+        'lead_person',
         'lead_email',
         'lead_phone',
         'current_stage',
@@ -25,7 +26,9 @@ class Lead extends Model
         'need_credit_approval',
         'need_discount_approval',
         'need_top_approval',
-        'payment_type'
+        'payment_type',
+        'accounts_clearance',
+        'is_outstanding'
     ];
 
     public function clientInfo(){

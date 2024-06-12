@@ -21,9 +21,9 @@ class CreatePumpChoicesTable extends Migration
             $table->double('pump_head')->default(0);
             $table->double('unit_price')->default(0);
             $table->double('qty');
-            $table->integer('discount_price')->default(0);
-            $table->integer('discount_percentage')->default(0);
-            $table->integer('net_price')->default(0);
+            $table->double('discount_price')->default(0);
+            $table->double('discount_percentage')->default(0);
+            $table->double('net_price')->default(0);
 
             $table->timestamps();
         });

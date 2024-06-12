@@ -50,8 +50,9 @@
                                 <td class="p-1 text-center">{{ $item->qty }}</td>
                                 <td class="p-1 text-center">{{ $proposed_discount }}</td>
                                 <td class="p-1 text-end">{{ $item->net_price }}</td>
-                                <td class="p-1 text-center"><input type="number" min="0" name="set_discount[]"
-                                        onkeyup="updatePrice(this)" value="{{ $proposed_discount }}" required /></td>
+                                <td class="p-1 text-center"><input type="number" min="0" step="any"
+                                        name="set_discount[]" onkeyup="updatePrice(this)"
+                                        value="{{ $proposed_discount }}" required /></td>
                                 <td class="p-1 text-end">{{ $item->net_price }}</td>
                             </tr>
                         @endforeach
@@ -102,8 +103,9 @@
                                 <td class="p-1 text-center">{{ $item->qty }}</td>
                                 <td class="p-1 text-center">{{ $proposed_discount }}</td>
                                 <td class="p-1 text-end">{{ $item->net_price }}</td>
-                                <td class="p-1 text-center"><input type="number" min="0" name="set_discount[]"
-                                        onkeyup="updatePrice(this)" value="{{ $proposed_discount }}" required /></td>
+                                <td class="p-1 text-center"><input type="number" min="0" step="any"
+                                        name="set_discount[]" onkeyup="updatePrice(this)"
+                                        value="{{ $proposed_discount }}" required /></td>
                                 <td class="p-1 text-end">{{ $item->net_price }}</td>
                             </tr>
                         @endforeach
@@ -117,10 +119,18 @@
 
 @if ($leadInfo->current_subStage == 'SUBMIT')
     {{-- Submit To Customer  --}}
-    <form action="">
+    {{-- <form action="" class="m-3"> --}}
         @csrf
-        <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
-    </form>
+        <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
+        @if ($leadInfo->lead_email)
+            <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button></center>
+        @else
+            <div class="bg-danger text-white p-2 text-center">
+                <h5 class="">No Email Found For The Client. Please Add An Email First.</h5>
+                <button class="btn btn-darkblue btn-sm">Add Email</button>
+            </div>
+        @endif
+    {{-- </form> --}}
 @endif
 
 
@@ -136,5 +146,99 @@
         let discountAmount = totalPrice * (Number(productDiscountPercentage) / 100);
         let productTotalPrice = totalPrice - discountAmount;
         row[9].innerText = productTotalPrice;
+    }
+</script>
+
+
+<script>
+    setInterval(function() {
+        fetch('/quotationReferenceCheck')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(json => {
+                let refFullDate = new Date(json.currentDate);
+                let refYear = refFullDate.getFullYear();
+                let refMonth = Number(refFullDate.getMonth() + 1).toString().padStart(2, '0');
+                let refDate = Number(refFullDate.getDate()).toString().padStart(2, '0');
+
+                let serialNo = Number(json.checkQuotationSerial[0]['sl'] + 1).toString().padStart(3,
+                    '0');
+
+                let refPreText = 'REF: PNL/P/QUT/' + refYear + '/' + refMonth + refDate + serialNo;
+                // console.log(refPreText);
+                document.getElementById('quotationRef').innerText = refPreText;
+                $('#quotationRef').val(refPreText);
+
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+    }, 1000 * 60 * 0.01);
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+<script>
+    function sentQuotation() {
+        var blob;
+        window.jsPDF = window.jspdf.jsPDF;
+        var docPDF = new jsPDF();
+        docPDF.setFont("Helvetica", "normal");
+
+        var elementHTML = document.querySelector("#section-to-print");
+        docPDF.html(elementHTML, {
+            callback: function(docPDF) {
+                // docPDF.save();
+                blob = docPDF.output('blob');
+                let leadId = $('#QleadId').val();
+                let quotationRef = $('#quotationRef').val();
+                let _token = '<?php echo csrf_token(); ?>';
+                var formData = new FormData();
+                formData.append('leadId', leadId);
+                formData.append('quotationRef', quotationRef);
+                formData.append('doc', blob);
+                formData.append('_token', _token);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
+                    }
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: '/submitQuotation',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function() {
+                        document.getElementById("loadingGif").style.display = "block";
+                    },
+                    complete: function() {
+                        document.getElementById("loadingGif").style.display = "none";
+                    },
+                    success: function(data) {
+                        // console.log(data);
+                        window.location.href = "/sales";
+                    },
+                    error: function(data) {
+                        // console.log(data)
+                    }
+                });
+
+            },
+            margin: [10, 10, 10, 10],
+            autoPaging: true,
+            x: 5,
+            y: 2,
+            width: 190, //target width in the PDF document
+            windowWidth: 675 //window width in CSS pixels
+        });
     }
 </script>

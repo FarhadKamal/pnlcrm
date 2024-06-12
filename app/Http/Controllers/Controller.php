@@ -10,6 +10,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class Controller extends BaseController
@@ -99,7 +100,18 @@ class Controller extends BaseController
         // }
 
         // QUOTATION Stage 
-        $data['quotationStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->get();
+        $data['quotationStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->get();
+        foreach ($data['quotationStage'] as $item) {
+            $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $item->id ORDER BY id DESC LIMIT 1");
+            if ($quotationRef) {
+                $item->quotationId = $quotationRef[0]->id;
+                $item->quotationRef = $quotationRef[0]->quotation_ref;
+            }
+        }
+
+
+        // Booking Stage 
+        $data['bookingStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->get();
 
         return view('sales.dashboard', $data);
     }

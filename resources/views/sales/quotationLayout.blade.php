@@ -1,6 +1,5 @@
-
 <br>
-<button onclick="window.print()" class="btn btn-sm btn-darkblue printBtn float-end mt-2">Print Quotation</button>
+<button onclick="window.print()" class="btn btn-sm btn-darkblue printBtn float-end mt-2 me-2">Print Quotation</button>
 <div class="quotDiv" id="section-to-print">
     <style>
         body {
@@ -229,7 +228,7 @@
         <tbody class="quotContainer">
             <tr>
                 <td>
-                    @if ($leadInfo->current_stage == 'QUOTATION' && $leadInfo->current_subStage == 'APPROVE')
+                    @if ($leadInfo->current_stage == 'QUOTATION' && $leadInfo->current_subStage == 'SUBMIT')
                         <div class="container1">
                             <h2><b id="quotationRef"></b></h2>
                             <h2>Date: <?= date('jS F Y') ?></h2>
@@ -241,6 +240,7 @@
                         <p class="boldText">{{ $leadInfo['clientInfo']->customer_name }}</p>
                         <p>{{ $leadInfo['clientInfo']->address }}, {{ $leadInfo['clientInfo']->district }}</p>
                         <p class="boldText">Attention: <span>{{ $leadInfo['clientInfo']->contact_person }}</span></p>
+                        <p><span>Name: </span>{{ $leadInfo->lead_person }}</p>
                         <p><span>Phone: </span>{{ $leadInfo->lead_phone }}</p>
                         @if ($leadInfo->lead_email)
                             <p><span>Email: </span>{{ $leadInfo->lead_email }}</p>
@@ -379,12 +379,13 @@
                             days
                             from the date
                             hereof.</p>
-                        <br>
+
+                    </div>
+                    <div style="margin-top: 2%" class="pagebreakAvoid">
                         <p class="colText boldText">Contact Person: {{ Auth()->user()->user_name }}</p>
                         <p class="colText boldText">{{ $desgName->desg_name }}, {{ $deptName->dept_name }}, Cell No:
                             {{ Auth()->user()->user_phone }}, E-mail: {{ Auth()->user()->user_email }}</p>
-                    </div>
-                    <div style="margin-top: 2%" class="pagebreakAvoid">
+                        <br>
                         <p>Thanking You,</p>
                         <img src="{{ asset('images/system/quotationSign.png') }}" width="120" alt="">
                         <p>Md. Afzal Hamid</p>
@@ -418,22 +419,22 @@
 
         <div style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">
             <div class="col-md-2">
-                <img width="100" src="{{ asset('images/system/pedrollo.png') }}" alt="">
+                <img src="{{ asset('images/system/pedrollo.svg') }}" alt="" width="100">
             </div>
             <div class="col-md-2">
-                <img width="100" src="{{ asset('images/system/BGFlow.jpg') }}" alt="">
+                <img src="{{ asset('images/system/BGFlow.svg') }}" alt="" width="100">
             </div>
             <div class="col-md-2">
-                <img width="120" src="{{ asset('images/system/panelli.jpg') }}" alt="">
+                <img src="{{ asset('images/system/panelli.svg') }}" alt=""width="120">
             </div>
             <div class="col-md-2">
-                <img width="60" src="{{ asset('images/system/hcp.png') }}" alt="">
+                <img src="{{ asset('images/system/hcp.svg') }}" alt=""width="60">
             </div>
             <div class="col-md-2">
-                <img width="60" src="{{ asset('images/system/maxwell.jpg') }}" alt="">
+                <img src="{{ asset('images/system/maxwell.svg') }}" alt="" width="60">
             </div>
             <div class="col-md-2">
-                <img width="80" src="{{ asset('images/system/itap.png') }}" alt="">
+                <img src="{{ asset('images/system/itap.svg') }}" alt="" width="80">
             </div>
         </div>
     </div>

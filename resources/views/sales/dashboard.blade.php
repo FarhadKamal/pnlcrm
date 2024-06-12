@@ -263,7 +263,8 @@
                                     @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction'))
                                         <a href="{{ route('verifyTransaction', ['leadId' => $item->id]) }}">
                                             <button type="button"
-                                                class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Verify Transaction</button>
+                                                class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Verify
+                                                Transaction</button>
                                         </a>
                                     @else
                                         <a href="">
@@ -284,34 +285,83 @@
         <!----------------------------Ready To Deliver Column---------------- -->
         <div class="col-sm p-1 stageColumn" id="dealColumn">
             <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 ">Ready To Deliver</h6>
-            <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
-                <div class="card-body">
-                    {{-- @if ($item->current_subStage == 'APPROVE')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Approval</small>
+            @if (count($deliveryStage) <= 0)
+                <p class="text-danger">No Delivery Found</p>
+            @endif
+            @foreach ($deliveryStage as $item)
+                <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
+                    <div class="card-body">
+                        @if ($item->current_subStage == 'DISCOUNTSET')
+                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Discount Set</small>
                         @endif
-                        @if ($item->current_subStage == 'CHECK')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Checking</small>
+                        @if ($item->current_subStage == 'INVOICE')
+                            <small class="badge badge-info blink p-1 m-0 ">Waiting for SAP Invoice</small>
                         @endif
-                        @if ($item->current_subStage == 'FORM')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Dealing</small>
-                        @endif --}}
-                    <div class="row">
-                        <div class="col-10">
-                            <h6 class="card-title">
-                                MM Trade
-                            </h6>
+                        @if ($item->current_subStage == 'READY')
+                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Delivery</small>
+                        @endif
+                        <div class="row">
+                            <div class="col-10">
+                                <h6 class="card-title fs-09rem">
+                                    {{ $item['clientInfo']->customer_name }}
+                                </h6>
+                            </div>
+                        </div>
+                        <small class="card-text mb-1"><b>Group:</b> {{ $item['clientInfo']->group_name }}</small><br>
+                        <small class="card-text mb-1"><b>District:</b>
+                            {{ $item['clientInfo']->district }}</small><br>
+                        <small class="card-text mb-1"><b>Contact:</b>
+                            {{ $item['clientInfo']->contact_person }}</small><br>
+                        <small class="card-text mb-1"><b>Phone:</b>
+                            {{ $item['clientInfo']->contact_mobile }}</small><br>
+                        <small class="card-text mb-1"><b>Source:</b> {{ $item['source']->source_name }}</small><br>
+                        <small class="card-text mb-1"><b>Created By:</b> {{ $item['createdBy']->user_name }}</small>
+                        <div>
+                            @if ($item->current_subStage == 'DISCOUNTSET')
+                                @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'sapDiscountSet'))
+                                    <a href="{{ route('discountSetForm', ['leadId' => $item->id]) }}">
+                                        <button type="button"
+                                            class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">SAP
+                                            Discount Set</button>
+                                    </a>
+                                @else
+                                    <a href="">
+                                        <button type="button"
+                                            class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                    </a>
+                                @endif
+                            @endif
+                            @if ($item->current_subStage == 'INVOICE')
+                                @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'sapInvoiceSet'))
+                                    <a href="{{ route('invoiceSetForm', ['leadId' => $item->id]) }}">
+                                        <button type="button"
+                                            class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">SAP
+                                            Invoice Set</button>
+                                    </a>
+                                @else
+                                    <a href="">
+                                        <button type="button"
+                                            class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                    </a>
+                                @endif
+                            @endif
+                            @if ($item->current_subStage == 'READY')
+                                @if ($item->clientInfo->assign_to == Auth()->user()->assign_to)
+                                    <a href="{{ route('deliveryPage', ['leadId' => $item->id]) }}">
+                                        <button type="button"
+                                            class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Delivery</button>
+                                    </a>
+                                @else
+                                    <a href="">
+                                        <button type="button"
+                                            class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                    </a>
+                                @endif
+                            @endif
                         </div>
                     </div>
-                    <small class="card-text mb-1"><b>Group:</b> MM Group</small><br>
-                    {{-- <small class="card-text mb-1"><b>Intersted In:</b> {{ $interested }}</small><br> --}}
-                    <small class="card-text mb-1"><b>District:</b>
-                        Chattogram</small><br>
-                    <small class="card-text mb-1"><b>Contact:</b> Mr. Jitu</small><br>
-                    <small class="card-text mb-1"><b>Phone:</b> 01844556655</small><br>
-                    <small class="card-text mb-1"><b>Source:</b> Mr. Jitu</small><br>
-                    <small class="card-text mb-1"><b>Created By:</b> Noushad</small>
                 </div>
-            </div>
+            @endforeach
         </div>
 
 

@@ -113,6 +113,9 @@ class Controller extends BaseController
         // Booking Stage 
         $data['bookingStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->get();
 
+        // Delivery Stage
+        $data['deliveryStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DELIVERY')->get();
+
         return view('sales.dashboard', $data);
     }
 }

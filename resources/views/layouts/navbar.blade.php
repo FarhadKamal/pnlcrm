@@ -51,7 +51,7 @@
         <div class="container-fluid">
             <!-- Navbar brand -->
             <a class="navbar-brand me-2" href="{{ route('dashboard') }}">
-                <img src="{{ asset('images/system/logo.png') }}" class="rounded" height="43" alt="Subaru Logo"
+                <img src="{{ asset('images/system/logo.png') }}" class="rounded" height="43" alt="PNL Logo"
                     loading="lazy" style="margin-top: -2px;" />
             </a>
 

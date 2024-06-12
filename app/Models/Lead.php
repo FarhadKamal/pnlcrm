@@ -28,7 +28,9 @@ class Lead extends Model
         'need_top_approval',
         'payment_type',
         'accounts_clearance',
-        'is_outstanding'
+        'is_outstanding',
+        'sap_invoice',
+        'invoice_date'
     ];
 
     public function clientInfo(){

@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DealController;
+use App\Http\Controllers\DeliveryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\QuotationController;
@@ -66,6 +67,13 @@ Route::post('insertTransaction', [BookingController::class, 'storeTransaction'])
 Route::get('verifyTransaction/{leadId}', [BookingController::class, 'verifyTransaction'])->name('verifyTransaction')->middleware('auth');
 Route::post('verifiedTransaction', [BookingController::class, 'verifyTheTransaction'])->name('verifiedTransaction')->middleware('auth');
 Route::post('accountsClearance', [BookingController::class, 'accountsCleared'])->name('accountsClearance')->middleware('auth');
+
+Route::get('discountSetForm/{leadId}', [DeliveryController::class, 'discountSetForm'])->name('discountSetForm')->middleware('auth');
+Route::post('discountSetInsertion', [DeliveryController::class, 'insertDiscount'])->name('discountSetInsertion')->middleware('auth');
+Route::get('invoiceSetForm/{leadId}', [DeliveryController::class, 'invoiceSetForm'])->name('invoiceSetForm')->middleware('auth');
+Route::post('invoiceSetInsertion', [DeliveryController::class, 'insertInvoice'])->name('invoiceSetInsertion')->middleware('auth');
+Route::get('deliveryPage/{leadId}', [DeliveryController::class, 'deliveryPage'])->name('deliveryPage')->middleware('auth');
+
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');
 Route::post('users', [AdminController::class, 'storeUser'])->name('users')->middleware('auth');

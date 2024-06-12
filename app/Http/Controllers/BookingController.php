@@ -238,13 +238,21 @@ class BookingController extends Controller
                 $leadInfo->accounts_clearance = 1;
                 $leadInfo->is_outstanding = 1;
                 $leadInfo->current_stage = 'DELIVERY';
-                $leadInfo->current_subStage = 'READY';
+                if ($leadInfo->need_discount_approval != 0) {
+                    $leadInfo->current_subStage = 'DISCOUNTSET';
+                } else {
+                    $leadInfo->current_subStage = 'INVOICE';
+                }
                 $leadInfo->save();
             } else {
                 $leadInfo = Lead::find($leadId);
                 $leadInfo->accounts_clearance = 1;
                 $leadInfo->current_stage = 'DELIVERY';
-                $leadInfo->current_subStage = 'READY';
+                if ($leadInfo->need_discount_approval != 0) {
+                    $leadInfo->current_subStage = 'DISCOUNTSET';
+                } else {
+                    $leadInfo->current_subStage = 'INVOICE';
+                }
                 $leadInfo->save();
             }
             $log_data = array(
@@ -252,7 +260,7 @@ class BookingController extends Controller
                 'log_stage' => 'BOOKING',
                 'log_task' => 'Accounts Cleared. Remarks: ' . $request->clearRemark . '',
                 'log_by' => Auth()->user()->id,
-                'log_next' => 'Ready for delivery'
+                'log_next' => 'SAP Discount/SAP Invoice'
             );
             SalesLog::create($log_data);
             return redirect()->route('home');

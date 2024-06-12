@@ -15,7 +15,7 @@
 
 <div class="container-fluid mb-3 mt-2">
     <center>
-        <h4 class="mt-3">Credit Set Form</h4>
+        <h4 class="mt-3">Invoice Set Form</h4>
     </center>
     <hr>
     <div class="row container-fluid">
@@ -69,16 +69,16 @@
             </div>
         </div>
         <div class="col-md-7 col-sm-7">
-            <h6 class="text-center"><kbd>SAP Credit Information</kbd></h6>
-            <form action="{{ route('creditSetInsertion') }}" method="POST" id="sapCreationForm">
+            <h6 class="text-center"><kbd>SAP Discount Information</kbd></h6>
+            <form action="{{ route('invoiceSetInsertion') }}" method="POST" id="invoiceSetInsertionForm">
                 @csrf
                 <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
-                <label for="" class="fs-08rem">SAP Credit Limit</label>
-                <input type="number" class="form-control fs-08rem p-1" name="creditLimit" required>
-                <label for="" class="fs-08rem">SAP Credit Remarks</label><br>
-                <textarea name="creditLimitRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
+                <label for="" class="fs-08rem">SAP Invoice ID</label>
+                <input type="number" name="invoiceID" id="invoiceID" class="form-control fs-08rem p-1" required>
+                <label for="" class="fs-08rem">SAP Invoice Remarks</label><br>
+                <textarea name="invoiceRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
                 <br>
-                <center><button class="btn btn-sm btn-darkblue">Submit Credit Form</button></center>
+                <center><button class="btn btn-sm btn-darkblue">Submit Discount</button></center>
             </form>
             <br>
             <table class="table table-bordered fs-08rem">
@@ -127,7 +127,7 @@
 </div>
 
 <script>
-    $('#sapCreationForm').submit(function(e, params) {
+    $('#invoiceSetInsertionForm').submit(function(e, params) {
         var localParams = params || {};
 
         if (!localParams.send) {
@@ -140,7 +140,7 @@
             icon: "warning",
             showDenyButton: false,
             showCancelButton: true,
-            confirmButtonText: 'Confirm transaction',
+            confirmButtonText: 'Confirm Submission',
             // denyButtonText: `Don't save`,
         }).then((result) => {
             /* Read more about isConfirmed, isDenied below */

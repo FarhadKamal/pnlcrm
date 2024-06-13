@@ -64,31 +64,28 @@ class DeliveryController extends Controller
         $data = $request->json()->all();
         $inputSAP = $data['inputSAP'];
 
+        if (date('m') > 6)
+            $zyear = date('Y');
+        else $zyear = date('Y') - 1;
 
-        if(date('m')>6)
-        $zyear=date('Y');
-        else $zyear=date('Y')-1;
+        $y1 = substr($zyear, -2);
+        $y2 = $y1 + 1;
 
-        $y1=substr($zyear, -2);
-        $y2=$y1+1;
-
-        $fyear= $y1."-".$y2;
+        $fyear = $y1 . "-" . $y2;
 
         // URL of the API endpoint
-        $url = 'http://103.4.66.107:8989/api/verify_invoice.php?code='+$inputSAP+'&year='+$fyear;
+        $url = 'http://103.4.66.107:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
 
         // Make the request and get the response
         $rtnvalue = file_get_contents($url);
 
-        //Check Here
-
-        if ($rtnvalue==1) {
+        if ($rtnvalue == 1) {
             $response = [
-                'status' => 'gotSAP',
+                'status' => 'gotSAP'
             ];
         } else {
             $response = [
-                'status' => 'notSAP',
+                'status' => 'notSAP'
             ];
         }
         return response()->json($response);
@@ -117,7 +114,7 @@ class DeliveryController extends Controller
                 'log_stage' => 'DELIVERY',
                 'log_task' => 'New SAP Invoice ID: ' . $request->invoiceID . ' Generated. Remarks: ' . $request->invoiceRemark . '',
                 'log_by' => Auth()->user()->id,
-                'log_next' => 'SAP Invoice Generation'
+                'log_next' => 'Delivery Information Submission'
             );
             SalesLog::create($log_data);
             return redirect()->route('home');
@@ -131,5 +128,59 @@ class DeliveryController extends Controller
         $data['pumpInfo'] = PumpChoice::where(['lead_id' => $leadId])->get();
         $data['quotationInfo'] = Quotation::orderBy('id', 'desc')->take(1)->where(['lead_id' => $leadId, 'is_accept' => 1])->get();
         return view('sales.deliveryPage', $data);
+    }
+
+    public function storeDeliveryInformation(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required|numeric',
+            'challanNo' => 'required|numeric',
+            'address' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            $leadInfo = Lead::find($request->leadId);
+            $leadInfo->delivery_challan = $request->challanNo;
+            $leadInfo->delivery_address = $request->address;
+            $leadInfo->save();
+
+            $log_data = array(
+                'lead_id' => $leadInfo->id,
+                'log_stage' => 'DELIVERY',
+                'log_task' => 'Delivery Information Submission.',
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'Delivery'
+            );
+            SalesLog::create($log_data);
+            return back()->with('success', 'Delivery Information stored');
+        }
+    }
+
+    public function storeDelivered(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            $leadInfo = Lead::find($request->leadId);
+            $leadInfo->current_stage = 'WON';
+            $leadInfo->current_subStage = '';
+            $leadInfo->save();
+
+            $log_data = array(
+                'lead_id' => $leadInfo->id,
+                'log_stage' => 'DELIVERY',
+                'log_task' => 'Delivered Item',
+                'log_by' => Auth()->user()->id,
+                'log_next' => ''
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('home');
+        }
     }
 }

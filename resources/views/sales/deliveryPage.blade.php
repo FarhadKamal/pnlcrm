@@ -117,7 +117,7 @@
                 <div class="row">
                     <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1"
                         onclick="printInvoice()">Invoice</button>
-                    <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1">Delivery Challan</button>
+                    <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1" onclick="printDeliveryChallan()">Delivery Challan</button>
                 </div>
             </div>
 
@@ -126,6 +126,7 @@
 </div>
 
 @include('sales.invoicePage')
+@include('sales.deliveryChallanPage')
 
 <script>
     $('#invoiceSetInsertionForm').submit(function(e, params) {
@@ -159,6 +160,23 @@
         // Check if the window opened successfully
         if (printWindow) {
             var printContents = document.getElementById("invoicePrint").innerHTML;
+            printWindow.document.write('<html><body>');
+            printWindow.document.write(printContents);
+            printWindow.document.write('</body></html>');
+
+            // Make sure to close the print window after printing
+            printWindow.document.close();
+            printWindow.print();
+        } else {
+            alert('Please allow pop-ups for this site to print');
+        }
+    }
+    function printDeliveryChallan() {
+        var printWindow = window.open('', '_blank');
+
+        // Check if the window opened successfully
+        if (printWindow) {
+            var printContents = document.getElementById("deliveryChallanPrint").innerHTML;
             printWindow.document.write('<html><body>');
             printWindow.document.write(printContents);
             printWindow.document.write('</body></html>');

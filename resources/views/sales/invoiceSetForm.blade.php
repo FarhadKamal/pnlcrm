@@ -127,9 +127,38 @@
 </div>
 
 <script>
-    $('#invoiceSetInsertionForm').submit(function(e, params) {
-        var localParams = params || {};
+    function sapInvoiceCheck() {
+        let inputSAP = $('#invoiceID').val();
+        const csrfToken = '<?php echo csrf_token(); ?>';
+        fetch('/checkSAPInvoice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify(inputSAP)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(json => {
+                if (json.status === 'gotSAP') {
+                    
+                } else {
 
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    $('#invoiceSetInsertionForm').submit(function(e, params) {
+        let checkSAPInvoice = sapInvoiceCheck();
+        var localParams = params || {};
         if (!localParams.send) {
             e.preventDefault();
         }

@@ -71,6 +71,7 @@ Route::post('accountsClearance', [BookingController::class, 'accountsCleared'])-
 Route::get('discountSetForm/{leadId}', [DeliveryController::class, 'discountSetForm'])->name('discountSetForm')->middleware('auth');
 Route::post('discountSetInsertion', [DeliveryController::class, 'insertDiscount'])->name('discountSetInsertion')->middleware('auth');
 Route::get('invoiceSetForm/{leadId}', [DeliveryController::class, 'invoiceSetForm'])->name('invoiceSetForm')->middleware('auth');
+Route::post('checkSAPInvoice', [DeliveryController::class, 'checkSAPInvoice'])->name('checkSAPInvoice')->middleware('auth');
 Route::post('invoiceSetInsertion', [DeliveryController::class, 'insertInvoice'])->name('invoiceSetInsertion')->middleware('auth');
 Route::get('deliveryPage/{leadId}', [DeliveryController::class, 'deliveryPage'])->name('deliveryPage')->middleware('auth');
 

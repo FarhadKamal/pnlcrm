@@ -35,6 +35,8 @@ class Leads2024 extends Migration
             $table->string('payment_type')->nullable();
             $table->integer('accounts_clearance')->default(0);
             $table->integer('is_outstanding')->default(0);
+            $table->integer('sap_invoice')->default(0);
+            $table->date('invoice_date')->nullable();
             $table->timestamps();
         });
     }

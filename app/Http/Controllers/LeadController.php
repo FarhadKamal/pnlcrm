@@ -78,6 +78,8 @@ class LeadController extends Controller
 
         $distName = LeadDistrict::find($request->clientDistrict);
         $distName = $distName->dist_name;
+        $divName = LeadDivision::find($request->clientDivision);
+        $divName = $distName->div_name;
 
         $insert_client_data = array(
             'customer_name' => $request->clientName,
@@ -85,7 +87,7 @@ class LeadController extends Controller
             'address' => $request->clientAddress,
             'zone' => $request->clientZone,
             'district' => $distName,
-            'division' => $request->clientDivision,
+            'division' => $divName,
             'tin' => $request->clientTIN,
             'bin' => $request->clientBIN,
             'trade_license' => $request->clientTL,

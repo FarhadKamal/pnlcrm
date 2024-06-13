@@ -59,6 +59,26 @@ class DeliveryController extends Controller
         return view('sales.invoiceSetForm', $data);
     }
 
+    public function checkSAPInvoice(Request $request)
+    {
+        $data = $request->json()->all();
+        $inputSAP = $data['inputSAP'];
+
+
+        //Check Here
+
+        if (true) {
+            $response = [
+                'status' => 'gotSAP',
+            ];
+        } else {
+            $response = [
+                'status' => 'notSAP',
+            ];
+        }
+        return response()->json($response);
+    }
+
     public function insertInvoice(Request $request)
     {
         $validator = Validator::make($request->all(), [

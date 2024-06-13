@@ -65,9 +65,24 @@ class DeliveryController extends Controller
         $inputSAP = $data['inputSAP'];
 
 
+        if(date('m')>6)
+        $zyear=date('Y');
+        else $zyear=date('Y')-1;
+
+        $y1=substr($zyear, -2);
+        $y2=$y1+1;
+
+        $fyear= $y1."-".$y2;
+
+        // URL of the API endpoint
+        $url = 'http://103.4.66.107:8989/api/verify_invoice.php?code='+$inputSAP+'&year='+$fyear;
+
+        // Make the request and get the response
+        $rtnvalue = file_get_contents($url);
+
         //Check Here
 
-        if (true) {
+        if ($rtnvalue==1) {
             $response = [
                 'status' => 'gotSAP',
             ];

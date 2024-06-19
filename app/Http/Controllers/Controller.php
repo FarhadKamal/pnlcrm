@@ -116,6 +116,12 @@ class Controller extends BaseController
         // Delivery Stage
         $data['deliveryStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DELIVERY')->get();
 
+        // WON Stage
+        $data['wonStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->get();
+       
+        // Lost Stage
+        $data['lostStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LOST')->get();
+
         return view('sales.dashboard', $data);
     }
 }

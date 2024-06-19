@@ -30,10 +30,13 @@ class Lead extends Model
         'accounts_clearance',
         'is_outstanding',
         'sap_invoice',
-        'invoice_date'
+        'invoice_date',
+        'delivery_challan',
+        'delivery_address'
     ];
 
-    public function clientInfo(){
+    public function clientInfo()
+    {
         return $this->hasOne(Customer::class, 'id', 'customer_id');
     }
 

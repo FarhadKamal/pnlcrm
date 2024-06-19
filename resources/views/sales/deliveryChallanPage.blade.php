@@ -42,6 +42,7 @@
             .leadInfo {
                 font-size: 18px;
                 margin-left: 20px;
+                font-size: 15px;
             }
         }
     </style>
@@ -50,7 +51,7 @@
     </div>
     <div
         style="display: flex; flex-direction:row; justify-content:space-between; margin-left: 20px;margin-right: 20px;margin-top: 15px;">
-        <p class="m-0 p-0">Delivery Challan No: {{ $quotationInfo[0]->quotation_ref }}<br>Invoice No:
+        <p class="m-0 p-0">Delivery Challan No: {{ $leadInfo->delivery_challan }}<br>Invoice No:
             {{ $leadInfo->sap_invoice }}</p>
         <p>Date : <?= date('jS F Y') ?></p>
     </div>
@@ -64,8 +65,7 @@
     <div class="leadInfo">
         <div style="display:flex; flex-direction:row; justify-content:space-evenly">
             <p>Customer: {{ $leadInfo->clientInfo->customer_name }}
-                <br>Delivery Address: {{ $leadInfo->clientInfo->address }},
-                {{ $leadInfo->clientInfo->district }}
+                <br>Delivery Address: {{ $leadInfo->delivery_address }}
             </p>
             <p>Contact Person: {{ $leadInfo->lead_person }}
                 <br>Phone: {{ $leadInfo->lead_phone }}
@@ -75,7 +75,7 @@
     </div>
 
     <div>
-        <table class="table table-bordered">
+        <table class="table table-bordered" style="font-size: 15px">
             <thead>
                 <tr>
                     <td>
@@ -100,7 +100,7 @@
                     <tr class="fs-07rem">
                         <td class="p-1 text-center" style="align-content: space-evenly; text-align:center">
                             {{ $sl }}</td>
-                        <td class="p-1"><b>Brand:</b> {{ $item->productInfo->brand_name }} <br> <b>Type:</b>
+                        <td class="p-1" style="font-size: 12px; line-height:initial"><b>Brand:</b> {{ $item->productInfo->brand_name }} <br> <b>Type:</b>
                             {{ $item->productInfo->itm_group }} <br> <b>Model:</b> {{ $item->productInfo->mat_name }}
                             <br> <b>Specification:</b> HP: {{ $item->productInfo->hp }}, KW:
                             {{ $item->productInfo->kw }}

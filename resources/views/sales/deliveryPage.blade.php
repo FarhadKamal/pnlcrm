@@ -114,14 +114,64 @@
 
             <div>
                 <h6 class="text-center"><kbd>Delivery Information</kbd></h6>
+                <div>
+                    <form action="{{ route('deliveryInformation') }}" method="POST" class="row mb-4">
+                        @csrf
+                        <input type="hidden" name="leadId" value="{{ $leadInfo->id }}" required>
+                        <?php
+                        if ($leadInfo->delivery_challan && $leadInfo->delivery_challan != '') {
+                            $challanNo = $leadInfo->delivery_challan;
+                        } else {
+                            $challanNo = '';
+                        }
+                        if ($leadInfo->delivery_address && $leadInfo->delivery_address != '') {
+                            $delAddress = $leadInfo->delivery_address;
+                        } else {
+                            $delAddress = '';
+                        }
+                        
+                        ?>
+                        <div class="col-md-3">
+                            <label for="" class="fs-07rem">Delivery Challan No</label>
+                            <input type="number" name="challanNo" class="form-control p-1 fs-07rem" min="0"
+                                value="{{ $challanNo }}" required>
+                        </div>
+                        <div class="col-md-7">
+                            <label for="" class="fs-07rem">Delivery Address</label>
+                            <input type="text" name="address" class="form-control p-1 fs-07rem"
+                                value=" {{ $delAddress }} " required>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-darkblue fs07rem mt-3">Save</button>
+                        </div>
+                    </form>
+                </div>
                 <div class="row">
+                    @if ($challanNo == '' || $delAddress == '')
+                        <center><small class="text-danger">Please save the delivery challan no and delivery
+                                address.</small></center>
+                    @endif
                     <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1"
                         onclick="printInvoice()">Invoice</button>
-                    <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1" onclick="printDeliveryChallan()">Delivery Challan</button>
+                    @if ($challanNo == '' || $delAddress == '')
+                        <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1" disabled>Delivery
+                            Challan</button>
+                    @else
+                        <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1"
+                            onclick="printDeliveryChallan()">Delivery Challan</button>
+                    @endif
                 </div>
             </div>
 
         </div>
+    </div>
+    <hr>
+    <div>
+        <form action="{{ route('delivered') }}" method="POST">
+            @csrf
+            <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+            <center><button class="btn btn-sm btn-darkblue fs-08rem">Delivered Item</button></center>
+        </form>
     </div>
 </div>
 
@@ -171,6 +221,7 @@
             alert('Please allow pop-ups for this site to print');
         }
     }
+
     function printDeliveryChallan() {
         var printWindow = window.open('', '_blank');
 

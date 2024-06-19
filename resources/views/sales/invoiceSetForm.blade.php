@@ -74,7 +74,8 @@
                 @csrf
                 <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
                 <label for="" class="fs-08rem">SAP Invoice ID</label>
-                <input type="number" name="invoiceID" id="invoiceID" class="form-control fs-08rem p-1" required>
+                <input type="number" name="invoiceID" id="invoiceID" class="form-control fs-08rem p-1" min="0"
+                    required>
                 <label for="" class="fs-08rem">SAP Invoice Remarks</label><br>
                 <textarea name="invoiceRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
                 <br>
@@ -127,57 +128,71 @@
 </div>
 
 <script>
-    function sapInvoiceCheck() {
+    async function sapInvoiceCheck() {
         let inputSAP = $('#invoiceID').val();
+        let filterData = {
+            inputSAP: inputSAP,
+        };
         const csrfToken = '<?php echo csrf_token(); ?>';
-        fetch('/checkSAPInvoice', {
+        try {
+            let response = await fetch('/checkSAPInvoice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
                 },
-                body: JSON.stringify(inputSAP)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(json => {
-                if (json.status === 'gotSAP') {
-                    
-                } else {
-
-                }
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
+                body: JSON.stringify(filterData)
             });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            let json = await response.json();
+
+            if (json.status === 'gotSAP') {
+                return true;
+            } else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: "Invoice ID not found in SAP",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+                return false;
+            }
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            return false;
+        }
     }
 
-    $('#invoiceSetInsertionForm').submit(function(e, params) {
-        let checkSAPInvoice = sapInvoiceCheck();
+    $('#invoiceSetInsertionForm').submit(async function(e, params) {
         var localParams = params || {};
+
         if (!localParams.send) {
             e.preventDefault();
         }
-        var form = e;
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Once submitted, you will not be able to undo it!",
-            icon: "warning",
-            showDenyButton: false,
-            showCancelButton: true,
-            confirmButtonText: 'Confirm Submission',
-            // denyButtonText: `Don't save`,
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                form.delegateTarget.submit()
-            } else {
-                Swal.fire('Something is wrong', '', 'info')
-            }
-        })
+
+        let checkSAPInvoice = await sapInvoiceCheck();
+        console.log(checkSAPInvoice);
+
+        if (checkSAPInvoice) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Once submitted, you will not be able to undo it!",
+                icon: "warning",
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Confirm Submission',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#invoiceSetInsertionForm').off('submit').submit();
+                } else {
+                    Swal.fire('Something is wrong', '', 'info');
+                }
+            });
+        }
     });
 </script>

@@ -27,6 +27,7 @@
 
             td {
                 border: 1px solid black !important;
+                font-size: 13px;
             }
 
             .signFooter {
@@ -40,36 +41,41 @@
             }
 
             .leadInfo {
-                font-size: 18px;
-                margin-left: 20px;
-                font-size: 15px;
+                font-size: 13px;
             }
         }
     </style>
-    <div>
+    {{-- <div>
         <img style="padding:0;margin:10px" src="{{ asset('images/system/logo.png') }}" alt="" height="50">
+    </div> --}}
+    <div style="margin-top: 120px"></div>
+    <div style="font-size: 20px; margin:0px; padding:0px;">
+        <center>
+            <p>Delivery Challan</p>
+        </center>
     </div>
+
     <div
         style="display: flex; flex-direction:row; justify-content:space-between; margin-left: 20px;margin-right: 20px;margin-top: 15px;">
-        <p class="m-0 p-0">Delivery Challan No: {{ $leadInfo->delivery_challan }}<br>Invoice No:
-            {{ $leadInfo->sap_invoice }}</p>
+        <p class="m-0 p-0">Delivery Challan No: {{ $leadInfo->delivery_challan }}</p>
         <p>Date : <?= date('jS F Y') ?></p>
     </div>
 
-    <div style="font-size: 30px; margin:0px; padding:0px;">
-        <center>
-            <h6>Delivery Challan</h6>
-        </center>
+    <div class="leadInfo">
+        <div style="margin-left: 20px">
+            <p>Customer: {{ $leadInfo->clientInfo->customer_name }}
+                <br>Delivery Address: {{ $leadInfo->delivery_address }}
+            </p>
+        </div>
     </div>
 
     <div class="leadInfo">
         <div style="display:flex; flex-direction:row; justify-content:space-evenly">
-            <p>Customer: {{ $leadInfo->clientInfo->customer_name }}
-                <br>Delivery Address: {{ $leadInfo->delivery_address }}
+            <p>Client PO Ref. No: {{ $quotationInfo[0]->quotation_po }}
+                <br>PO. Date: {{ date('d-M-Y', strtotime($quotationInfo[0]->quotation_po_date)) }}
             </p>
             <p>Contact Person: {{ $leadInfo->lead_person }}
-                <br>Phone: {{ $leadInfo->lead_phone }}
-                <br>Email: {{ $leadInfo->lead_email }}
+                <br>Contact No: {{ $leadInfo->lead_phone }}
             </p>
         </div>
     </div>
@@ -100,7 +106,8 @@
                     <tr class="fs-07rem">
                         <td class="p-1 text-center" style="align-content: space-evenly; text-align:center">
                             {{ $sl }}</td>
-                        <td class="p-1" style="font-size: 12px; line-height:initial"><b>Brand:</b> {{ $item->productInfo->brand_name }} <br> <b>Type:</b>
+                        <td class="p-1" style="font-size: 12px; line-height:initial"><b>Brand:</b>
+                            {{ $item->productInfo->brand_name }} <br> <b>Type:</b>
                             {{ $item->productInfo->itm_group }} <br> <b>Model:</b> {{ $item->productInfo->mat_name }}
                             <br> <b>Specification:</b> HP: {{ $item->productInfo->hp }}, KW:
                             {{ $item->productInfo->kw }}
@@ -111,9 +118,9 @@
                     <?php $sl++; ?>
                 @endforeach
                 <tr>
-                    <td class="p-1 fw-bold text-center" colspan="2">Total Quantity</td>
-                    <td class="p-1 text-end fw-bold" style="align-content: space-evenly;text-align:center">
-                        {{ $totalQuantity }}</td>
+                    <td class="p-1 fw-bold text-center" colspan="2"><b>Total Quantity</b></td>
+                    <td class="p-1 text-end fw-bold" style="align-content: space-evenly;text-align:center"><b>
+                        {{ $totalQuantity }}</b></td>
                 </tr>
             </tbody>
         </table>

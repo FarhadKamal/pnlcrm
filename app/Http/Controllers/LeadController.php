@@ -257,9 +257,9 @@ class LeadController extends Controller
         );
         SalesLog::create($log_data);
 
-        return $this->dealForm($leadId)->with('success', 'Corporate Client Generation Success');
+        // return $this->dealForm($leadId)->with('success', 'Corporate Client Generation Success');
         //  back()->with('success', 'Corporate Client Generation Success');
-        // return redirect()->route('dealPage/'.$leadId);
+        return redirect()->route('home');
     }
 
     public function dealForm($leadId)
@@ -273,5 +273,22 @@ class LeadController extends Controller
         // $data['allPumpHead'] = Items::distinct()->orderBy('head', 'ASC')->get('head');
 
         return view('sales.dealForm', $data);
+    }
+
+    public function updateLeadEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'QleadId' => 'required|numeric',
+            'lead_email' => 'required|email',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        } else {
+            $leadInfo = Lead::find($request->QleadId);
+            $leadInfo->lead_email = $request->lead_email;
+            $leadInfo->save();
+            return back()->with('success', 'Lead Email Updated');
+        }
     }
 }

@@ -21,6 +21,8 @@ class CreateQuotationsTable extends Migration
             $table->boolean('is_accept')->default(0);
             $table->string('accept_file')->nullable();
             $table->string('accept_description')->nullable();
+            $table->string('quotation_po')->nullable();
+            $table->date('quotation_po_date')->nullable();
             $table->boolean('is_return')->default(0);
             $table->string('return_reason')->nullable();
             $table->string('return_description')->nullable();

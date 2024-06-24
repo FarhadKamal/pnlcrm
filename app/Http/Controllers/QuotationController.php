@@ -35,15 +35,17 @@ class QuotationController extends Controller
     public function preQuotationApprove(Request $request)
     {
         $lead_id = $request->lead_id;
-        $approvePumpChoice = $request->approvePumpChoice;
         $set_discount = $request->set_discount;
 
-        foreach ($approvePumpChoice as $key => $id) {
-            $pumpInfo = PumpChoice::find($id);
-            $pumpInfo->discount_percentage = $set_discount[$key];
-            $pumpInfo->discount_price = $set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01;
-            $pumpInfo->net_price = (($pumpInfo->qty  * $pumpInfo->unit_price) - ($set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01));
-            $pumpInfo->save();
+        if (isset($request->approvePumpChoice)) {
+            $approvePumpChoice = $request->approvePumpChoice;
+            foreach ($approvePumpChoice as $key => $id) {
+                $pumpInfo = PumpChoice::find($id);
+                $pumpInfo->discount_percentage = $set_discount[$key];
+                $pumpInfo->discount_price = $set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01;
+                $pumpInfo->net_price = (($pumpInfo->qty  * $pumpInfo->unit_price) - ($set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01));
+                $pumpInfo->save();
+            }
         }
 
         $need_discount_approval = 1;
@@ -82,15 +84,18 @@ class QuotationController extends Controller
     public function topQuotationApprove(Request $request)
     {
         $lead_id = $request->lead_id;
-        $approvePumpChoice = $request->approvePumpChoice;
         $set_discount = $request->set_discount;
 
-        foreach ($approvePumpChoice as $key => $id) {
-            $pumpInfo = PumpChoice::find($id);
-            $pumpInfo->discount_percentage = $set_discount[$key];
-            $pumpInfo->discount_price = $set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01;
-            $pumpInfo->net_price = (($pumpInfo->qty  * $pumpInfo->unit_price) - ($set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01));
-            $pumpInfo->save();
+        if (isset($request->approvePumpChoice)) {
+            $approvePumpChoice = $request->approvePumpChoice;
+
+            foreach ($approvePumpChoice as $key => $id) {
+                $pumpInfo = PumpChoice::find($id);
+                $pumpInfo->discount_percentage = $set_discount[$key];
+                $pumpInfo->discount_price = $set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01;
+                $pumpInfo->net_price = (($pumpInfo->qty  * $pumpInfo->unit_price) - ($set_discount[$key] * $pumpInfo->qty  * $pumpInfo->unit_price * 0.01));
+                $pumpInfo->save();
+            }
         }
 
         $leadInfo = Lead::find($lead_id);
@@ -183,7 +188,9 @@ class QuotationController extends Controller
             'quotationFeedbackModal_leadId' => 'required|numeric',
             'quotationFeedbackModal_QuotationId' => 'required|numeric',
             'quotationAcceptFile' => 'required|mimes:jpeg,jpg,png,pdf,doc,docx',
-            'quotationAcceptFeedback' => 'required'
+            'quotationAcceptFeedback' => 'required',
+            'quotationPO' => 'required',
+            'quotationPODate' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -200,6 +207,7 @@ class QuotationController extends Controller
                 $lead->current_subStage = 'SAPIDSET';
             } else {
                 if ($lead->payment_type == 'Cash') {
+                    //Discount Set Check
                     $lead->current_subStage = 'TRANSACTION';
                 } elseif ($lead->payment_type == 'Credit') {
                     $lead->current_subStage = 'CREDITSET';
@@ -214,10 +222,13 @@ class QuotationController extends Controller
 
             //Quotation Table Data Update
             $quotationId = $request->quotationFeedbackModal_QuotationId;
+            $poDate = date('Y-m-d', strtotime($request->quotationPODate));
             $update_data = array(
                 'is_accept' => 1,
                 'accept_file' => $newFileName,
                 'accept_description' => $request->quotationAcceptFeedback,
+                'quotation_po' => $request->quotationPO,
+                'quotation_po_date' => $poDate,
                 'return_reason' => ' ',
                 'return_description' => ' '
             );

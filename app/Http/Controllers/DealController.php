@@ -68,6 +68,20 @@ class DealController extends Controller
         return back()->with('success', 'Requirement saved success');
     }
 
+    public function SAPstockDetails($productId)
+    {
+        $ch = curl_init();
+        $url = "http://103.4.66.107:8989/api/get_item_stock.php?code=" . $productId . "";
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+        $data['responseData'] = json_decode($response);
+
+        return view('sales.report.sapStockReport', $data);
+    }
+
     public function deleteDealRequirement(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -168,6 +182,7 @@ class DealController extends Controller
                 // Create a new object with pump information and price/stock data
                 $pumpData = [
                     'id' => $item->id,
+                    'new_code' => $item->new_code,
                     'mat_name' => $item->mat_name,
                     'brand' => $item->brand_name,
                     'hp' => $item->hp,
@@ -274,7 +289,7 @@ class DealController extends Controller
         $leadInfo->current_stage = 'QUOTATION';
         if ($need_credit_approval || $need_discount_approval) {
             $leadInfo->current_subStage = 'APPROVE';
-        }else{
+        } else {
             $leadInfo->current_subStage = 'SUBMIT';
         }
         $leadInfo->save();

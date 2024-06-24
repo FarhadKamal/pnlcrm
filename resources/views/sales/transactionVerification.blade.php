@@ -83,7 +83,11 @@
                         <td class="p-1">{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</td>
                         <?php $totalPaid = 0; ?>
                         @foreach ($transactionInfo as $item)
-                            <?php $totalPaid = $totalPaid + $item->pay_amount; ?>
+                            <?php
+                            if ($item->is_verified == 1) {
+                                $totalPaid = $totalPaid + $item->pay_amount;
+                            }
+                            ?>
                         @endforeach
                         <td class="p-1">{{ number_format((float) $totalPaid, 2, '.', ',') }}</td>
                         <td class="p-1">{{ number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') }}</td>
@@ -148,7 +152,7 @@
             <label for="" class="fs-08rem">Clearance Remarks</label>
             <textarea name="clearRemark" id="clearRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
             @if ($leadInfo->accounts_clearance == 0)
-            <br>
+                <br>
                 <center><button class="btn btn-sm btn-darkblue">Proceed Accounts Clearance</button></center>
             @endif
         </form>

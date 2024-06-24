@@ -79,7 +79,7 @@
                 <label for="" class="fs-08rem">SAP Invoice Remarks</label><br>
                 <textarea name="invoiceRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
                 <br>
-                <center><button class="btn btn-sm btn-darkblue">Submit Discount</button></center>
+                <center><button class="btn btn-sm btn-darkblue">Submit Invoice</button></center>
             </form>
             <br>
             <table class="table table-bordered fs-08rem">

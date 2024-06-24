@@ -140,7 +140,7 @@
                     }
 
                     fetchData.forEach(element => {
-
+                        let itemCode = element.new_code;
                         let html = '<tr>';
                         html += '<td class="d-none">' + element.id + '</td>';
                         html += '<td class="p-1">' + element.mat_name + '</td>';
@@ -151,7 +151,11 @@
                         if (element.stock == null) {
                             html += '<td class="p-1 text-end totalPrice">0</td>';
                         } else {
-                            html += '<td class="p-1 text-end totalPrice">' + element.stock + '</td>';
+                            let stockURL = '<?= url(''); ?>/SAPstockDetails/'+itemCode;
+                            
+                            html +=
+                                '<td class="p-1 text-end totalPrice"><a href="'+stockURL+'" target="_blank">' +
+                                element.stock + '</a></td>';
                         }
                         html +=
                             '<td class="p-1 text-center"><input type="number" class="text-center" style="width:5rem" value="1" min="1" onchange="updatePrice(this)" onkeyup="updatePrice(this)"></td>';

@@ -205,6 +205,10 @@
 
             #section-to-print,
             #section-to-print * {
+                /* visibility: visible; */
+            }
+
+            #quotationLayoutTable * {
                 visibility: visible;
             }
 
@@ -217,7 +221,7 @@
         <img style="padding:0;margin:0;" src="{{ asset('images/system/logo.png') }}" alt="" height="50">
     </div>
 
-    <table style="width: 100%">
+    <table style="width: 100%" id="quotationLayoutTable">
         <thead>
             <tr>
                 <td>
@@ -439,4 +443,3 @@
         </div>
     </div>
 </div>
-

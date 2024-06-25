@@ -119,18 +119,21 @@
 
 @if ($leadInfo->current_subStage == 'SUBMIT')
     {{-- Submit To Customer  --}}
-    {{-- <form action="" class="m-3"> --}}
-        @csrf
-        <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
-        @if ($leadInfo->lead_email)
-            <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button></center>
-        @else
-            <div class="bg-danger text-white p-2 text-center">
-                <h5 class="">No Email Found For The Client. Please Add An Email First.</h5>
+    <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
+    @if ($leadInfo->lead_email)
+        <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button></center>
+    @else
+        <div class="bg-danger text-white p-2 text-center">
+            <h5 class="">No Email Found For The Client. Please Add An Email First.</h5>
+            <form action="{{ route('updateLeadEmail') }}" class="m-3">
+                @csrf
+                <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
+                <label for="">Email</label>
+                <input type="email" name="lead_email" id="lead_email" class="border-0 rounded fs-08rem p-1" required>
                 <button class="btn btn-darkblue btn-sm">Add Email</button>
-            </div>
-        @endif
-    {{-- </form> --}}
+            </form>
+        </div>
+    @endif
 @endif
 
 
@@ -225,7 +228,7 @@
                     },
                     success: function(data) {
                         // console.log(data);
-                        window.location.href = "/sales";
+                        window.location.href = "/home";
                     },
                     error: function(data) {
                         // console.log(data)

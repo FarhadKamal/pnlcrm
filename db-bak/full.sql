@@ -74,11 +74,11 @@ CREATE TABLE `departments` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `departments` */
 
-insert  into `departments`(`id`,`dept_name`,`is_active`,`created_at`,`updated_at`) values (1,'IT',1,NULL,NULL);
+insert  into `departments`(`id`,`dept_name`,`is_active`,`created_at`,`updated_at`) values (1,'IT',1,NULL,NULL),(2,'Management',1,'2024-06-19 15:03:33','2024-06-19 15:03:33'),(3,'Accounts',1,'2024-06-19 15:03:46','2024-06-19 15:03:46');
 
 /*Table structure for table `designations` */
 
@@ -91,11 +91,11 @@ CREATE TABLE `designations` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `designations` */
 
-insert  into `designations`(`id`,`desg_name`,`is_active`,`created_at`,`updated_at`) values (1,'Admin',1,NULL,NULL);
+insert  into `designations`(`id`,`desg_name`,`is_active`,`created_at`,`updated_at`) values (1,'Admin',1,NULL,NULL),(2,'Head Of Sales',1,'2024-06-19 15:01:18','2024-06-19 15:01:36');
 
 /*Table structure for table `items` */
 
@@ -164,11 +164,11 @@ CREATE TABLE `lead_districts` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `lead_districts` */
 
-insert  into `lead_districts`(`id`,`dist_name`,`is_active`,`created_at`,`updated_at`) values (1,'Chattogram',1,NULL,NULL),(2,'Feni',1,NULL,NULL),(3,'Coxs Bazar',1,NULL,NULL),(4,'Dhaka',1,NULL,NULL);
+insert  into `lead_districts`(`id`,`dist_name`,`is_active`,`created_at`,`updated_at`) values (1,'Chattogram',1,NULL,NULL),(2,'Feni',1,NULL,NULL),(3,'Coxs Bazar',1,NULL,NULL),(4,'Dhaka',1,NULL,NULL),(5,'Barishal',1,'2024-06-19 15:29:30','2024-06-19 15:29:39'),(6,'Comilla',1,'2024-06-19 15:30:00','2024-06-19 15:30:05');
 
 /*Table structure for table `lead_divisions` */
 
@@ -181,11 +181,11 @@ CREATE TABLE `lead_divisions` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `lead_divisions` */
 
-insert  into `lead_divisions`(`id`,`div_name`,`is_active`,`created_at`,`updated_at`) values (1,'Chattogram',1,NULL,NULL),(2,'Dhaka',1,NULL,NULL);
+insert  into `lead_divisions`(`id`,`div_name`,`is_active`,`created_at`,`updated_at`) values (1,'Chattogram',1,NULL,NULL),(2,'Dhaka',1,NULL,NULL),(3,'Comilla',1,'2024-06-19 16:44:56','2024-06-19 16:45:13');
 
 /*Table structure for table `lead_sources` */
 
@@ -198,11 +198,11 @@ CREATE TABLE `lead_sources` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `lead_sources` */
 
-insert  into `lead_sources`(`id`,`source_name`,`is_active`,`created_at`,`updated_at`) values (1,'Phone Call',1,NULL,NULL),(2,'Physical Visit',1,NULL,NULL),(3,'Facebook',1,NULL,NULL);
+insert  into `lead_sources`(`id`,`source_name`,`is_active`,`created_at`,`updated_at`) values (1,'Phone Call',1,NULL,NULL),(2,'Physical Visit',1,NULL,NULL),(3,'Facebook',1,NULL,NULL),(4,'Newspaper',1,'2024-06-19 16:48:04','2024-06-19 16:48:10');
 
 /*Table structure for table `lead_zones` */
 
@@ -249,14 +249,16 @@ CREATE TABLE `leads` (
   `is_outstanding` int(11) DEFAULT '0',
   `sap_invoice` int(11) DEFAULT '0',
   `invoice_date` date DEFAULT NULL,
+  `delivery_challan` int(11) DEFAULT NULL,
+  `delivery_address` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `leads` */
 
-insert  into `leads`(`id`,`customer_id`,`created_by`,`lead_source`,`product_requirement`,`lead_person`,`lead_email`,`lead_phone`,`current_stage`,`current_subStage`,`is_return`,`is_won`,`is_lost`,`lost_reason`,`lost_description`,`need_credit_approval`,`need_discount_approval`,`need_top_approval`,`payment_type`,`accounts_clearance`,`is_outstanding`,`sap_invoice`,`invoice_date`,`created_at`,`updated_at`) values (13,260051,1,'1','ABCD','Mr. Kamal','irfanul.kalam@az-neo.com','01844556655','DELIVERY','READY',0,0,0,NULL,NULL,2,2,2,'Credit',1,0,2214596,NULL,'2024-06-09 11:27:50','2024-06-12 14:29:23'),(12,220010,1,'1','AAS','Mr. Kamal','irfanul.kalam@az-neo.com','01844556655','QUOTATION','SUBMIT',0,0,0,NULL,NULL,2,2,2,'Credit',0,0,0,NULL,'2024-06-06 13:33:24','2024-06-10 11:41:46'),(11,220007,1,'1','ad','Mr. Kamal','irfanul.kalam@az-neo.com','01844556655','QUOTATION','SUBMIT',0,0,0,NULL,NULL,0,0,0,'Cash',0,0,0,NULL,'2024-06-06 12:36:13','2024-06-06 12:36:39'),(10,220009,1,'2','ASd','Mr. Kamal','irfanul.kalam@az-neo.com','01844556655','QUOTATION','APPROVE',0,0,0,NULL,NULL,1,0,0,'Credit',0,0,0,NULL,'2024-06-05 16:15:14','2024-06-06 12:19:00'),(14,220010,1,'1','sdf','Ananta Jalil','irfanul.kalam@az-neo.com','01844556655','DELIVERY','READY',0,0,0,NULL,NULL,0,0,0,'Cash',1,1,0,NULL,'2024-06-10 12:21:55','2024-06-11 17:53:26');
+insert  into `leads`(`id`,`customer_id`,`created_by`,`lead_source`,`product_requirement`,`lead_person`,`lead_email`,`lead_phone`,`current_stage`,`current_subStage`,`is_return`,`is_won`,`is_lost`,`lost_reason`,`lost_description`,`need_credit_approval`,`need_discount_approval`,`need_top_approval`,`payment_type`,`accounts_clearance`,`is_outstanding`,`sap_invoice`,`invoice_date`,`delivery_challan`,`delivery_address`,`created_at`,`updated_at`) values (1,220009,1,'1','normal credit','Mr Kamal','irfanul.kalam@az-neo.com','01844556655','WON','',0,0,0,NULL,NULL,2,1,0,'Credit',1,1,99700292,'2024-06-24',5235,'23523','2024-06-24 13:57:42','2024-06-24 14:26:56'),(2,220005,1,'2','credit extra discount','Mr Kamal','irfanul.kalam@az-neo.com','01844556655','DELIVERY','READY',0,0,0,NULL,NULL,2,2,0,'Credit',1,1,99700292,'2024-06-24',NULL,NULL,'2024-06-24 13:58:41','2024-06-24 14:26:14'),(3,220007,1,'3','cash normal','Mr Kamal','irfanul.kalam@az-neo.com','01844556655','DELIVERY','READY',0,0,0,NULL,NULL,0,0,0,'Cash',1,1,99700292,'2024-06-24',NULL,NULL,'2024-06-24 13:59:03','2024-06-24 14:26:22'),(4,220010,1,'4','cash extra discount','Mr Kamal','irfanul.kalam@az-neo.com','01844556655','DELIVERY','INVOICE',0,0,0,NULL,NULL,0,2,2,'Cash',1,1,0,NULL,NULL,NULL,'2024-06-24 13:59:27','2024-06-24 14:24:49'),(5,220007,1,'1','ok','Mr Kamal',NULL,'01844556655','DEAL','FORM',0,0,0,NULL,NULL,0,0,0,NULL,0,0,0,NULL,NULL,NULL,'2024-06-24 16:31:45','2024-06-24 16:31:45');
 
 /*Table structure for table `migrations` */
 
@@ -286,11 +288,11 @@ CREATE TABLE `permissions` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `permissions` */
 
-insert  into `permissions`(`id`,`permission_name`,`permission_code`,`permission_description`,`is_active`,`created_at`,`updated_at`) values (1,'Lead Creation Form','leadForm','View new lead creation form',1,'2024-06-06 14:54:12','2024-06-06 14:54:12'),(2,'Sales Person','salesPerson','The user who has permission can handle leads',1,'2024-06-09 11:24:23','2024-06-09 11:24:23'),(3,'Deal Approve','dealApprove','The function is used to approve a deal for credit and discount.',1,'2024-06-09 17:53:57','2024-06-09 17:53:57'),(4,'Deal Top Management Approve','dealTopApprove','The function is used to approve a deal for discount',1,'2024-06-09 17:54:57','2024-06-09 17:54:57'),(5,'SAP ID Creation','sapIDCreation','The permission is used to create new SAP id for new lead for enlisting as a customer',1,'2024-06-11 12:51:47','2024-06-11 12:51:47'),(6,'SAP Credit Set','sapCreditSet','The permission is used to set credit limit',1,'2024-06-11 12:54:15','2024-06-11 12:54:15'),(7,'Verify Transaction','verifyTransaction','The permission is used to verify a cash transaction',1,'2024-06-11 13:19:05','2024-06-11 13:19:05'),(8,'Accounts Clearance','accountsClearance','The permission is used to clear accounts department on cash transaction',1,'2024-06-12 12:56:41','2024-06-12 12:56:41'),(9,'SAP Discount Set','sapDiscountSet','The permission is used to set discount on SAP',1,'2024-06-12 13:05:00','2024-06-12 13:05:00'),(10,'SAP Invoice Generation','sapInvoiceSet','The permission is used to SAP invoice generation code',1,'2024-06-12 14:02:39','2024-06-12 14:02:39');
+insert  into `permissions`(`id`,`permission_name`,`permission_code`,`permission_description`,`is_active`,`created_at`,`updated_at`) values (1,'Lead Creation Form','leadForm','View new lead creation form',1,'2024-06-06 14:54:12','2024-06-06 14:54:12'),(2,'Sales Person','salesPerson','The user who has permission can handle leads',1,'2024-06-09 11:24:23','2024-06-09 11:24:23'),(3,'Deal Approve','dealApprove','The function is used to approve a deal for credit and discount.',1,'2024-06-09 17:53:57','2024-06-09 17:53:57'),(4,'Deal Top Management Approve','dealTopApprove','The function is used to approve a deal for discount',1,'2024-06-09 17:54:57','2024-06-09 17:54:57'),(5,'SAP ID Creation','sapIDCreation','The permission is used to create new SAP id for new lead for enlisting as a customer',1,'2024-06-11 12:51:47','2024-06-11 12:51:47'),(6,'SAP Credit Set','sapCreditSet','The permission is used to set credit limit',1,'2024-06-11 12:54:15','2024-06-11 12:54:15'),(7,'Verify Transaction','verifyTransaction','The permission is used to verify a cash transaction',1,'2024-06-11 13:19:05','2024-06-11 13:19:05'),(8,'Accounts Clearance','accountsClearance','The permission is used to clear accounts department on cash transaction',1,'2024-06-12 12:56:41','2024-06-12 12:56:41'),(9,'SAP Discount Set','sapDiscountSet','The permission is used to set discount on SAP',1,'2024-06-12 13:05:00','2024-06-12 13:05:00'),(10,'SAP Invoice Generation','sapInvoiceSet','The permission is used to SAP invoice generation code',1,'2024-06-12 14:02:39','2024-06-12 14:02:39'),(11,'Lead Stage All','leadStageAll','The permission is used to view all lead stage information',1,'2024-06-19 11:58:32','2024-06-19 11:58:32'),(12,'Lead Assign Form','leadAssign','The permission is used to assign a salesperson to a lead',1,'2024-06-19 11:59:18','2024-06-19 11:59:18'),(13,'Deal Stage All','dealStageAll','The permission is used to view all deal stage information',1,'2024-06-19 11:59:56','2024-06-19 11:59:56'),(14,'Lead Stage Own','leadStage','The permission is used to view own lead stage information',1,'2024-06-19 12:03:00','2024-06-19 12:03:00'),(15,'Deal Stage Own','dealStage','The permission is used to view own deal stage information',1,'2024-06-19 12:04:45','2024-06-19 12:04:45'),(16,'Quotation Stage Own','quotationStage','The permission is used to submit quotations to the customer',1,'2024-06-19 12:25:49','2024-06-19 12:25:49'),(17,'Quotation Stage All','quotationStageAll','The permission is used to view all quotation stage information',1,'2024-06-19 12:26:09','2024-06-19 12:26:09'),(18,'Booking Stage Own','bookingStage','The permission is used to view own booking stage lead information and transaction form',1,'2024-06-19 12:38:36','2024-06-19 12:38:36'),(19,'Booking Stage All','bookingStageAll','The permission is used to view all booking stage information & transaction list',1,'2024-06-19 12:38:57','2024-06-19 12:38:57'),(20,'Delivery Stage Own','deliveryStage','The permission is used to view own delivery stage information and delivered item',1,'2024-06-19 12:57:42','2024-06-19 12:57:42'),(21,'Delivery Stage All','deliveryStageAll','The permission is used to view all delivery stage information',1,'2024-06-19 12:58:02','2024-06-19 12:58:02'),(22,'Won Stage Own','wonStage','The permission is used to view own won stage information',1,'2024-06-19 13:09:56','2024-06-19 13:09:56'),(23,'Won Stage All','wonStageAll','The permission is used to view all won stage information',1,'2024-06-19 13:10:13','2024-06-19 13:10:13'),(24,'Lost Stage Own','lostStage','The permission is used to view own lost stage information',1,'2024-06-19 13:10:35','2024-06-19 13:10:35'),(25,'Lost Stage All','lostStageAll','The permission is used to view all lost stage information',1,'2024-06-19 13:10:52','2024-06-19 13:10:52');
 
 /*Table structure for table `personal_access_tokens` */
 
@@ -331,11 +333,11 @@ CREATE TABLE `pump_choices` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `pump_choices` */
 
-insert  into `pump_choices`(`id`,`lead_id`,`req_id`,`product_id`,`pump_head`,`unit_price`,`qty`,`discount_price`,`discount_percentage`,`net_price`,`created_at`,`updated_at`) values (2,1,2,190,0,23500,1,470,2,23030,NULL,NULL),(3,1,2,33,0,39500,1,1185,3,38315,NULL,NULL),(4,2,3,154,0,139000,1,4170,3,134830,NULL,NULL),(5,2,4,47,0,41500,1,0,0,41500,NULL,NULL),(6,2,4,109,0,60000,1,1200,2,58800,NULL,NULL),(8,10,6,232,0,14500,1,0,0,14500,NULL,NULL),(9,11,7,230,0,13500,1,270,2,13230,NULL,NULL),(10,12,8,232,0,14500,1,1776,12,12724,NULL,'2024-06-10 11:41:45'),(11,13,9,232,0,14500,1,2682.5,18.5,11817.5,NULL,'2024-06-10 12:02:34'),(12,13,9,53,0,232500,2,38362.5,8.25,426637.5,NULL,'2024-06-10 12:02:34'),(13,14,10,1,0,8400,1,0,0,8400,NULL,NULL),(14,14,10,5,0,41500,1,0,0,41500,NULL,NULL),(15,14,10,6,0,45500,1,0,0,45500,NULL,NULL);
+insert  into `pump_choices`(`id`,`lead_id`,`req_id`,`product_id`,`pump_head`,`unit_price`,`qty`,`discount_price`,`discount_percentage`,`net_price`,`created_at`,`updated_at`) values (1,1,1,1,0,8400,1,588,7,7812,NULL,NULL),(3,2,2,1,0,8400,1,630,7.5,7770,NULL,NULL),(4,2,2,3,0,23000,1,1610.0000000000002,7,21390,NULL,NULL),(5,3,3,1,0,8400,1,588,7,7812,NULL,NULL),(6,4,4,1,0,8400,1,848.4,10.1,7551.6,NULL,NULL),(7,4,4,3,0,23000,3,4140,6,64860,NULL,NULL);
 
 /*Table structure for table `quotations` */
 
@@ -349,17 +351,19 @@ CREATE TABLE `quotations` (
   `is_accept` tinyint(1) NOT NULL DEFAULT '0',
   `accept_file` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `accept_description` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `quotation_po` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `quotation_po_date` date DEFAULT NULL,
   `is_return` tinyint(1) NOT NULL DEFAULT '0',
   `return_reason` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `return_description` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `quotations` */
 
-insert  into `quotations`(`id`,`lead_id`,`quotation_ref`,`quotation_file`,`is_accept`,`accept_file`,`accept_description`,`is_return`,`return_reason`,`return_description`,`created_at`,`updated_at`) values (1,14,'REF: PNL/P/QUT/2024/0610001','1718015139.pdf',1,'1718085379.pdf','Accepted',0,' ',' ','2024-06-10 16:25:39','2024-06-11 11:56:19'),(2,13,'REF: PNL/P/QUT/2024/0611001','1718088569.pdf',1,'1718088593.pdf','OK',0,' ',' ','2024-06-11 12:49:29','2024-06-11 12:49:53');
+insert  into `quotations`(`id`,`lead_id`,`quotation_ref`,`quotation_file`,`is_accept`,`accept_file`,`accept_description`,`quotation_po`,`quotation_po_date`,`is_return`,`return_reason`,`return_description`,`created_at`,`updated_at`) values (1,1,'REF: PNL/P/QUT/2024/0624001','1719216664.pdf',1,'1719216844.pdf','4463634436','PO458','2024-06-24',0,' ',' ','2024-06-24 14:11:04','2024-06-24 14:14:04'),(2,2,'REF: PNL/P/QUT/2024/0624002','1719216795.pdf',1,'1719216870.pdf','rwrew','56345','2024-06-24',0,' ',' ','2024-06-24 14:13:15','2024-06-24 14:14:30'),(3,3,'REF: PNL/P/QUT/2024/0624003','1719216805.pdf',1,'1719216887.pdf','243','44534','2024-06-24',0,' ',' ','2024-06-24 14:13:25','2024-06-24 14:14:47'),(4,4,'REF: PNL/P/QUT/2024/0624004','1719216818.pdf',1,'1719216905.pdf','324234','234234','2024-06-24',0,' ',' ','2024-06-24 14:13:38','2024-06-24 14:15:05');
 
 /*Table structure for table `requirements` */
 
@@ -381,11 +385,11 @@ CREATE TABLE `requirements` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `requirements` */
 
-insert  into `requirements`(`id`,`lead_id`,`type_of_use`,`suction_type`,`suction_pipe_dia`,`delivery_head`,`delivery_pipe_dia`,`horizontal_pipe_length`,`source_of_water`,`water_consumption`,`liquid_type`,`pump_running_hour`,`created_at`,`updated_at`) values (2,1,'Industrial',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-04 16:48:35','2024-06-04 16:48:35'),(3,2,'Agricultural',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-05 13:42:35','2024-06-05 13:42:35'),(4,2,'Agricultural',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-05 13:42:52','2024-06-05 13:42:52'),(5,9,'Bore-hole',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-05 16:14:44','2024-06-05 16:14:44'),(6,10,'Bore-hole',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-05 16:15:17','2024-06-05 16:15:17'),(7,11,'Industrial',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-06 12:36:17','2024-06-06 12:36:17'),(8,12,'Industrial',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-06 13:33:28','2024-06-06 13:33:28'),(9,13,'Domestic',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-10 12:01:16','2024-06-10 12:01:16'),(10,14,'Bore-hole',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-10 12:21:59','2024-06-10 12:21:59');
+insert  into `requirements`(`id`,`lead_id`,`type_of_use`,`suction_type`,`suction_pipe_dia`,`delivery_head`,`delivery_pipe_dia`,`horizontal_pipe_length`,`source_of_water`,`water_consumption`,`liquid_type`,`pump_running_hour`,`created_at`,`updated_at`) values (1,1,'Domestic',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-24 13:59:56','2024-06-24 13:59:56'),(2,2,'Domestic',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-24 14:01:53','2024-06-24 14:01:53'),(3,3,'Domestic',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-24 14:03:46','2024-06-24 14:03:46'),(4,4,'Domestic',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-06-24 14:04:25','2024-06-24 14:04:25');
 
 /*Table structure for table `sales_logs` */
 
@@ -401,11 +405,11 @@ CREATE TABLE `sales_logs` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `sales_logs` */
 
-insert  into `sales_logs`(`id`,`lead_id`,`log_stage`,`log_task`,`log_by`,`log_next`,`created_at`,`updated_at`) values (1,1,'Lead','New Lead Creation',1,'Pump Selection','2024-06-04 16:45:13','2024-06-04 16:45:13'),(2,2,'Lead','New Lead Creation',1,'Pump Selection','2024-06-04 16:47:34','2024-06-04 16:47:34'),(3,1,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:07:28','2024-06-05 16:07:28'),(4,2,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:08:41','2024-06-05 16:08:41'),(5,3,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:08:53','2024-06-05 16:08:53'),(6,4,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:09:43','2024-06-05 16:09:43'),(7,5,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:10:32','2024-06-05 16:10:32'),(8,6,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:13:09','2024-06-05 16:13:09'),(9,7,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:14:20','2024-06-05 16:14:20'),(10,8,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:14:29','2024-06-05 16:14:29'),(11,9,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:14:39','2024-06-05 16:14:39'),(12,10,'Lead','New Lead Creation',1,'Pump Selection','2024-06-05 16:15:14','2024-06-05 16:15:14'),(13,11,'Lead','New Lead Creation',1,'Pump Selection','2024-06-06 12:36:13','2024-06-06 12:36:13'),(14,12,'Lead','New Lead Creation',1,'Pump Selection','2024-06-06 13:33:24','2024-06-06 13:33:24'),(15,13,'Lead','New Lead Creation',1,'Assign Sales Person','2024-06-09 11:27:50','2024-06-09 11:27:50'),(16,14,'Lead','New Lead Creation',1,'Pump Selection','2024-06-10 12:21:55','2024-06-10 12:21:55'),(17,14,'QUOTATION','Quotatation accept by lead. Description: Accepted.',1,'Booking Transaction','2024-06-11 11:56:19','2024-06-11 11:56:19'),(18,13,'QUOTATION','Quotatation accept by lead. Description: OK.',1,'Booking Transaction','2024-06-11 12:49:53','2024-06-11 12:49:53'),(19,14,'BOOKING','Transaction insertion of BDT 30000/-',1,'Verify Transaction','2024-06-11 13:51:02','2024-06-11 13:51:02'),(20,14,'BOOKING','Transaction verified of BDT 30000/-',5,'Transaction/Ready to deliver','2024-06-11 16:11:21','2024-06-11 16:11:21'),(21,13,'BOOKING','New SAP ID: 260051 set',1,'Credit Set/Transaction','2024-06-11 17:03:07','2024-06-11 17:03:07'),(22,13,'BOOKING','New Credit Limit: 400000 set. Remarks: Already have 50000 credits.',1,'Ready for delivery','2024-06-11 17:34:47','2024-06-11 17:34:47'),(23,14,'BOOKING','Accounts Cleared. Remarks: ',5,'Ready for delivery','2024-06-11 17:54:57','2024-06-11 17:54:57'),(24,13,'DELIVERY','New Discount Set. Remarks: Discount set',1,'SAP Invoice Generation','2024-06-12 13:58:10','2024-06-12 13:58:10'),(25,13,'DELIVERY','New SAP Invoice ID: 2214596 Generated. Remarks: ',1,'SAP Invoice Generation','2024-06-12 14:29:23','2024-06-12 14:29:23');
+insert  into `sales_logs`(`id`,`lead_id`,`log_stage`,`log_task`,`log_by`,`log_next`,`created_at`,`updated_at`) values (1,1,'Lead','New Lead Creation',1,'Pump Selection','2024-06-24 13:57:42','2024-06-24 13:57:42'),(2,2,'Lead','New Lead Creation',1,'Pump Selection','2024-06-24 13:58:41','2024-06-24 13:58:41'),(3,3,'Lead','New Lead Creation',1,'Pump Selection','2024-06-24 13:59:03','2024-06-24 13:59:03'),(4,4,'Lead','New Lead Creation',1,'Pump Selection','2024-06-24 13:59:27','2024-06-24 13:59:27'),(5,1,'QUOTATION','Quotatation accept by lead. Description: 4463634436.',1,'Booking Transaction','2024-06-24 14:14:04','2024-06-24 14:14:04'),(6,2,'QUOTATION','Quotatation accept by lead. Description: rwrew.',1,'Booking Transaction','2024-06-24 14:14:30','2024-06-24 14:14:30'),(7,3,'QUOTATION','Quotatation accept by lead. Description: 243.',1,'Booking Transaction','2024-06-24 14:14:47','2024-06-24 14:14:47'),(8,4,'QUOTATION','Quotatation accept by lead. Description: 324234.',1,'Booking Transaction','2024-06-24 14:15:05','2024-06-24 14:15:05'),(9,1,'BOOKING','New Credit Limit: 100000 set. Remarks: safdasf',1,'Ready for delivery','2024-06-24 14:15:38','2024-06-24 14:15:38'),(10,2,'BOOKING','New Credit Limit: 20000 set. Remarks: ytr',1,'Ready for delivery','2024-06-24 14:16:50','2024-06-24 14:16:50'),(11,3,'BOOKING','Accounts Cleared. Remarks: ',1,'SAP Discount/SAP Invoice','2024-06-24 14:21:06','2024-06-24 14:21:06'),(12,4,'BOOKING','Accounts Cleared. Remarks: ',1,'SAP Discount/SAP Invoice','2024-06-24 14:24:19','2024-06-24 14:24:19'),(13,1,'DELIVERY','New Discount Set. Remarks: r44r',1,'SAP Invoice Generation','2024-06-24 14:24:34','2024-06-24 14:24:34'),(14,2,'DELIVERY','New Discount Set. Remarks: r4r',1,'SAP Invoice Generation','2024-06-24 14:24:41','2024-06-24 14:24:41'),(15,4,'DELIVERY','New Discount Set. Remarks: r4r',1,'SAP Invoice Generation','2024-06-24 14:24:49','2024-06-24 14:24:49'),(16,1,'DELIVERY','New SAP Invoice ID: 99700292 Generated. Remarks: wrqw3rq3',1,'Delivery Information Submission','2024-06-24 14:26:05','2024-06-24 14:26:05'),(17,2,'DELIVERY','New SAP Invoice ID: 99700292 Generated. Remarks: ty4t4',1,'Delivery Information Submission','2024-06-24 14:26:14','2024-06-24 14:26:14'),(18,3,'DELIVERY','New SAP Invoice ID: 99700292 Generated. Remarks: 35',1,'Delivery Information Submission','2024-06-24 14:26:22','2024-06-24 14:26:22'),(19,1,'DELIVERY','Delivery Information Submission.',1,'Delivery','2024-06-24 14:26:27','2024-06-24 14:26:27'),(20,1,'DELIVERY','Delivered Item',1,'','2024-06-24 14:26:56','2024-06-24 14:26:56'),(21,5,'Lead','New Lead Creation',1,'Pump Selection','2024-06-24 16:31:45','2024-06-24 16:31:45');
 
 /*Table structure for table `system_locations` */
 
@@ -418,11 +422,11 @@ CREATE TABLE `system_locations` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `system_locations` */
 
-insert  into `system_locations`(`id`,`loc_name`,`is_active`,`created_at`,`updated_at`) values (1,'Chattogram',1,NULL,NULL);
+insert  into `system_locations`(`id`,`loc_name`,`is_active`,`created_at`,`updated_at`) values (1,'Chattogram',1,NULL,NULL),(2,'Dhaka',1,'2024-06-19 15:15:52','2024-06-19 15:16:13');
 
 /*Table structure for table `transactions` */
 
@@ -441,11 +445,9 @@ CREATE TABLE `transactions` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `transactions` */
-
-insert  into `transactions`(`id`,`lead_id`,`quotation_id`,`deposit_date`,`pay_amount`,`is_verified`,`verified_by`,`deposited_date`,`deposited_remarks`,`created_at`,`updated_at`) values (1,14,1,'2024-06-11',30000,1,5,'2024-06-11','OK','2024-06-11 13:51:02','2024-06-11 16:11:19');
 
 /*Table structure for table `user_permissions` */
 
@@ -458,11 +460,11 @@ CREATE TABLE `user_permissions` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=213 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `user_permissions` */
 
-insert  into `user_permissions`(`id`,`user_id`,`permission_id`,`created_at`,`updated_at`) values (24,1,9,'2024-06-12 14:03:13','2024-06-12 14:03:13'),(23,1,6,'2024-06-12 14:03:13','2024-06-12 14:03:13'),(9,5,2,'2024-06-11 14:13:59','2024-06-11 14:13:59'),(22,1,5,'2024-06-12 14:03:13','2024-06-12 14:03:13'),(10,5,7,'2024-06-11 14:13:59','2024-06-11 14:13:59'),(21,1,2,'2024-06-12 14:03:13','2024-06-12 14:03:13'),(20,1,1,'2024-06-12 14:03:13','2024-06-12 14:03:13'),(25,1,10,'2024-06-12 14:03:13','2024-06-12 14:03:13');
+insert  into `user_permissions`(`id`,`user_id`,`permission_id`,`created_at`,`updated_at`) values (212,1,24,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(211,1,22,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(9,5,2,'2024-06-11 14:13:59','2024-06-11 14:13:59'),(210,1,20,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(10,5,7,'2024-06-11 14:13:59','2024-06-11 14:13:59'),(209,1,19,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(208,1,16,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(207,1,15,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(206,1,14,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(205,1,13,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(204,1,12,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(203,1,11,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(202,1,10,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(201,1,9,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(200,1,8,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(199,1,7,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(198,1,6,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(197,1,5,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(196,1,4,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(195,1,3,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(194,1,2,'2024-06-24 14:19:56','2024-06-24 14:19:56'),(193,1,1,'2024-06-24 14:19:56','2024-06-24 14:19:56');
 
 /*Table structure for table `users` */
 

@@ -79,7 +79,7 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    {{-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
                             role="button" data-mdb-toggle="dropdown" aria-expanded="false">
                             Inventory
@@ -92,7 +92,7 @@
                                 <a class="dropdown-item" href="#">Menu 2</a>
                             </li>
                         </ul>
-                    </li>
+                    </li> --}}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
                             role="button" data-mdb-toggle="dropdown" aria-expanded="false">
@@ -100,7 +100,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                             <li>
-                                <a class="dropdown-item" href="#">Outstanding List</a>
+                                <a class="dropdown-item" href="{{ route('outstandings') }}">Outstanding List</a>
                             </li>
                         </ul>
                     </li>
@@ -110,13 +110,13 @@
                             Reports
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                            <li>
+                            {{-- <li>
                                 <a class="dropdown-item" href="#">Stock Report</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="#">Userwise Sales
                                     Report</a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
                     {{-- @if (Auth()->user()->is_admin == 1) --}}
@@ -126,33 +126,33 @@
                             Admin
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                            <li>
+                            {{-- <li>
                                 <a class="dropdown-item" href="#">Company List</a>
-                            </li>
+                            </li> --}}
                             <li>
                                 <a class="dropdown-item" href="{{ route('users') }}">User</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">Designation</a>
+                                <a class="dropdown-item" href="{{ route('designations') }}">Designation</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">Department</a>
+                                <a class="dropdown-item" href="{{ route('departments') }}">Department</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">System Location</a>
+                                <a class="dropdown-item" href="{{ route('locations') }}">System Location</a>
                             </li>
-                            <li>
+                            {{-- <li>
                                 <a class="dropdown-item" href="#">Zone</a>
+                            </li> --}}
+                            <li>
+                                <a class="dropdown-item" href="{{ route('districts') }}">District</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">District</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Division</a>
+                                <a class="dropdown-item" href="{{ route('divisions') }}">Division</a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">Lead Source</a>
+                                <a class="dropdown-item" href="{{ route('leadSources') }}">Lead Source</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('permissions') }}">Permissions</a>

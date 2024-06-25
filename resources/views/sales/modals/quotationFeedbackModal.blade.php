@@ -21,19 +21,28 @@
                         <form action="{{ route('quotationAccept') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-1">
-                                <label class="form-label m-0">Acceptence Attachment</label>
+                                <label class="form-label m-0">Acceptence Attachment <small class="text-danger">*</small></label>
                                 <input name="quotationAcceptFile" id="quotationAcceptFile" type="file"
                                     accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx"
-                                    class="form-control lh-sm" required>
+                                    class="form-control lh-sm fs-08rem" required>
                             </div>
                             <div class="mb-1">
-                                <label class="form-label m-0">Customer Feedback</label>
-                                <textarea name="quotationAcceptFeedback" id="quotationAcceptFeedback" class="form-control lh-sm" rows="5"
+                                <label class="form-label m-0">Purchase Order No <small class="text-danger">*</small></label>
+                                <input type="text" name="quotationPO" class="form-control lh-sm fs-08rem" required>
+                            </div>
+                            <div class="mb-1">
+                                <label class="form-label m-0">Purchase Order Date <small class="text-danger">*</small></label>
+                                <input type="text" name="quotationPODate"
+                                    class="form-control lh-sm flatpickr fs-08rem" required>
+                            </div>
+                            <div class="mb-1">
+                                <label class="form-label m-0">Customer Feedback <small class="text-danger">*</small></label>
+                                <textarea name="quotationAcceptFeedback" id="quotationAcceptFeedback" class="form-control lh-sm fs-08rem" rows="5"
                                     required></textarea>
                             </div>
                             <input type="text" name="quotationFeedbackModal_leadId"
                                 id="quotationFeedbackModal_leadId" hidden>
-                                <input type="text" name="quotationFeedbackModal_QuotationId"
+                            <input type="text" name="quotationFeedbackModal_QuotationId"
                                 id="quotationFeedbackModal_QuotationId" hidden>
                             <center><button class="btn btn-sm btn-darkblue">Accepted</button></center>
                         </form>
@@ -147,7 +156,7 @@
         document.getElementById("quotationAckRef2").innerText = splitRef[1];
         document.getElementById("ackLeadName").innerText = data.lead_person;
         document.getElementById("ackLeadClient").innerText = data.client_info.customer_name;
-       
+
         //Initial Form Fields End
 
         let leadId = data.id;
@@ -181,4 +190,16 @@
             alert('Please allow pop-ups for this site to print');
         }
     }
+</script>
+
+<script>
+    $(function() {
+        $(".flatpickr").datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd-M-yyyy',
+            minDate: 0,
+            defaultDate: "+1w",
+        }).datepicker('update', new Date());
+    });
 </script>

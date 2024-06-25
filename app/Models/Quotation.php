@@ -15,6 +15,8 @@ class Quotation extends Model
         'is_accept',
         'accept_file',
         'accept_description',
+        'quotation_po',
+        'quotation_po_date',
         'is_return',
         'return_reason',
         'return_description'

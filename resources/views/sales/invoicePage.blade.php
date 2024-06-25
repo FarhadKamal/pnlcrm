@@ -27,6 +27,7 @@
 
             td {
                 border: 1px solid black !important;
+                font-size: 13px;
             }
 
             .signFooter {
@@ -40,33 +41,30 @@
             }
 
             .leadInfo {
-                font-size: 18px;
-                margin-left: 20px;
+                font-size: 13px;
             }
         }
     </style>
-    <div>
-        <img style="padding:0;margin:10px" src="{{ asset('images/system/logo.png') }}" alt="" height="50">
-    </div>
-    <div
-        style="display: flex; flex-direction:row; justify-content:space-between; margin-left: 20px;margin-right: 20px;margin-top: 15px;">
-        <p class="m-0 p-0">Quotation Ref: {{ $quotationInfo[0]->quotation_ref }}<br>Invoice No: {{ $leadInfo->sap_invoice }}</p>
-        <p>Date : <?= date('jS F Y') ?></p>
-    </div>
-
-    <div style="font-size: 30px; margin:0px; padding:0px;">
+    <div style="margin-top: 120px"></div>
+    <div style="font-size: 20px; margin:0px; padding:0px;">
         <center>
-            <h6>INVOICE</h6>
+            <p>INVOICE</p>
         </center>
     </div>
 
     <div class="leadInfo">
-        <p>To
-            <br>{{ $leadInfo->clientInfo->customer_name }}
-            <br>{{ $leadInfo->clientInfo->group_name }}
-            <br>Phone: {{ $leadInfo->lead_phone }}
-            <br>Email: {{ $leadInfo->lead_email }}
-            <br>Address: {{ $leadInfo->clientInfo->address }}, {{ $leadInfo->clientInfo->district }}
+        <div style="display:flex; flex-direction:row; justify-content:space-evenly">
+            <p>
+                Customer: {{ $leadInfo->clientInfo->customer_name }}
+                <br>Address: {{ $leadInfo->clientInfo->address }}, {{ $leadInfo->clientInfo->district }}
+            </p>
+            <p>
+                Invoice No: {{ $leadInfo->sap_invoice }} <br>
+                Invoice Date: {{ date('d-M-Y', strtotime($leadInfo->invoice_date)) }} <br>
+                PO/PR Ref.: {{ $quotationInfo[0]->quotation_po }} <br>
+                PO/PR Date: {{ date('d-M-Y', strtotime($quotationInfo[0]->quotation_po_date)) }}
+            </p>
+        </div>
     </div>
 
     <div>
@@ -110,7 +108,8 @@
                     $totalDiscount = $totalDiscount + $item->discount_price;
                     $totalNetPrice = $totalNetPrice + $item->net_price; ?>
                     <tr class="fs-07rem">
-                        <td class="p-1 text-center" style="align-content: space-evenly; text-align:center">{{ $sl }}</td>
+                        <td class="p-1 text-center" style="align-content: space-evenly; text-align:center">
+                            {{ $sl }}</td>
                         <td class="p-1"><b>Brand:</b> {{ $item->productInfo->brand_name }} <br> <b>Type:</b>
                             {{ $item->productInfo->itm_group }} <br> <b>Model:</b> {{ $item->productInfo->mat_name }}
                             <br> <b>Specification:</b> HP: {{ $item->productInfo->hp }}, KW:
@@ -118,7 +117,8 @@
                         </td>
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">
                             {{ number_format((float) $item->unit_price, 2, '.', ',') }}</td>
-                        <td class="p-1 text-center" style="align-content: space-evenly;text-align:center">{{ $item->qty }}</td>
+                        <td class="p-1 text-center" style="align-content: space-evenly;text-align:center">
+                            {{ $item->qty }}</td>
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">
                             {{ number_format((float) $item->discount_price, 2, '.', ',') }}</td>
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">
@@ -127,9 +127,9 @@
                     <?php $sl++; ?>
                 @endforeach
                 <tr>
-                    <td class="p-1 fw-bold text-center" colspan="5">Total Net Pay</td>
+                    <td class="p-1 fw-bold text-center" colspan="5"><b>Total Net Pay</b></td>
                     <td class="p-1 text-end fw-bold" style="align-content: space-evenly;text-align:right">
-                        {{ number_format((float) $totalNetPrice, 2, '.', ',') }}</td>
+                        <b>{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</b></td>
                 </tr>
                 <tr>
                     <?php

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Customer;
 use App\Models\Lead;
 use App\Models\PumpChoice;
@@ -78,8 +79,13 @@ class BookingController extends Controller
         } else {
             $leadInfo = Lead::find($request->leadId);
             $leadInfo->accounts_clearance = 1;
+            $leadInfo->is_outstanding = 1;
             $leadInfo->current_stage = 'DELIVERY';
-            $leadInfo->current_subStage = 'READY';
+            if ($leadInfo->need_discount_approval != 0) {
+                $leadInfo->current_subStage = 'DISCOUNTSET';
+            } else {
+                $leadInfo->current_subStage = 'INVOICE';
+            }
             $leadInfo->save();
 
             $log_data = array(
@@ -261,6 +267,57 @@ class BookingController extends Controller
                 'log_task' => 'Accounts Cleared. Remarks: ' . $request->clearRemark . '',
                 'log_by' => Auth()->user()->id,
                 'log_next' => 'SAP Discount/SAP Invoice'
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('home');
+        }
+    }
+
+    public function outstandingList()
+    {
+        $userTag = Auth()->user()->assign_to;
+        if (Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction') || Helper::permissionCheck(Auth()->user()->id, 'bookingStageAll')) {
+            $data['outstandings'] = Lead::where(['is_outstanding' => 1])->get();
+        } else if (Helper::permissionCheck(Auth()->user()->id, 'bookingStage')) {
+            $data['outstandings'] = Lead::where(['is_outstanding' => 1])->whereHas('clientInfo', function ($query) {
+                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+            })->get();
+        }
+
+        return view('sales.outstandingList', $data);
+    }
+
+    public function outStandingTransaction($leadId)
+    {
+        $data['leadId'] = $leadId;
+        $data['leadInfo'] = Lead::find($leadId);
+        $data['quotationInfo'] = Quotation::orderBy('id', 'desc')->take(1)->where(['lead_id' => $leadId, 'is_accept' => 1])->get();
+        $data['pumpInfo'] = PumpChoice::where(['lead_id' => $leadId])->get();
+        $data['transactionInfo'] = Transaction::where(['lead_id' => $leadId])->get();
+        return view('sales.outStandingTransaction', $data);
+    }
+
+    public function outstandingsCleared(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lead_id' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            $leadId = $request->lead_id;
+            $leadInfo = Lead::find($leadId);
+            $leadInfo->is_outstanding = 0;
+            $leadInfo->save();
+
+            $log_data = array(
+                'lead_id' => $leadId,
+                'log_stage' => 'Outstanding',
+                'log_task' => 'Outstanding Cleared. Remarks: ' . $request->clearRemark . '',
+                'log_by' => Auth()->user()->id,
+                'log_next' => ''
             );
             SalesLog::create($log_data);
             return redirect()->route('home');

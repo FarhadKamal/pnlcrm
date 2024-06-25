@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\LeadDistrict;
+use App\Models\LeadDivision;
+use App\Models\LeadSource;
 use App\Models\Permission;
 use App\Models\SystemLocation;
 use App\Models\User;
@@ -233,4 +236,294 @@ class AdminController extends Controller
             return back()->with('success', 'User Permission Saved');
         }
     }
+
+    // Designation Operation Start 
+    public function designationList()
+    {
+        $designations = Designation::get();
+        return view('admin.designations', compact('designations'));
+    }
+
+    public function storeDesignation(Request $request)
+    {
+        $this->validate($request, [
+            'desgName' => 'required|max:255',
+            'desgStatus' => 'required|numeric'
+        ]);
+
+        $insert_data = array(
+            'desg_name' => $request->desgName,
+            'is_active' => $request->desgStatus
+        );
+
+        Designation::create($insert_data);
+
+        return back()->with('success', 'Designation is created');
+    }
+
+    public function editDesignation(Request $itemId)
+    {
+        $itemId = $itemId->itemId;
+        $desgDeatils = Designation::find($itemId);
+        return $desgDeatils;
+    }
+
+    public function updateDesignation(Request $request)
+    {
+        $this->validate($request, [
+            'desgEditName' => 'required|max:255',
+            'desgEditStatus' => 'required|numeric'
+        ]);
+
+        $update_data = array(
+            'desg_name' => $request->desgEditName,
+            'is_active' => $request->desgEditStatus
+        );
+
+        Designation::where('id', $request->itemId)->update($update_data);
+
+        return back()->with('success', 'Designation is updated');
+    }
+    // Designation Operation End
+
+    // Department Operation Start 
+    public function departmentList()
+    {
+        $departments = Department::get();
+        return view('admin.departments', compact('departments'));
+    }
+
+    public function storedepartment(Request $request)
+    {
+        $this->validate($request, [
+            'deptName' => 'required|max:255',
+            'deptStatus' => 'required|numeric'
+        ]);
+
+        $insert_data = array(
+            'dept_name' => $request->deptName,
+            'is_active' => $request->deptStatus
+        );
+
+        Department::create($insert_data);
+
+        return back()->with('success', 'Department is created');
+    }
+
+    public function editdepartment(Request $itemId)
+    {
+        $itemId = $itemId->itemId;
+        $deptDeatils = Department::find($itemId);
+        return $deptDeatils;
+    }
+
+    public function updatedepartment(Request $request)
+    {
+        $this->validate($request, [
+            'deptEditName' => 'required|max:255',
+            'deptEditStatus' => 'required|numeric'
+        ]);
+
+        $update_data = array(
+            'dept_name' => $request->deptEditName,
+            'is_active' => $request->deptEditStatus
+        );
+
+        Department::where('id', $request->itemId)->update($update_data);
+
+        return back()->with('success', 'Department is updated');
+    }
+    // Department Operation End
+
+    // System Location Operation Start. For User and Inventory location
+    public function locationList()
+    {
+        $locations = SystemLocation::orderBy('loc_name', 'asc')->get();
+        return view('admin.locations', compact('locations'));
+    }
+
+    public function storelocation(Request $request)
+    {
+        $this->validate($request, [
+            'locName' => 'required|max:255',
+            'locStatus' => 'required|numeric'
+        ]);
+
+        $insert_data = array(
+            'loc_name' => $request->locName,
+            'is_active' => $request->locStatus
+        );
+
+        SystemLocation::create($insert_data);
+
+        return back()->with('success', 'Location is created');
+    }
+
+    public function editlocation(Request $itemId)
+    {
+        $itemId = $itemId->itemId;
+        $locDeatils = SystemLocation::find($itemId);
+        return $locDeatils;
+    }
+
+    public function updatelocation(Request $request)
+    {
+        $this->validate($request, [
+            'locEditName' => 'required|max:255',
+            'locEditStatus' => 'required|numeric'
+        ]);
+
+        $update_data = array(
+            'loc_name' => $request->locEditName,
+            'is_active' => $request->locEditStatus
+        );
+
+        SystemLocation::where('id', $request->itemId)->update($update_data);
+
+        return back()->with('success', 'Location is updated');
+    }
+    // Location Operation End
+
+    // District Operation Start 
+    public function districtList()
+    {
+        $districts = LeadDistrict::orderBy('dist_name', 'asc')->get();
+        return view('admin.districts', compact('districts'));
+    }
+    public function storeDistrict(Request $request)
+    {
+        $this->validate($request, [
+            'distName' => 'required|max:255',
+            'distStatus' => 'required|numeric'
+        ]);
+
+        $insert_data = array(
+            'dist_name' => $request->distName,
+            'is_active' => $request->distStatus
+        );
+
+        LeadDistrict::create($insert_data);
+
+        return back()->with('success', 'District is created');
+    }
+
+    public function editDistrict(Request $itemId)
+    {
+        $itemId = $itemId->itemId;
+        $distDeatils = LeadDistrict::find($itemId);
+        return $distDeatils;
+    }
+
+    public function updateDistrict(Request $request)
+    {
+        $this->validate($request, [
+            'distEditName' => 'required|max:255',
+            'distEditStatus' => 'required|numeric'
+        ]);
+
+        $update_data = array(
+            'dist_name' => $request->distEditName,
+            'is_active' => $request->distEditStatus
+        );
+
+        LeadDistrict::where('id', $request->itemId)->update($update_data);
+
+        return back()->with('success', 'District is updated');
+    }
+    // District Operation End 
+
+     // Division Operation Start 
+     public function divisionList()
+     {
+         $divisions = LeadDivision::orderBy('div_name', 'asc')->get();
+         return view('admin.divisions', compact('divisions'));
+     }
+
+     public function storeDivision(Request $request)
+    {
+        $this->validate($request, [
+            'divName' => 'required|max:255',
+            'divStatus' => 'required|numeric'
+        ]);
+
+        $insert_data = array(
+            'div_name' => $request->divName,
+            'is_active' => $request->divStatus
+        );
+
+        LeadDivision::create($insert_data);
+
+        return back()->with('success', 'Division is created');
+    }
+
+    public function editDivision(Request $itemId)
+    {
+        $itemId = $itemId->itemId;
+        $divDeatils = LeadDivision::find($itemId);
+        return $divDeatils;
+    }
+    
+    public function updateDivision(Request $request)
+    {
+        $this->validate($request, [
+            'divEditName' => 'required|max:255',
+            'divEditStatus' => 'required|numeric'
+        ]);
+
+        $update_data = array(
+            'div_name' => $request->divEditName,
+            'is_active' => $request->divEditStatus
+        );
+
+        LeadDivision::where('id', $request->itemId)->update($update_data);
+
+        return back()->with('success', 'Division is updated');
+    }
+    // Division Operation End 
+
+     // Lead Source Operation Start 
+     public function leadSourceList()
+     {
+         $leadSources = LeadSource::get();
+         return view('admin.leadSources', compact('leadSources'));
+     }
+     public function storeLeadSource(Request $request)
+     {
+         $this->validate($request, [
+             'leadSourceName' => 'required|max:255',
+             'leadSourceStatus' => 'required|numeric'
+         ]);
+ 
+         $insert_data = array(
+             'source_name' => $request->leadSourceName,
+             'is_active' => $request->leadSourceStatus
+         );
+ 
+         LeadSource::create($insert_data);
+ 
+         return back()->with('success', 'Lead Source is created');
+     }
+     public function editLeadSource(Request $itemId)
+     {
+         $itemId = $itemId->itemId;
+         $leadSourceDeatils = LeadSource::find($itemId);
+         return $leadSourceDeatils;
+     }
+     public function updateLeadSource(Request $request)
+     {
+         $this->validate($request, [
+             'leadSourceEditName' => 'required|max:255',
+             'leadSourceEditStatus' => 'required|numeric'
+         ]);
+ 
+         $update_data = array(
+             'source_name' => $request->leadSourceEditName,
+             'is_active' => $request->leadSourceEditStatus
+         );
+ 
+         LeadSource::where('id', $request->itemId)->update($update_data);
+ 
+         return back()->with('success', 'Lead Source is updated');
+     }
+     // Lead Source Operation End 
 }

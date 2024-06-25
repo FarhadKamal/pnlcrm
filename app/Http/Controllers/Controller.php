@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -71,56 +72,92 @@ class Controller extends BaseController
         return redirect()->route('/');
     }
 
-
     public function salesStage()
     {
         //Lead Stage 
-        // if (Helper::permissionCheck(Auth()->user()->id, 'leadAssign')) {
-        $data['leadStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
-        $data['assignList'] = User::with('designation:id,desg_name', 'location:id,loc_name')->get();
-        $data['leadButtonLabel'] = 'Assign';
-        // } elseif (Helper::permissionCheck(Auth()->user()->id, 'leadStageAll')) {
-        //     $data['leadStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
-        //     $data['assignList'] = User::with('designation:id,desg_name', 'location:id,location_name')->get();
-        //     $data['leadButtonLabel'] = 'Details';
-        // } elseif (Helper::permissionCheck(Auth()->user()->id, 'leadStage')) {
-        //     $data['leadStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name')->where(['current_stage' => 'LEAD', 'created_by' => Auth()->user()->id])->get();
-        //     $data['leadButtonLabel'] = 'Details';
-        // }
+        if (Helper::permissionCheck(Auth()->user()->id, 'leadAssign')) {
+            $data['leadStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
+            $data['assignList'] = User::with('designation:id,desg_name', 'location:id,loc_name')->get();
+            $data['leadButtonLabel'] = 'Assign';
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'leadStageAll')) {
+            $data['leadStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
+            $data['assignList'] = User::with('designation:id,desg_name', 'location:id,loc_name')->get();
+            $data['leadButtonLabel'] = 'Details';
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'leadStage')) {
+            $data['leadStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where(['current_stage' => 'LEAD', 'created_by' => Auth()->user()->id])->get();
+            $data['leadButtonLabel'] = 'Details';
+        }
 
 
         //Deal Stage
-        // if (Helper::permissionCheck(Auth()->user()->id, 'dealApprove')) {
-        $data['dealStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DEAL')->get();
-        // } elseif (Helper::permissionCheck(Auth()->user()->id, 'dealStageAll')) {
-
-        //     $data['dealStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name', 'assignTo:id,user_name')->where(['current_stage' => 'DEAL'])->get();
-        // } elseif (Helper::permissionCheck(Auth()->user()->id, 'dealStage')) {
-        //     $data['dealStage'] = Lead::with('location:id,lead_location', 'source:id,source_name', 'category:id,category_name', 'createdBy:id,user_name', 'assignTo:id,user_name')->where(['current_stage' => 'DEAL', 'assign_to' => Auth()->user()->id])->get();
-        // }
+        if (Helper::permissionCheck(Auth()->user()->id, 'dealStageAll')) {
+            $data['dealStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DEAL')->get();
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'dealStage')) {
+            $data['dealStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where(['current_stage' => 'DEAL'])->whereHas('clientInfo', function ($query) {
+                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+            })->get();
+        }
 
         // QUOTATION Stage 
-        $data['quotationStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->get();
-        foreach ($data['quotationStage'] as $item) {
-            $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $item->id ORDER BY id DESC LIMIT 1");
-            if ($quotationRef) {
-                $item->quotationId = $quotationRef[0]->id;
-                $item->quotationRef = $quotationRef[0]->quotation_ref;
+        if (Helper::permissionCheck(Auth()->user()->id, 'quotationStageAll')) {
+            $data['quotationStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->get();
+            foreach ($data['quotationStage'] as $item) {
+                $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $item->id ORDER BY id DESC LIMIT 1");
+                if ($quotationRef) {
+                    $item->quotationId = $quotationRef[0]->id;
+                    $item->quotationRef = $quotationRef[0]->quotation_ref;
+                }
+            }
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'quotationStage')) {
+            $data['quotationStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->whereHas('clientInfo', function ($query) {
+                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+            })->get();
+            foreach ($data['quotationStage'] as $item) {
+                $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $item->id ORDER BY id DESC LIMIT 1");
+                if ($quotationRef) {
+                    $item->quotationId = $quotationRef[0]->id;
+                    $item->quotationRef = $quotationRef[0]->quotation_ref;
+                }
             }
         }
 
 
         // Booking Stage 
-        $data['bookingStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->get();
+        if (Helper::permissionCheck(Auth()->user()->id, 'bookingStageAll')) {
+            $data['bookingStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->get();
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'bookingStage')) {
+            $data['bookingStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->whereHas('clientInfo', function ($query) {
+                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+            })->get();
+        }
+
 
         // Delivery Stage
-        $data['deliveryStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DELIVERY')->get();
+        if (Helper::permissionCheck(Auth()->user()->id, 'deliveryStageAll')) {
+            $data['deliveryStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DELIVERY')->get();
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'deliveryStage')) {
+            $data['deliveryStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DELIVERY')->whereHas('clientInfo', function ($query) {
+                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+            })->get();
+        }
 
         // WON Stage
-        $data['wonStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->get();
-       
+        if (Helper::permissionCheck(Auth()->user()->id, 'wonStageAll')) {
+            $data['wonStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->get();
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'wonStage')) {
+            $data['wonStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->whereHas('clientInfo', function ($query) {
+                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+            })->get();
+        }
+
         // Lost Stage
-        $data['lostStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LOST')->get();
+        if (Helper::permissionCheck(Auth()->user()->id, 'lostStageAll')) {
+            $data['lostStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LOST')->get();
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'lostStage')) {
+            $data['lostStage'] = Lead::with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LOST')->whereHas('clientInfo', function ($query) {
+                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+            })->get();
+        }
 
         return view('sales.dashboard', $data);
     }

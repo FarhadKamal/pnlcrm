@@ -20,12 +20,14 @@ class DealController extends Controller
         $validator = Validator::make($request->all(), [
             'lead_id' => 'required',
             'type_of_use' => 'required',
+            'pump_type' => 'required',
             'suction_type' => 'nullable',
             'suction_pipe_dia' => 'nullable',
             'delivery_head' => 'nullable',
             'delivery_pipe_dia' => 'nullable',
             'horizontal_pipe_length' => 'nullable',
             'source_of_water' => 'nullable',
+            'water_hour' => 'nullable',
             'water_consumption' => 'nullable',
             'liquid_type' => 'nullable',
             'pump_running_hour' => 'nullable',
@@ -34,12 +36,14 @@ class DealController extends Controller
         if ($validator->fails()) {
             $data['errors'] = $validator->errors()->all();
             $data['type_of_use'] = $request->type_of_use;
+            $data['pump_type'] = $request->pump_type;
             $data['suction_type'] = $request->suction_type;
             $data['suction_pipe_dia'] = $request->suction_pipe_dia;
             $data['delivery_head'] = $request->delivery_head;
             $data['delivery_pipe_dia'] = $request->delivery_pipe_dia;
             $data['horizontal_pipe_length'] = $request->horizontal_pipe_length;
             $data['source_of_water'] = $request->source_of_water;
+            $data['water_hour'] = $request->water_hour;
             $data['water_consumption'] = $request->water_consumption;
             $data['liquid_type'] = $request->liquid_type;
             $data['pump_running_hour'] = $request->pump_running_hour;
@@ -51,12 +55,14 @@ class DealController extends Controller
         $insert_req_data = array(
             'lead_id' => $request->lead_id,
             'type_of_use' => $request->type_of_use,
+            'pump_type' => $request->pump_type,
             'suction_type' => $request->suction_type,
             'suction_pipe_dia' => $request->suction_pipe_dia,
             'delivery_head' => $request->delivery_head,
             'delivery_pipe_dia' => $request->delivery_pipe_dia,
             'horizontal_pipe_length' => $request->horizontal_pipe_length,
             'source_of_water' => $request->source_of_water,
+            'water_hour' => $request->water_hour,
             'water_consumption' => $request->water_consumption,
             'liquid_type' => $request->liquid_type,
             'pump_running_hour' => $request->pump_running_hour

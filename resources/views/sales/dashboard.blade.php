@@ -28,9 +28,9 @@
                         <small class="card-text mb-1"><b>District:</b>
                             {{ $item['clientInfo']->district }}</small><br>
                         <small class="card-text mb-1"><b>Contact:</b>
-                            {{ $item['clientInfo']->contact_person }}</small><br>
+                            {{ $item->lead_person }}</small><br>
                         <small class="card-text mb-1"><b>Phone:</b>
-                            {{ $item['clientInfo']->contact_mobile }}</small><br>
+                            {{ $item->lead_phone }}</small><br>
                         <small class="card-text mb-1"><b>Source:</b> {{ $item['source']->source_name }}</small><br>
                         <small class="card-text mb-1"><b>Created By:</b> {{ $item['createdBy']->user_name }}</small>
                         <div>
@@ -77,9 +77,9 @@
                             <small class="card-text mb-1"><b>District:</b>
                                 {{ $item['clientInfo']->district }}</small><br>
                             <small class="card-text mb-1"><b>Contact:</b>
-                                {{ $item['clientInfo']->contact_person }}</small><br>
+                                {{ $item->lead_person }}</small><br>
                             <small class="card-text mb-1"><b>Phone:</b>
-                                {{ $item['clientInfo']->contact_mobile }}</small><br>
+                                {{ $item->lead_phone }}</small><br>
                             <small class="card-text mb-1"><b>Source:</b> {{ $item['source']->source_name }}</small><br>
                             <small class="card-text mb-1"><b>Created By:</b>
                                 {{ $item['createdBy']->user_name }}</small>
@@ -139,9 +139,9 @@
                             <small class="card-text mb-1"><b>District:</b>
                                 {{ $item['clientInfo']->district }}</small><br>
                             <small class="card-text mb-1"><b>Contact:</b>
-                                {{ $item['clientInfo']->contact_person }}</small><br>
+                                {{ $item->lead_person }}</small><br>
                             <small class="card-text mb-1"><b>Phone:</b>
-                                {{ $item['clientInfo']->contact_mobile }}</small><br>
+                                {{ $item->lead_phone }}</small><br>
                             <small class="card-text mb-1"><b>Source:</b> {{ $item['source']->source_name }}</small><br>
                             <small class="card-text mb-1"><b>Created By:</b>
                                 {{ $item['createdBy']->user_name }}</small>
@@ -242,9 +242,9 @@
                             <small class="card-text mb-1"><b>District:</b>
                                 {{ $item['clientInfo']->district }}</small><br>
                             <small class="card-text mb-1"><b>Contact:</b>
-                                {{ $item['clientInfo']->contact_person }}</small><br>
+                                {{ $item->lead_person }}</small><br>
                             <small class="card-text mb-1"><b>Phone:</b>
-                                {{ $item['clientInfo']->contact_mobile }}</small><br>
+                                {{ $item->lead_phone }}</small><br>
                             <small class="card-text mb-1"><b>Source:</b>
                                 {{ $item['source']->source_name }}</small><br>
                             <small class="card-text mb-1"><b>Created By:</b>
@@ -354,9 +354,9 @@
                             <small class="card-text mb-1"><b>District:</b>
                                 {{ $item['clientInfo']->district }}</small><br>
                             <small class="card-text mb-1"><b>Contact:</b>
-                                {{ $item['clientInfo']->contact_person }}</small><br>
+                                {{ $item->lead_person }}</small><br>
                             <small class="card-text mb-1"><b>Phone:</b>
-                                {{ $item['clientInfo']->contact_mobile }}</small><br>
+                                {{ $item->lead_phone }}</small><br>
                             <small class="card-text mb-1"><b>Source:</b>
                                 {{ $item['source']->source_name }}</small><br>
                             <small class="card-text mb-1"><b>Created By:</b>
@@ -436,9 +436,9 @@
                             <small class="card-text mb-1"><b>District:</b>
                                 {{ $item['clientInfo']->district }}</small><br>
                             <small class="card-text mb-1"><b>Contact:</b>
-                                {{ $item['clientInfo']->contact_person }}</small><br>
+                                {{ $item->lead_person }}</small><br>
                             <small class="card-text mb-1"><b>Phone:</b>
-                                {{ $item['clientInfo']->contact_mobile }}</small><br>
+                                {{ $item->lead_phone }}</small><br>
                             <small class="card-text mb-1"><b>Source:</b>
                                 {{ $item['source']->source_name }}</small><br>
                             <small class="card-text mb-1"><b>Created By:</b>
@@ -478,9 +478,9 @@
                             <small class="card-text mb-1"><b>District:</b>
                                 {{ $item['clientInfo']->district }}</small><br>
                             <small class="card-text mb-1"><b>Contact:</b>
-                                {{ $item['clientInfo']->contact_person }}</small><br>
+                                {{ $item->lead_person }}</small><br>
                             <small class="card-text mb-1"><b>Phone:</b>
-                                {{ $item['clientInfo']->contact_mobile }}</small><br>
+                                {{ $item->lead_phone }}</small><br>
                             <small class="card-text mb-1"><b>Source:</b>
                                 {{ $item['source']->source_name }}</small><br>
                             <small class="card-text mb-1"><b>Created By:</b>

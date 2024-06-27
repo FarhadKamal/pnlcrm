@@ -163,7 +163,7 @@
                             '<td class="p-1 text-center"><input type="number" class="text-center" style="width:5rem" value="0" onchange="updatePrice(this)" onkeyup="updatePrice(this)"></td>';
                         html += '<td class="p-1 text-end totalPrice">' + element.price + '</td>';
                         html +=
-                            '<td class="p-1 text-center" onclick="addCart(this)"><badge class="bg-darkblue text-white pt-1 pb-1 ps-2 pe-2 rounded-pill">Add</badge></td>';
+                            '<td class="p-1 text-center" onclick="addCart(this)"><badge class="bg-darkblue text-white pt-1 pb-1 ps-2 pe-2 rounded-pill" style="cursor:pointer">Add</badge></td>';
                         html += '</tr>';
                         $('#filterPumpList').append(html);
                     });

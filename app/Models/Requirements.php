@@ -11,12 +11,14 @@ class Requirements extends Model
     protected $fillable = [
         'lead_id',
         'type_of_use',
+        'pump_type',
         'suction_type',
         'suction_pipe_dia',
         'delivery_head',
         'delivery_pipe_dia',
         'horizontal_pipe_length',
         'source_of_water',
+        'water_hour',
         'water_consumption',
         'liquid_type',
         'pump_running_hour'

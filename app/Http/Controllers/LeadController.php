@@ -224,6 +224,7 @@ class LeadController extends Controller
             'leadSource' => 'required',
             'clientReq' => 'required'
         ]);
+
         if ($validator->fails()) {
             $data['errors'] = $validator->errors()->all();
             $data['clientId'] = $request->clientId;
@@ -247,6 +248,14 @@ class LeadController extends Controller
         );
         $leadId = Lead::create($insert_lead_data);
         $leadId = $leadId->id;
+
+        if (isset($request->infoPermChange)) {
+            $customerInfo = Customer::find($request->clientId);
+            $customerInfo->contact_person = $request->contactPerson;
+            $customerInfo->contact_mobile = $request->contactMobile;
+            $customerInfo->contact_email = $request->contactEmail;
+            $customerInfo->save();
+        }
 
         $log_data = array(
             'lead_id' => $leadId,

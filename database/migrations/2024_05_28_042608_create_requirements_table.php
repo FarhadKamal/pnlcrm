@@ -17,12 +17,14 @@ class CreateRequirementsTable extends Migration
             $table->id();
             $table->integer('lead_id');
             $table->string('type_of_use');
+            $table->string('pump_type');
             $table->string('suction_type')->nullable();
             $table->double('suction_pipe_dia')->nullable();
             $table->string('delivery_head')->nullable();
             $table->double('delivery_pipe_dia')->nullable();
             $table->double('horizontal_pipe_length')->nullable();
             $table->string('source_of_water')->nullable();
+            $table->double('water_hour')->nullable();
             $table->double('water_consumption')->nullable();
             $table->string('liquid_type')->nullable();
             $table->double('pump_running_hour')->nullable();

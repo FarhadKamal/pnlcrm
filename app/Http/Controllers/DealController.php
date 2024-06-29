@@ -280,11 +280,13 @@ class DealController extends Controller
             $proposed_discount = $row->discount_percentage;
             $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
 
-            if ($proposed_discount > $trade_discount)
+            if ($proposed_discount > $trade_discount) {
                 $need_discount_approval = 1;
+            }
 
-            if ($proposed_discount > ($trade_discount + 3))
+            if ($proposed_discount > ($trade_discount + 3)) {
                 $need_top_approval = 1;
+            }
         }
 
         $leadInfo = Lead::find($leadId);

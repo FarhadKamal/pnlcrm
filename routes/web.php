@@ -58,7 +58,7 @@ Route::post('topQuotationApprove', [QuotationController::class, 'topQuotationApp
 Route::get('quotationReferenceCheck', [QuotationController::class, 'quotationReferenceCheck'])->name('quotationReferenceCheck')->middleware('auth');
 Route::post('submitQuotation', [QuotationController::class, 'submitQuotation'])->name('submitQuotation')->middleware('auth');
 Route::post('quotationAccept', [QuotationController::class, 'acceptLeadQuotation'])->name('quotationAccept')->middleware('auth');
-// Route::post('quotationNotAccept', [SalesController::class, 'notAcceptLeadQuotation'])->name('quotationNotAccept')->middleware('auth');
+// Route::post('quotationNotAccept', [QuotationController::class, 'notAcceptLeadQuotation'])->name('quotationNotAccept')->middleware('auth');
 
 Route::get('newSapForm/{leadId}', [BookingController::class, 'newSapForm'])->name('newSapForm')->middleware('auth');
 Route::post('newSapInsertion', [BookingController::class, 'insertNewSapID'])->name('newSapInsertion')->middleware('auth');

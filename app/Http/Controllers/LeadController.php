@@ -47,7 +47,7 @@ class LeadController extends Controller
             'clientName' => 'required',
             'groupName' => 'required',
             'clientAddress' => 'required',
-            'clientZone' => 'required',
+            // 'clientZone' => 'required',
             'clientDistrict' => 'required',
             'clientDivision' => 'required',
             'contactPerson' => 'required',
@@ -62,7 +62,7 @@ class LeadController extends Controller
             $data['clientName'] = $request->clientName;
             $data['groupName'] = $request->groupName;
             $data['clientAddress'] = $request->clientAddress;
-            $data['clientZone'] = $request->clientZone;
+            // $data['clientZone'] = $request->clientZone;
             $data['clientDistrict'] = $request->clientDistrict;
             $data['clientDivision'] = $request->clientDivision;
             $data['clientTIN'] = $request->clientTIN;
@@ -85,7 +85,8 @@ class LeadController extends Controller
             'customer_name' => $request->clientName,
             'group_name' => $request->groupName,
             'address' => $request->clientAddress,
-            'zone' => $request->clientZone,
+            // 'zone' => $request->clientZone,
+            'zone' => 'N/A',
             'district' => $distName,
             'division' => $divName,
             'tin' => $request->clientTIN,
@@ -121,6 +122,8 @@ class LeadController extends Controller
             'lead_source' => $request->leadSource,
             'product_requirement' => $request->clientReq,
             'customer_id' => $customerId,
+            'lead_person' => $request->contactPerson,
+            'lead_email' => $request->contactEmail,
             'lead_phone' => $request->contactMobile,
             'current_stage' => 'LEAD',
             'current_subStage' => 'ASSIGN',

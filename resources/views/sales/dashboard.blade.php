@@ -3,47 +3,51 @@
     <div class="d-flex  flex-row salesStageFlex" id="salesStageFlex">
 
         <!----------------------------Lead Column---------------- -->
-        <div class="col-sm p-1 stageColumn" id="leadColumn">
-            <h6 class=" rounded  p-1 bg-secondary text-white text-center mb-3 ">Lead
-                @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm'))
-                    <a href="{{ route('newLeadForm') }}">
-                        <badge class="badge badge-info p-1 rounded-pill  fs-07rem blink">+Add New</badge>
-                    </a>
+        @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadStage') ||
+                App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadStageAll'))
+            <div class="col-sm p-1 stageColumn" id="leadColumn">
+                <h6 class=" rounded  p-1 bg-secondary text-white text-center mb-3 ">Lead
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm'))
+                        <a href="{{ route('newLeadForm') }}">
+                            <badge class="badge badge-info p-1 rounded-pill  fs-07rem blink">+Add New</badge>
+                        </a>
+                    @endif
+                </h6>
+                @if (count($leadStage) <= 0)
+                    <p class="text-danger">No Lead Found</p>
                 @endif
-            </h6>
-            @if (count($leadStage) <= 0)
-                <p class="text-danger">No Lead Found</p>
-            @endif
-            @foreach ($leadStage as $item)
-                <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-10">
-                                <h6 class="card-title fs-09rem">
-                                    {{ $item['clientInfo']->customer_name }}
-                                </h6>
+                @foreach ($leadStage as $item)
+                    <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-10">
+                                    <h6 class="card-title fs-09rem">
+                                        {{ $item['clientInfo']->customer_name }}
+                                    </h6>
+                                </div>
+                            </div>
+                            <small class="card-text mb-1"><b>Group:</b>
+                                {{ $item['clientInfo']->group_name }}</small><br>
+                            <small class="card-text mb-1"><b>District:</b>
+                                {{ $item['clientInfo']->district }}</small><br>
+                            <small class="card-text mb-1"><b>Contact:</b>
+                                {{ $item->lead_person }}</small><br>
+                            <small class="card-text mb-1"><b>Phone:</b>
+                                {{ $item->lead_phone }}</small><br>
+                            <small class="card-text mb-1"><b>Source:</b> {{ $item['source']->source_name }}</small><br>
+                            <small class="card-text mb-1"><b>Created By:</b> {{ $item['createdBy']->user_name }}</small>
+                            <div>
+                                <?php $encoded = json_encode($item); ?>
+                                <button type="button" data-mdb-toggle="modal" data-mdb-target="#newLeadModal"
+                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100"
+                                    onclick='dataShowModal(<?= $encoded ?>)'>{{ $leadButtonLabel }}</button>
                             </div>
                         </div>
-                        <small class="card-text mb-1"><b>Group:</b> {{ $item['clientInfo']->group_name }}</small><br>
-                        <small class="card-text mb-1"><b>District:</b>
-                            {{ $item['clientInfo']->district }}</small><br>
-                        <small class="card-text mb-1"><b>Contact:</b>
-                            {{ $item->lead_person }}</small><br>
-                        <small class="card-text mb-1"><b>Phone:</b>
-                            {{ $item->lead_phone }}</small><br>
-                        <small class="card-text mb-1"><b>Source:</b> {{ $item['source']->source_name }}</small><br>
-                        <small class="card-text mb-1"><b>Created By:</b> {{ $item['createdBy']->user_name }}</small>
-                        <div>
-                            <?php $encoded = json_encode($item); ?>
-                            <button type="button" data-mdb-toggle="modal" data-mdb-target="#newLeadModal"
-                                class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100"
-                                onclick='dataShowModal(<?= $encoded ?>)'>{{ $leadButtonLabel }}</button>
-                        </div>
                     </div>
-                </div>
-            @endforeach
-            @include('sales.modals.newLeadModal')
-        </div>
+                @endforeach
+                @include('sales.modals.newLeadModal')
+            </div>
+        @endif
 
         <!----------------------------Deal Column---------------- -->
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'dealStage') ||

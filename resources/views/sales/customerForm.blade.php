@@ -77,7 +77,7 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label class="form-label">
+                {{-- <label class="form-label">
                     Zone <span class="text-danger">*</span>
                 </label>
                 <select class="form-control fs-08rem" aria-label="Client Zone" name="clientZone" id="clientZone"
@@ -90,7 +90,7 @@
                             <option value="{{ $item->id }}">{{ $item->zone_name }}</option>
                         @endif
                     @endforeach
-                </select>
+                </select> --}}
             </div>
             <div class="col-md-3"></div>
             <div class="col-md-3">

@@ -35,11 +35,13 @@ class BookingController extends Controller
             $data['errors'] = $validator->errors()->all();
             return back()->with('errors', $data['errors']);
         } else {
+            
             $customerInfo = Customer::find($request->customerId);
             $customerInfo->sap_id = $request->newSAP;
             $customerInfo->save();
             $leadInfo = Lead::where(['customer_id' => $customerInfo->id])->get();
             $leadInfo = Lead::find($leadInfo[0]->id);
+            
             if ($leadInfo->payment_type == 'Credit') {
                 $leadInfo->current_subStage = 'CREDITSET';
             } else {
@@ -81,7 +83,7 @@ class BookingController extends Controller
             $leadInfo->accounts_clearance = 1;
             $leadInfo->is_outstanding = 1;
             $leadInfo->current_stage = 'DELIVERY';
-            if ($leadInfo->need_discount_approval != 0) {
+            if ($leadInfo->need_discount_approval > 1) {
                 $leadInfo->current_subStage = 'DISCOUNTSET';
             } else {
                 $leadInfo->current_subStage = 'INVOICE';

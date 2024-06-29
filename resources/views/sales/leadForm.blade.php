@@ -63,10 +63,10 @@
                 <p id="district"></p>
             </div>
             <div class="col-md-3">
-                <label class="form-label">
+                {{-- <label class="form-label">
                     Zone <span class="text-danger">*</span>
                 </label>
-                <p id="zone"></p>
+                <p id="zone"></p> --}}
             </div>
             <div class="col-md-3"></div>
             <div class="col-md-3">

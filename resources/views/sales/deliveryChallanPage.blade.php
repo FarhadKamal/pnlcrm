@@ -74,8 +74,8 @@
             <p>Client PO Ref. No: {{ $quotationInfo[0]->quotation_po }}
                 <br>PO. Date: {{ date('d-M-Y', strtotime($quotationInfo[0]->quotation_po_date)) }}
             </p>
-            <p>Contact Person: {{ $leadInfo->lead_person }}
-                <br>Contact No: {{ $leadInfo->lead_phone }}
+            <p>Contact Person: {{ $leadInfo->delivery_person }}
+                <br>Contact No: {{ $leadInfo->delivery_mobile }}
             </p>
         </div>
     </div>
@@ -120,7 +120,7 @@
                 <tr>
                     <td class="p-1 fw-bold text-center" colspan="2"><b>Total Quantity</b></td>
                     <td class="p-1 text-end fw-bold" style="align-content: space-evenly;text-align:center"><b>
-                        {{ $totalQuantity }}</b></td>
+                            {{ $totalQuantity }}</b></td>
                 </tr>
             </tbody>
         </table>

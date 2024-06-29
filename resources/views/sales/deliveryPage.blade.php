@@ -114,6 +114,10 @@
 
             <div>
                 <h6 class="text-center"><kbd>Delivery Information</kbd></h6>
+                {{-- <div class="fs-07rem">
+                    Is same as lead information? <input type="checkbox" name="deliveryInfoCheckbox"
+                        id="deliveryInfoCheckbox" onclick="changeDeliveryInfo()">
+                </div> --}}
                 <div>
                     <form action="{{ route('deliveryInformation') }}" method="POST" class="row mb-4">
                         @csrf
@@ -129,6 +133,16 @@
                         } else {
                             $delAddress = '';
                         }
+                        if ($leadInfo->delivery_person && $leadInfo->delivery_person != '') {
+                            $delPerson = $leadInfo->delivery_person;
+                        } else {
+                            $delPerson = '';
+                        }
+                        if ($leadInfo->delivery_mobile && $leadInfo->delivery_mobile != '') {
+                            $delMobile = $leadInfo->delivery_mobile;
+                        } else {
+                            $delMobile = '';
+                        }
                         
                         ?>
                         <div class="col-md-3">
@@ -138,8 +152,19 @@
                         </div>
                         <div class="col-md-7">
                             <label for="" class="fs-07rem">Delivery Address</label>
-                            <input type="text" name="address" class="form-control p-1 fs-07rem"
+                            <input type="text" name="address" id="address" class="form-control p-1 fs-07rem"
                                 value=" {{ $delAddress }} " required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="" class="fs-07rem">Delivery Contact Person</label>
+                            <input type="text" name="contactPerson" id="contactPerson"
+                                class="form-control p-1 fs-07rem" min="0" value="{{ $delPerson }}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="" class="fs-07rem">Delivery Contact Mobile</label>
+                            <input type="number" name="contactMobile" id="contactMobile"
+                                class="form-control p-1 fs-07rem" min="0" value="{{ $delMobile }}"
+                                required>
                         </div>
                         <div class="col-md-2">
                             <button class="btn btn-sm btn-darkblue fs07rem mt-3">Save</button>
@@ -237,6 +262,19 @@
             printWindow.print();
         } else {
             alert('Please allow pop-ups for this site to print');
+        }
+    }
+
+    function changeDeliveryInfo() {
+        if ($('#deliveryInfoCheckbox').is(":checked") == true) {
+            let add = '<?= $leadInfo->clientInfo->address ?>';
+            $('#address').val(add);
+            $('#contactPerson').val('<?= $leadInfo->lead_person ?>');
+            $('#contactMobile').val('<?= $leadInfo->lead_phone ?>');
+        } else {
+            $('#address').val('<?= $leadInfo->delivery_address ?>');
+            $('#contactPerson').val('<?= $leadInfo->delivery_person ?>');
+            $('#contactMobile').val('<?= $leadInfo->delivery_mobile ?>');
         }
     }
 </script>

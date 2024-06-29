@@ -32,7 +32,9 @@ class Lead extends Model
         'sap_invoice',
         'invoice_date',
         'delivery_challan',
-        'delivery_address'
+        'delivery_address',
+        'delivery_person',
+        'delivery_mobile'
     ];
 
     public function clientInfo()

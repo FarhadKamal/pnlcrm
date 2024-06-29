@@ -111,7 +111,7 @@
                 <input type="text" class="form-control fs-08rem" name="contactEmail" id="contactEmail"
                     @if (session('errorsData')) value="{{ session('errorsData')['contactEmail'] }}" @endif>
             </div>
-            <div class="col-md-3"></div>
+            <div class="col-md-3 fs-07rem mt-3"><input type="checkbox" name="infoPermChange" id="infoPermChange">&nbsp; Permanent Change Contact Info</div>
             <div class="col-md-3">
                 <label class="form-label">
                     Lead Source <span class="text-danger">*</span>
@@ -161,7 +161,7 @@
                 return response.json();
             })
             .then(json => {
-                
+                console.log(json);
                 let groupName = json.group_name;
                 let address = json.address;
                 let division = json.division;
@@ -189,9 +189,9 @@
                 $('#tin').text(tin);
                 $('#bin').text(bin);
                 $('#trade').text(trade);
-                $('#contactPerson').text(contactPerson);
-                $('#contactMobile').text(contactMobile);
-                $('#contactEmail').text(contactEmail);
+                $('#contactPerson').val(contactPerson);
+                $('#contactMobile').val(contactMobile);
+                $('#contactEmail').val(contactEmail);
 
             })
             .catch(error => {

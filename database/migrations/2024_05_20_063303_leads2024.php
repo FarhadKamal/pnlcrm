@@ -39,6 +39,8 @@ class Leads2024 extends Migration
             $table->date('invoice_date')->nullable();
             $table->integer('delivery_challan')->nullable();
             $table->text('delivery_address')->nullable();
+            $table->string('delivery_person')->nullable();
+            $table->string('delivery_mobile')->nullable();
             $table->timestamps();
         });
     }

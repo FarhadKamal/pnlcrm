@@ -136,6 +136,8 @@ class DeliveryController extends Controller
             'leadId' => 'required|numeric',
             'challanNo' => 'required|numeric',
             'address' => 'required',
+            'contactPerson' => 'required',
+            'contactMobile' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             $data['errors'] = $validator->errors()->all();
@@ -144,6 +146,8 @@ class DeliveryController extends Controller
             $leadInfo = Lead::find($request->leadId);
             $leadInfo->delivery_challan = $request->challanNo;
             $leadInfo->delivery_address = $request->address;
+            $leadInfo->delivery_person = $request->contactPerson;
+            $leadInfo->delivery_mobile = $request->contactMobile;
             $leadInfo->save();
 
             $log_data = array(

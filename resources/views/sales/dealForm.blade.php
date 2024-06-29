@@ -67,6 +67,35 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
+                                    <label for="">Pump Type <small class="text-danger">*</small></label>
+                                    <select name="pump_type" id="pump_type" class="form-select fs-08rem p-1" required>
+                                        <option value="" selected disabled>--Select One--</option>
+
+                                        <option value="Surface" <?= $item->pump_type == 'Surface' ? 'selected' : '' ?>>
+                                            Surface</option>
+                                        <option value="Submersible"
+                                            <?= $item->pump_type == 'Submersible' ? 'selected' : '' ?>>Submersible
+                                        </option>
+                                        <option value="Submersible (Peripheral)"
+                                            <?= $item->pump_type == 'Submersible (Peripheral)' ? 'selected' : '' ?>>
+                                            Submersible (Peripheral)
+                                        </option>
+                                        <option value="Submersible (Drainage)"
+                                            <?= $item->pump_type == 'Submersible (Drainage)' ? 'selected' : '' ?>>
+                                            Submersible (Drainage)
+                                        </option>
+                                        <option value="Submersible (Surface)"
+                                            <?= $item->pump_type == 'Submersible (Surface)' ? 'selected' : '' ?>>
+                                            Submersible (Surface)
+                                        </option>
+                                        <option value="Jet Cleaner"
+                                            <?= $item->pump_type == 'Jet Cleaner' ? 'selected' : '' ?>>Jet Cleaner
+                                        </option>
+                                        <option value="Any" <?= $item->pump_type == 'Any' ? 'selected' : '' ?>>Any
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
                                     <label for="">Suction Type</label>
                                     <select name="suction_type" id="suction_type" class="form-select fs-08rem p-1">
                                         <option value="" selected disabled>--Select One--</option>
@@ -79,7 +108,7 @@
                                 <div class="col-md-6">
                                     <label for="">Delivery Head</label>
                                     <input type="number" class="form-control fs-08rem p-1" name="delivery_head"
-                                        id="delivery_head">
+                                        id="delivery_head" value="{{ $item->delivery_head }}">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="">Suction Pipe Dia (Inch)</label>
@@ -171,9 +200,14 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
+                                    <label for="">Water Consumption (Ltr/H)</label>
+                                    <input type="number" class="form-control fs-08rem p-1" name="water_hour"
+                                        id="water_hour" value="{{ $item->water_hour }}">
+                                </div>
+                                <div class="col-md-6">
                                     <label for="">Water Consumption (m3/Day)</label>
                                     <input type="number" class="form-control fs-08rem p-1" name="water_consumption"
-                                        id="water_consumption">
+                                        id="water_consumption" value="{{ $item->water_consumption }}">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="">Liquid Type</label>
@@ -285,8 +319,8 @@
                                                             value='{{ $seletedItem->qty }}'></td>
                                                     <td class='d-none'><input name='product_discountPercentage[]'
                                                             value='{{ $seletedItem->discount_percentage }}'></td>
-                                                            <td class='d-none'><input name='product_discountAmt[]'
-                                                                value='{{ $seletedItem->discount_price }}'></td>
+                                                    <td class='d-none'><input name='product_discountAmt[]'
+                                                            value='{{ $seletedItem->discount_price }}'></td>
                                                     <td class='d-none'><input name='product_netPrice[]'
                                                             value='{{ $seletedItem->net_price }}'></td>
                                                     <td class='p-1'>{{ $seletedItem['productInfo']->mat_name }}
@@ -339,6 +373,26 @@
                                     <option value="Agricultural">Agricultural</option>
                                     <option value="Bore-hole">Tube Well</option>
                                     <option value="Any">Any</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">Pump Type <small class="text-danger">*</small></label>
+                                <select name="pump_type" id="pump_type" class="form-select fs-08rem p-1" required>
+                                    <option value="" selected disabled>--Select One--</option>
+
+                                    <option value="Surface">Surface</option>
+                                    <option value="Submersible">Submersible
+                                    </option>
+                                    <option value="Submersible (Peripheral)">Submersible (Peripheral)
+                                    </option>
+                                    <option value="Submersible (Drainage)">Submersible (Drainage)
+                                    </option>
+                                    <option value="Submersible (Surface)">Submersible (Surface)
+                                    </option>
+                                    <option value="Jet Cleaner">Jet Cleaner
+                                    </option>
+                                    <option value="Any">Any
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -405,6 +459,11 @@
                                     <option value="River">River</option>
                                     <option value="Deep Tube Well">Deep Tube Well</option>
                                 </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">Water Consumption (Ltr/H)</label>
+                                <input type="number" class="form-control fs-08rem p-1" name="water_hour"
+                                    id="water_hour">
                             </div>
                             <div class="col-md-6">
                                 <label for="">Water Consumption (m3/Day)</label>
@@ -476,7 +535,9 @@
                         </table>
                         {{-- <center><button class="btn btn-sm btn-darkblue fs-06rem p-1">Save Selected Pump</button>
                         </center> --}}
-                        <center><h5 class="text-danger">Please save the requirement first.</h5></center>
+                        <center>
+                            <h5 class="text-danger">Please save the requirement first.</h5>
+                        </center>
                     </div>
 
                 </div>
@@ -559,7 +620,8 @@
         html += "<td class='d-none'><input name='product_id[]' value='" + productId + "'>" + productId + "</td>";
         html += "<td class='d-none'><input name='product_unitPrice[]' value='" + productUP + "'></td>";
         html += "<td class='d-none'><input name='product_qty[]' value='" + productQty + "'></td>";
-        html += "<td class='d-none'><input name='product_discountPercentage[]' value='" + productDiscountPercentage + "'></td>";
+        html += "<td class='d-none'><input name='product_discountPercentage[]' value='" + productDiscountPercentage +
+            "'></td>";
         html += "<td class='d-none'><input name='product_discountAmt[]' value='" + discountAmount + "'></td>";
         html += "<td class='d-none'><input name='product_netPrice[]' value='" + productTotalPrice + "'></td>";
         html += "<td class='p-1'>" + productName + "</td>";

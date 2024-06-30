@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Requirements;
 use App\Models\PumpChoice;
+use App\Models\SalesLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -297,10 +298,22 @@ class DealController extends Controller
         $leadInfo->current_stage = 'QUOTATION';
         if ($need_credit_approval || $need_discount_approval) {
             $leadInfo->current_subStage = 'APPROVE';
+            $logNext = 'Quotation Approve';
         } else {
             $leadInfo->current_subStage = 'SUBMIT';
+            $logNext = 'Quotation Submit';
         }
         $leadInfo->save();
+
+        $log_data = array(
+            'lead_id' => $leadId,
+            'log_stage' => 'DEAL',
+            'log_task' => 'Deal Submitted',
+            'log_by' => Auth()->user()->id,
+            'log_next' => $logNext
+        );
+        SalesLog::create($log_data);
+
         return redirect()->route('home');
     }
 

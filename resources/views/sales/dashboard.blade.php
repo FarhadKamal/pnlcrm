@@ -60,15 +60,10 @@
                 @foreach ($dealStage as $item)
                     <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
                         <div class="card-body">
-                            {{-- @if ($item->current_subStage == 'APPROVE')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Approval</small>
-                        @endif
-                        @if ($item->current_subStage == 'CHECK')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Checking</small>
-                        @endif
-                        @if ($item->current_subStage == 'FORM')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Dealing</small>
-                        @endif --}}
+                            @if ($item->is_return == 1)
+                                <small class="badge badge-danger blink p-1 m-0 ">Return. Resubmit Deal</small>
+                            @endif
+
                             <div class="row">
                                 <div class="col-10">
                                     <h6 class="card-title fs-09rem">
@@ -96,7 +91,7 @@
                                             Choice</button>
                                     </a>
                                 @else
-                                    <a href="#">
+                                    <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                         <button type="button"
                                             class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                     </a>
@@ -157,7 +152,7 @@
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Approve</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -170,7 +165,7 @@
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Managmement</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -183,7 +178,7 @@
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Submit</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -199,7 +194,7 @@
                                             Feedback
                                         </button>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -263,7 +258,7 @@
                                                 SET</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -277,7 +272,7 @@
                                                 Discount Set</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -291,7 +286,7 @@
                                                 Credit Set</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -311,7 +306,7 @@
                                                     Transaction</button>
                                             </a>
                                         @else
-                                            <a href="">
+                                            <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                                 <button type="button"
                                                     class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                             </a>
@@ -374,7 +369,7 @@
                                                 Discount Set</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -388,7 +383,7 @@
                                                 Invoice Set</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -401,7 +396,7 @@
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Delivery</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId'=>$item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -448,9 +443,10 @@
                             <small class="card-text mb-1"><b>Created By:</b>
                                 {{ $item['createdBy']->user_name }}</small>
                             <div>
-                                <a href="">
+                                <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                     <button type="button"
-                                        class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                        class="btn btn-sm btn-success  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Win
+                                        Log</button>
                                 </a>
                             </div>
                         </div>
@@ -490,9 +486,10 @@
                             <small class="card-text mb-1"><b>Created By:</b>
                                 {{ $item['createdBy']->user_name }}</small>
                             <div>
-                                <a href="">
+                                <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                     <button type="button"
-                                        class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                        class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Lost
+                                        Log</button>
                                 </a>
                             </div>
                         </div>

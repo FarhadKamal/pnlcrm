@@ -44,8 +44,10 @@ class BookingController extends Controller
             
             if ($leadInfo->payment_type == 'Credit') {
                 $leadInfo->current_subStage = 'CREDITSET';
+                $logNext = 'Credit Limit Set';
             } else {
                 $leadInfo->current_subStage = 'TRANSACTION';
+                $logNext = 'Cash Transaction';
             }
             $leadInfo->save();
             $log_data = array(
@@ -53,7 +55,7 @@ class BookingController extends Controller
                 'log_stage' => 'BOOKING',
                 'log_task' => 'New SAP ID: ' . $request->newSAP . ' set',
                 'log_by' => Auth()->user()->id,
-                'log_next' => 'Credit Set/Transaction'
+                'log_next' => $logNext
             );
             SalesLog::create($log_data);
             return redirect()->route('home');
@@ -85,8 +87,10 @@ class BookingController extends Controller
             $leadInfo->current_stage = 'DELIVERY';
             if ($leadInfo->need_discount_approval > 1) {
                 $leadInfo->current_subStage = 'DISCOUNTSET';
+                $logNext = 'SAP Discount Set';
             } else {
                 $leadInfo->current_subStage = 'INVOICE';
+                $logNext = 'SAP Invoice Generation';
             }
             $leadInfo->save();
 
@@ -95,7 +99,7 @@ class BookingController extends Controller
                 'log_stage' => 'BOOKING',
                 'log_task' => 'New Credit Limit: ' . $request->creditLimit . ' set. Remarks: ' . $request->creditLimitRemark . '',
                 'log_by' => Auth()->user()->id,
-                'log_next' => 'Ready for delivery'
+                'log_next' => $logNext
             );
             SalesLog::create($log_data);
             return redirect()->route('home');
@@ -211,7 +215,7 @@ class BookingController extends Controller
                 'log_stage' => 'BOOKING',
                 'log_task' => 'Transaction verified of BDT ' . $amount . '/-',
                 'log_by' => Auth()->user()->id,
-                'log_next' => 'Transaction/Ready to deliver'
+                'log_next' => 'Transaction/Accounts Clearence'
             );
             SalesLog::create($log_data);
             return back()->with('success', 'Transaction Verified');
@@ -248,8 +252,10 @@ class BookingController extends Controller
                 $leadInfo->current_stage = 'DELIVERY';
                 if ($leadInfo->need_discount_approval != 0) {
                     $leadInfo->current_subStage = 'DISCOUNTSET';
+                    $logNext = 'SAP Discount Set';
                 } else {
                     $leadInfo->current_subStage = 'INVOICE';
+                    $logNext = 'SAP Invoice Generation';
                 }
                 $leadInfo->save();
             } else {
@@ -258,8 +264,10 @@ class BookingController extends Controller
                 $leadInfo->current_stage = 'DELIVERY';
                 if ($leadInfo->need_discount_approval != 0) {
                     $leadInfo->current_subStage = 'DISCOUNTSET';
+                    $logNext = 'SAP Discount Set';
                 } else {
                     $leadInfo->current_subStage = 'INVOICE';
+                    $logNext = 'SAP Invoice Generation';
                 }
                 $leadInfo->save();
             }
@@ -268,7 +276,7 @@ class BookingController extends Controller
                 'log_stage' => 'BOOKING',
                 'log_task' => 'Accounts Cleared. Remarks: ' . $request->clearRemark . '',
                 'log_by' => Auth()->user()->id,
-                'log_next' => 'SAP Discount/SAP Invoice'
+                'log_next' => $logNext
             );
             SalesLog::create($log_data);
             return redirect()->route('home');

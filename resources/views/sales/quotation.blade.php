@@ -1,4 +1,7 @@
 @include('layouts.navbar')
+<div class="float-end m-2">
+    <a href="{{ route('detailsLog', ['leadId'=>$leadInfo->id]) }}" target="_blank"><button class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+</div>
 <div class="">
     @include('sales.quotationLayout')
 </div>

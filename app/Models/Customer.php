@@ -27,4 +27,9 @@ class Customer extends Model
         'sap_id',
         'is_active'
     ];
+
+    public function assignTo()
+    {
+        return $this->hasOne(User::class, 'assign_to', 'assign_to');
+    }
 }

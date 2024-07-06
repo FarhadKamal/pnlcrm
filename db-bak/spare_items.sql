@@ -2,7 +2,8 @@
 SQLyog Enterprise - MySQL GUI v7.02 
 MySQL - 5.7.31 : Database - pnlsale
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 

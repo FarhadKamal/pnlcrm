@@ -21,22 +21,26 @@
                         <form action="{{ route('quotationAccept') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-1">
-                                <label class="form-label m-0">Acceptence Attachment <small class="text-danger">*</small></label>
+                                <label class="form-label m-0">Acceptence Attachment <small
+                                        class="text-danger">*</small></label>
                                 <input name="quotationAcceptFile" id="quotationAcceptFile" type="file"
                                     accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx"
                                     class="form-control lh-sm fs-08rem" required>
                             </div>
                             <div class="mb-1">
-                                <label class="form-label m-0">Purchase Order No <small class="text-danger">*</small></label>
+                                <label class="form-label m-0">Purchase Order No <small
+                                        class="text-danger">*</small></label>
                                 <input type="text" name="quotationPO" class="form-control lh-sm fs-08rem" required>
                             </div>
                             <div class="mb-1">
-                                <label class="form-label m-0">Purchase Order Date <small class="text-danger">*</small></label>
+                                <label class="form-label m-0">Purchase Order Date <small
+                                        class="text-danger">*</small></label>
                                 <input type="text" name="quotationPODate"
                                     class="form-control lh-sm flatpickr fs-08rem" required>
                             </div>
                             <div class="mb-1">
-                                <label class="form-label m-0">Customer Feedback <small class="text-danger">*</small></label>
+                                <label class="form-label m-0">Customer Feedback <small
+                                        class="text-danger">*</small></label>
                                 <textarea name="quotationAcceptFeedback" id="quotationAcceptFeedback" class="form-control lh-sm fs-08rem" rows="5"
                                     required></textarea>
                             </div>
@@ -53,8 +57,7 @@
                         <div class="text-center">
                             <h6><kbd>Quotation Return Form</kbd></h6>
                         </div>
-                        {{-- <form action="{{ route('quotationNotAccept') }}" method="POST"> --}}
-                        <form>
+                        <form action="{{ route('quotationNotAccept') }}" method="POST">
                             @csrf
                             <div class="mb-1">
                                 <label class="form-label m-0">Return Reason</label>
@@ -63,7 +66,7 @@
                                     <option value="" selected disabled>Select One</option>
                                     <option value="High Price">High Price</option>
                                     <option value="Need More Discount">Need More Discount</option>
-                                    <option value="Change Vehicle">Change Vehicle</option>
+                                    <option value="Change Item">Change Item</option>
                                     <option value="Others">Others</option>
                                 </select>
                             </div>

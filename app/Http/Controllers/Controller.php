@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Models\Lead;
+use App\Models\PumpChoice;
+use App\Models\Quotation;
+use App\Models\SalesLog;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -13,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class Controller extends BaseController
 {
@@ -160,5 +164,59 @@ class Controller extends BaseController
         }
 
         return view('sales.dashboard', $data);
+    }
+
+    public function lostForm($leadId)
+    {
+        $data['leadId'] = $leadId;
+        $data['leadInfo'] = Lead::find($leadId);
+        return view('sales.lostForm', $data);
+    }
+
+    public function storeLost(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lostReason' => 'required',
+            'lostDescription' => 'required',
+            'lostLead' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors()->all());
+        } else {
+            $leadInfo = Lead::find($request->lostLead);
+            $leadOldStage = $leadInfo->current_stage;
+
+            $leadInfo->current_stage = 'LOST';
+            $leadInfo->current_subStage = 'LOST';
+            $leadInfo->is_lost = 1;
+            $leadInfo->lost_reason = $request->lostReason;
+            $leadInfo->lost_description = $request->lostDescription;
+            $leadInfo->save();
+
+            $log_data = array(
+                'lead_id' => $leadInfo->id,
+                'log_stage' => $leadOldStage,
+                'log_task' => 'Lead is lost',
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'LOST'
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('home');
+        }
+    }
+
+    public function salesLog($leadId)
+    {
+        $data['leadInfo'] = Lead::find($leadId);
+        if (!$data['leadInfo']) {
+            return back()->with('error', 'No Lead Found');
+        }
+        if ((Auth()->user()->assign_to != $data['leadInfo']->clientInfo->assign_to) && (!Helper::permissionCheck(Auth()->user()->id, 'salesLog'))) {
+            return back()->with('error', 'You Are Not Authorized');
+        }
+        $data['pumpInfo'] = PumpChoice::where(['lead_id' => $leadId])->get();
+        $data['quotationInfo'] = Quotation::orderBy('id', 'desc')->take(1)->where(['lead_id' => $leadId, 'is_accept' => 1])->get();
+        $data['salesLog'] = SalesLog::where('lead_id', $leadId)->orderBy('id', 'DESC')->get();
+        return view('sales.leadDetailsLog', $data);
     }
 }

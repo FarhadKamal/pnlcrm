@@ -146,6 +146,17 @@ class QuotationController extends Controller
             $data['errors'] = $validator->errors()->all();
             // return back()->with('errors', $data['errors']);
         } else {
+            //First Handle Other Attachment 
+            $otherAttachment = $request->file('otherAttachment');
+            $attachmentArr = [];
+            if ($otherAttachment) {
+                foreach ($otherAttachment as $item) {
+                    if ($item) {
+                        $attachmentArr[] = $item;
+                    }
+                }
+            }
+
             $lead = Lead::find($request->leadId);
             $leadEmail = $lead->lead_email;
             $leadName = $lead->clientInfo->customer_name;
@@ -155,7 +166,7 @@ class QuotationController extends Controller
             $customFileName = "Price Quotation_" . $leadName . "_" . date("d-M-Y") . ".pdf";
             $acceptAttachment = storage_path('app/public/' . $request->file('doc')->storeAs('folder', $customFileName, 'public'));
 
-            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName);
+            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr);
 
             $quotationAttachment = new \Symfony\Component\HttpFoundation\File\File($acceptAttachment);
             $newFileName = time() . "." . $quotationAttachment->getExtension();
@@ -316,15 +327,22 @@ class QuotationController extends Controller
     }
 
 
-    public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName)
+    public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr)
     {
 
         $data = array('name' => "PNL Holdings Limited");
-        Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName) {
+        Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr) {
             $message->to($leadEmail, $leadName)->subject('PNL Holdings Limited Price Quotation');
             $message->from('info@subaru-bd.com', 'PNL Holdings Ltd.');
             $message->cc($assignEmail, $assignName);
             $message->attach($attachment);
+            // Attach additional attachments from the array
+            foreach ($attachmentArr as $file) {
+                $message->attach($file->getPathname(), [
+                    'as' => $file->getClientOriginalName(),
+                    'mime' => $file->getMimeType()
+                ]);
+            }
             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Thank you for your interest in PNL Holdings Limited.<br>Please Find the quotation attachment and reply your feedback to this email. For any query you can call us directly at +8801844494444</p><p>Regards,<br>Subaru Bangladesh</p>', 'text/html');
         });
 

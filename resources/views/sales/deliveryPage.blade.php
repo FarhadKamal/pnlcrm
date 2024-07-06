@@ -116,7 +116,7 @@
                 <h6 class="text-center"><kbd>Delivery Information</kbd></h6>
                 {{-- <div class="fs-07rem">
                     Is same as lead information? <input type="checkbox" name="deliveryInfoCheckbox"
-                        id="deliveryInfoCheckbox" onclick="changeDeliveryInfo()">
+                        id="deliveryInfoCheckbox" onchange="changeDeliveryInfo()">
                 </div> --}}
                 <div>
                     <form action="{{ route('deliveryInformation') }}" method="POST" class="row mb-4">
@@ -145,22 +145,22 @@
                         }
                         
                         ?>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="" class="fs-07rem">Delivery Challan No</label>
-                            <input type="number" name="challanNo" class="form-control p-1 fs-07rem" min="0"
-                                value="{{ $challanNo }}" required>
+                            <input type="text" name="challanNo" id="challanNo" class="form-control p-1 fs-07rem"
+                                min="0" value="{{ $challanNo }}" required readonly>
                         </div>
-                        <div class="col-md-7">
+                        <div class="col-md-8">
                             <label for="" class="fs-07rem">Delivery Address</label>
                             <input type="text" name="address" id="address" class="form-control p-1 fs-07rem"
                                 value=" {{ $delAddress }} " required>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="" class="fs-07rem">Delivery Contact Person</label>
                             <input type="text" name="contactPerson" id="contactPerson"
                                 class="form-control p-1 fs-07rem" min="0" value="{{ $delPerson }}" required>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="" class="fs-07rem">Delivery Contact Mobile</label>
                             <input type="number" name="contactMobile" id="contactMobile"
                                 class="form-control p-1 fs-07rem" min="0" value="{{ $delMobile }}"
@@ -192,10 +192,17 @@
     </div>
     <hr>
     <div>
-        <form action="{{ route('delivered') }}" method="POST">
+        <form action="{{ route('delivered') }}" method="POST" class="row container" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
-            <center><button class="btn btn-sm btn-darkblue fs-08rem">Delivered Item</button></center>
+            <div class="col-md-4">
+                <label for="" class="fs-07rem">Delivery Acknowledgement</label>
+                <input type="file" name="deliveryAttachment" accept="application/pdf, image/*"
+                    class="form-control fs-07rem p-1" required>
+            </div>
+            <div class="col-md-8 mt-3">
+                <center><button class="btn btn-sm btn-darkblue fs-08rem">Delivered Item</button></center>
+            </div>
         </form>
     </div>
 </div>
@@ -264,17 +271,38 @@
             alert('Please allow pop-ups for this site to print');
         }
     }
+</script>
 
-    function changeDeliveryInfo() {
-        if ($('#deliveryInfoCheckbox').is(":checked") == true) {
-            let add = '<?= $leadInfo->clientInfo->address ?>';
-            $('#address').val(add);
-            $('#contactPerson').val('<?= $leadInfo->lead_person ?>');
-            $('#contactMobile').val('<?= $leadInfo->lead_phone ?>');
-        } else {
-            $('#address').val('<?= $leadInfo->delivery_address ?>');
-            $('#contactPerson').val('<?= $leadInfo->delivery_person ?>');
-            $('#contactMobile').val('<?= $leadInfo->delivery_mobile ?>');
+<script>
+    setInterval(function() {
+        let checkChallanNo = '<?= $leadInfo->delivery_challan ?>';
+        if (checkChallanNo == '' || checkChallanNo == null) {
+            fetch('/deliveryReferenceCheck')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    let refFullDate = new Date(json.currentDate);
+                    let refYear = refFullDate.getFullYear();
+                    let refMonth = Number(refFullDate.getMonth() + 1).toString().padStart(2, '0');
+                    let refDate = Number(refFullDate.getDate()).toString().padStart(2, '0');
+
+                    let serialNo = Number(json.checkDeliverySerial[0]['sl'] + 1).toString().padStart(3,
+                        '0');
+                    let sellerZone = '<?= Auth()->user()->assign_to ?>';
+                    let refPreText = 'DC/PNL/' + sellerZone + '/' + refYear + '/' + refMonth + refDate +
+                        serialNo;
+                    // console.log(refPreText);
+                    // document.getElementById('challanNo').value = refPreText;
+                    $('#challanNo').val(refPreText);
+
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
         }
-    }
+    }, 1000 * 60 * 0.01);
 </script>

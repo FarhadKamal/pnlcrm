@@ -13,6 +13,7 @@ class Items extends Model
         'new_code',
         'mat_name',
         'brand_name',
+        'pump_type',
         'itm_group',
         'phase',
         'lead_phone',

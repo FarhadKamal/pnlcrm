@@ -54,9 +54,11 @@ class QuotationController extends Controller
         $current_subStage = 'SUBMIT';
         $logNext = 'Quotation Submit';
 
-        if ($request->credit_approved == 1)
+        if ($request->credit_approved == 1) {
             $need_credit_approval = 2;
-        else $need_credit_approval = 0;
+        } else {
+            $need_credit_approval = 0;
+        }
 
         $choiceInfo = PumpChoice::where(['lead_id' => $lead_id])->get();
 
@@ -72,6 +74,45 @@ class QuotationController extends Controller
                 $need_top_approval = 1;
                 $current_subStage = 'MANAGEMENT';
                 $logNext = 'Management Approval';
+            }
+        }
+
+        if ($need_top_approval == 1) {
+            $dealApproveUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="dealTopApprove"');
+            if ($dealApproveUsersEmail) {
+                foreach ($dealApproveUsersEmail as $email) {
+                    $assignEmail = $email->user_email;
+                    $assignName = $email->user_name;
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
+                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a deal is waiting for top management approval. Please approve the deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    });
+                }
+            }
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
+                    $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Waiting for top management approval.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
+        } else {
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
+                    $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
             }
         }
 
@@ -115,6 +156,17 @@ class QuotationController extends Controller
         $leadInfo->need_top_approval = 2;
         $leadInfo->current_subStage = 'SUBMIT';
         $leadInfo->save();
+
+        $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+        foreach ($assignedUsersEmail as $email) {
+            $assignEmail = $email->user_email;
+            $assignName = $email->user_name;
+            Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
+                $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved by the top managment. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+            });
+        }
 
         $log_data = array(
             'lead_id' => $lead_id,
@@ -240,14 +292,43 @@ class QuotationController extends Controller
             if (!$sapId) {
                 $lead->current_subStage = 'SAPIDSET';
                 $logNext = 'New SAP ID Set';
+                $SAPUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapIDCreation"');
+                if ($SAPUsersEmail) {
+                    foreach ($SAPUsersEmail as $email) {
+                        $assignEmail = $email->user_email;
+                        $assignName = $email->user_name;
+                        Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                            $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP ID SET');
+                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP ID generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        });
+                    }
+                }
             } else {
                 if ($lead->payment_type == 'Cash') {
-                    //Discount Set Check
                     $lead->current_subStage = 'TRANSACTION';
                     $logNext = 'Cash Transaction';
                 } elseif ($lead->payment_type == 'Credit') {
                     $lead->current_subStage = 'CREDITSET';
                     $logNext = 'Credit Limit Set';
+                    $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapCreditSet"');
+                    if ($SAPCreditUsersEmail) {
+                        foreach ($SAPCreditUsersEmail as $email) {
+                            $assignEmail = $email->user_email;
+                            $assignName = $email->user_name;
+                            Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                                $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
+                                $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP Credit SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                            });
+                        }
+                    }
                 }
             }
             $lead->save();

@@ -10,6 +10,8 @@ use App\Models\Requirements;
 use App\Models\PumpChoice;
 use App\Models\SalesLog;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -287,6 +289,24 @@ class DealController extends Controller
 
             if ($proposed_discount > ($trade_discount + 3)) {
                 $need_top_approval = 1;
+            }
+        }
+
+        if ($need_credit_approval == 1 || $need_discount_approval == 1) {
+            $dealApproveUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="dealApprove"');
+            if ($dealApproveUsersEmail) {
+                foreach ($dealApproveUsersEmail as $email) {
+                    $assignEmail = $email->user_email;
+                    $assignName = $email->user_name;
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Submitted');
+                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a deal is submitted. Please approve the deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    });
+                }
             }
         }
 

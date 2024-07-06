@@ -79,6 +79,7 @@ Route::get('invoiceSetForm/{leadId}', [DeliveryController::class, 'invoiceSetFor
 Route::post('checkSAPInvoice', [DeliveryController::class, 'checkSAPInvoice'])->name('checkSAPInvoice')->middleware('auth');
 Route::post('invoiceSetInsertion', [DeliveryController::class, 'insertInvoice'])->name('invoiceSetInsertion')->middleware('auth');
 Route::get('deliveryPage/{leadId}', [DeliveryController::class, 'deliveryPage'])->name('deliveryPage')->middleware('auth');
+Route::get('deliveryReferenceCheck', [DeliveryController::class, 'deliveryReferenceCheck'])->name('deliveryReferenceCheck')->middleware('auth');
 Route::post('deliveryInformation', [DeliveryController::class, 'storeDeliveryInformation'])->name('deliveryInformation')->middleware('auth');
 Route::post('delivered', [DeliveryController::class, 'storeDelivered'])->name('delivered')->middleware('auth');
 

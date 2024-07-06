@@ -37,10 +37,11 @@ class Leads2024 extends Migration
             $table->integer('is_outstanding')->default(0);
             $table->integer('sap_invoice')->default(0);
             $table->date('invoice_date')->nullable();
-            $table->integer('delivery_challan')->nullable();
+            $table->string('delivery_challan')->nullable();
             $table->text('delivery_address')->nullable();
             $table->string('delivery_person')->nullable();
             $table->string('delivery_mobile')->nullable();
+            $table->string('delivery_attachment')->nullable();
             $table->timestamps();
         });
     }

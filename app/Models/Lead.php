@@ -34,7 +34,8 @@ class Lead extends Model
         'delivery_challan',
         'delivery_address',
         'delivery_person',
-        'delivery_mobile'
+        'delivery_mobile',
+        'delivery_attachment'
     ];
 
     public function clientInfo()

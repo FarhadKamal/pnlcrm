@@ -7,6 +7,7 @@ use App\Models\PumpChoice;
 use App\Models\Quotation;
 use App\Models\SalesLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class DeliveryController extends Controller
@@ -130,11 +131,18 @@ class DeliveryController extends Controller
         return view('sales.deliveryPage', $data);
     }
 
+    public function deliveryReferenceCheck()
+    {
+        $data['currentDate'] = date('Y-m-d');
+        $data['checkDeliverySerial'] = DB::select("SELECT COUNT(*) AS sl FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE leads.delivery_challan != '' AND customers.assign_to = '".Auth()->user()->assign_to."' AND Year(leads.updated_at) = " . date('Y') . " AND Month(leads.updated_at) = " . date('m') . " AND Day(leads.updated_at) = " . date('d') . "");
+        return response()->json($data);
+    }
+
     public function storeDeliveryInformation(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'leadId' => 'required|numeric',
-            'challanNo' => 'required|numeric',
+            'challanNo' => 'required',
             'address' => 'required',
             'contactPerson' => 'required',
             'contactMobile' => 'required|numeric',
@@ -166,14 +174,21 @@ class DeliveryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'leadId' => 'required|numeric',
+            'deliveryAttachment' => 'required|mimes:jpeg,jpg,png,pdf'
         ]);
         if ($validator->fails()) {
             $data['errors'] = $validator->errors()->all();
             return back()->with('errors', $data['errors']);
         } else {
+            $deliveryAttachment = $request->file('deliveryAttachment');
+            $newFileName = time() . "." . $deliveryAttachment->getClientOriginalExtension();
+            $destinationPath = 'deliveryAttachment/';
+            $deliveryAttachment->move($destinationPath, $newFileName);
+
             $leadInfo = Lead::find($request->leadId);
             $leadInfo->current_stage = 'WON';
             $leadInfo->current_subStage = '';
+            $leadInfo->delivery_attachment = $newFileName;
             $leadInfo->save();
 
             $log_data = array(

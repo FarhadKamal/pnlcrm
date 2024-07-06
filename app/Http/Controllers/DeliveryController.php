@@ -8,6 +8,7 @@ use App\Models\Quotation;
 use App\Models\SalesLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class DeliveryController extends Controller
@@ -39,6 +40,32 @@ class DeliveryController extends Controller
             $leadInfo->current_stage = 'DELIVERY';
             $leadInfo->current_subStage = 'INVOICE';
             $leadInfo->save();
+
+            $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapInvoiceSet"');
+                if ($SAPCreditUsersEmail) {
+                    foreach ($SAPCreditUsersEmail as $email) {
+                        $assignEmail = $email->user_email;
+                        $assignName = $email->user_name;
+                        Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                            $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP INVOICE GENERATION');
+                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        });
+                    }
+                }
+                $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
+                foreach ($assignedUsersEmail as $email) {
+                    $assignEmail = $email->user_email;
+                    $assignName = $email->user_name;
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM DISCOUNT SET');
+                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', Discount Set for the lead. Waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    });
+                }
 
             $log_data = array(
                 'lead_id' => $leadInfo->id,
@@ -109,6 +136,17 @@ class DeliveryController extends Controller
             $leadInfo->current_stage = 'DELIVERY';
             $leadInfo->current_subStage = 'READY';
             $leadInfo->save();
+
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
+                foreach ($assignedUsersEmail as $email) {
+                    $assignEmail = $email->user_email;
+                    $assignName = $email->user_name;
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM INVOICE GENERATED');
+                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', Invoice generated for the lead. Waiting for your Delivery process.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    });
+                }
 
             $log_data = array(
                 'lead_id' => $leadInfo->id,

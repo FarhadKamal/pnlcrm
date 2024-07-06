@@ -206,6 +206,118 @@
         <!-- Container wrapper -->
     </nav>
     <!-- Navbar -->
+    <nav class="bg-info navClose pt-2" id="navbarButtonsSidebar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-wrap flex-row justify-content-evenly text-white">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                    data-mdb-toggle="dropdown" aria-expanded="false">
+                    More
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                    <li>
+                        <a class="dropdown-item" href="{{ route('outstandings') }}">Outstanding List</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                    data-mdb-toggle="dropdown" aria-expanded="false">
+                    Reports
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                    {{-- <li>
+                        <a class="dropdown-item" href="">Stock Report</a>
+                    </li> --}}
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    @yield('section')
+
+    <div class="mobile-bottom-bar flex-row justify-content-evenly bg-info p-2 fixed-bottom mb-0">
+        {{-- <div>
+            <a class="nav-link dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink"
+                role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-bell"></i>
+                <span class="badge rounded-pill badge-notification bg-danger"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end notification-list" aria-labelledby="navbarDropdownMenuLink">
+                <li>
+                    <a class="dropdown-item" href="#">Some news</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">Another news</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </li>
+            </ul>
+        </div> --}}
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownMenuLink"
+                role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                <img src="{{ asset('images/system/avatar.png') }}" class="rounded-circle" height="22"
+                    alt="Portrait of a Woman" loading="lazy" />
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li>
+                    <a class="dropdown-item" href="#">My profile</a>
+                </li>
+                {{-- <li>
+                    <a class="dropdown-item" href="#">Settings</a>
+                </li> --}}
+                <li>
+                    <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+        @if (Auth()->user()->is_admin == 1)
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                    data-mdb-toggle="dropdown" aria-expanded="false">
+                    Admin
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                    {{-- <li>
+                                <a class="dropdown-item" href="#">Company List</a>
+                            </li> --}}
+                    <li>
+                        <a class="dropdown-item" href="{{ route('users') }}">User</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('designations') }}">Designation</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('departments') }}">Department</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('locations') }}">System Location</a>
+                    </li>
+                    {{-- <li>
+                                <a class="dropdown-item" href="#">Zone</a>
+                            </li> --}}
+                    <li>
+                        <a class="dropdown-item" href="{{ route('districts') }}">District</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('divisions') }}">Division</a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item" href="{{ route('leadSources') }}">Lead Source</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('permissions') }}">Permissions</a>
+                    </li>
+                </ul>
+            </div>
+        @endif
+    </div>
 
     <div>
         <img src="{{ asset('images/system/droplet.gif') }}" alt="" id="loadingGif">
@@ -214,5 +326,16 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
+<script>
+    function sidebarToggole() {
+        if (document.getElementById('navbarButtonsSidebar').classList.contains('navClose')) {
+            document.getElementById('navbarButtonsSidebar').classList.remove("navClose");
+            document.getElementById('navbarButtonsSidebar').classList.add("navOpen");
+        } else {
+            document.getElementById('navbarButtonsSidebar').classList.remove("navOpen");
+            document.getElementById('navbarButtonsSidebar').classList.add("navClose");
+        }
+    }
+</script>
 
 </html>

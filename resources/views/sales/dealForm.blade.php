@@ -15,7 +15,8 @@
 
 <div class="container-fluid mb-3 mt-2">
     <div class="float-end">
-        <a href="{{ route('detailsLog', ['leadId'=>$leadId]) }}" target="_blank"><button class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+        <a href="{{ route('detailsLog', ['leadId' => $leadId]) }}" target="_blank"><button
+                class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
     </div>
     <center>
         <h4 class="mt-3">Requirement & Pump Selection Form</h4>
@@ -70,31 +71,31 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="">Pump Type <small class="text-danger">*</small></label>
+                                    <label for="">Item Type <small class="text-danger">*</small></label>
                                     <select name="pump_type" id="pump_type" class="form-select fs-08rem p-1" required>
                                         <option value="" selected disabled>--Select One--</option>
 
                                         <option value="Surface" <?= $item->pump_type == 'Surface' ? 'selected' : '' ?>>
-                                            Surface</option>
+                                            Surface Pump</option>
                                         <option value="Submersible"
-                                            <?= $item->pump_type == 'Submersible' ? 'selected' : '' ?>>Submersible
+                                            <?= $item->pump_type == 'Submersible' ? 'selected' : '' ?>>Submersible Pump
                                         </option>
-                                        <option value="Submersible (Peripheral)"
-                                            <?= $item->pump_type == 'Submersible (Peripheral)' ? 'selected' : '' ?>>
-                                            Submersible (Peripheral)
+                                        <option value="Drainage"
+                                            <?= $item->pump_type == 'Drainage' ? 'selected' : '' ?>>
+                                            Drainage Pump
                                         </option>
-                                        <option value="Submersible (Drainage)"
-                                            <?= $item->pump_type == 'Submersible (Drainage)' ? 'selected' : '' ?>>
-                                            Submersible (Drainage)
+                                        <option value="Itap" <?= $item->pump_type == 'Itap' ? 'selected' : '' ?>>
+                                            Itap
                                         </option>
-                                        <option value="Submersible (Surface)"
-                                            <?= $item->pump_type == 'Submersible (Surface)' ? 'selected' : '' ?>>
-                                            Submersible (Surface)
+                                        <option value="Maxwell" <?= $item->pump_type == 'Maxwell' ? 'selected' : '' ?>>
+                                            Maxwell
                                         </option>
-                                        <option value="Jet Cleaner"
-                                            <?= $item->pump_type == 'Jet Cleaner' ? 'selected' : '' ?>>Jet Cleaner
+                                        <option value="Spare Parts"
+                                            <?= $item->pump_type == 'Spare Parts' ? 'selected' : '' ?>>
+                                            Spare Parts
                                         </option>
-                                        <option value="Any" <?= $item->pump_type == 'Any' ? 'selected' : '' ?>>Any
+                                        <option value="Others" <?= $item->pump_type == 'Others' ? 'selected' : '' ?>>
+                                            Others
                                         </option>
                                     </select>
                                 </div>
@@ -270,7 +271,7 @@
                             <h6 class="text-primary fw-bold">Pump Selection</h6>
                             <button data-mdb-toggle="modal" data-mdb-target="#pumpSelectionModal"
                                 class="float-end btn btn-sm btn-primary fs-07rem p-1 m-1 modalBtn"
-                                onclick="setModalNumber({{ $modalNo }})">Select Pump</button>
+                                onclick="setModalNumber({{ $modalNo }})">Select Item</button>
                         </center>
                         @include('sales.modals.pumpSelectionModal')
                         <div class="selectedPumps border p-2">
@@ -313,6 +314,8 @@
                                         @foreach ($selectedPumpList as $seletedItem)
                                             @if ($seletedItem->req_id == $item->id)
                                                 <tr>
+                                                    <td class="d-none"><input name='spare[]'
+                                                        value='{{ $seletedItem->spare_parts }}'></td>
                                                     <td class='d-none'><input name='product_id[]'
                                                             value='{{ $seletedItem->product_id }}'>
                                                     </td>
@@ -326,12 +329,32 @@
                                                             value='{{ $seletedItem->discount_price }}'></td>
                                                     <td class='d-none'><input name='product_netPrice[]'
                                                             value='{{ $seletedItem->net_price }}'></td>
-                                                    <td class='p-1'>{{ $seletedItem['productInfo']->mat_name }}
-                                                    </td>
-                                                    <td class='p-1'>{{ $seletedItem['productInfo']->brand_name }}
-                                                    </td>
-                                                    <td class='p-1'>{{ $seletedItem['productInfo']->hp }}</td>
-                                                    <td class='p-1'>{{ $seletedItem['productInfo']->head }}</td>
+                                                    @if ($seletedItem->spare_parts == 0)
+                                                        <td class='p-1'>{{ $seletedItem['productInfo']->mat_name }}
+                                                        </td>
+                                                    @else
+                                                        <td class="p-1">{{ $seletedItem->spareInfo->mat_name }}
+                                                        </td>
+                                                    @endif
+                                                    @if ($seletedItem->spare_parts == 0)
+                                                        <td class='p-1'>
+                                                            {{ $seletedItem['productInfo']->brand_name }}
+                                                        </td>
+                                                    @else
+                                                        <td class="p-1">{{ $seletedItem->spareInfo->brand_name }}
+                                                        </td>
+                                                    @endif
+                                                    @if ($seletedItem->spare_parts == 0)
+                                                        <td class='p-1'>{{ $seletedItem['productInfo']->hp }}</td>
+                                                    @else
+                                                        <td class="p-1"></td>
+                                                    @endif
+                                                    @if ($seletedItem->spare_parts == 0)
+                                                        <td class='p-1'>{{ $seletedItem['productInfo']->head }}
+                                                        </td>
+                                                    @else
+                                                        <td class="p-1"></td>
+                                                    @endif
                                                     <td class='p-1'>{{ $seletedItem->unit_price }}</td>
                                                     <td class='p-1'>{{ $seletedItem->qty }}</td>
                                                     <td class='p-1'>{{ $seletedItem->discount_percentage }}</td>
@@ -379,23 +402,17 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="">Pump Type <small class="text-danger">*</small></label>
+                                <label for="">Item Type <small class="text-danger">*</small></label>
                                 <select name="pump_type" id="pump_type" class="form-select fs-08rem p-1" required>
                                     <option value="" selected disabled>--Select One--</option>
 
-                                    <option value="Surface">Surface</option>
-                                    <option value="Submersible">Submersible
-                                    </option>
-                                    <option value="Submersible (Peripheral)">Submersible (Peripheral)
-                                    </option>
-                                    <option value="Submersible (Drainage)">Submersible (Drainage)
-                                    </option>
-                                    <option value="Submersible (Surface)">Submersible (Surface)
-                                    </option>
-                                    <option value="Jet Cleaner">Jet Cleaner
-                                    </option>
-                                    <option value="Any">Any
-                                    </option>
+                                    <option value="Surface">Surface Pump</option>
+                                    <option value="Submersible">Submersible Pump</option>
+                                    <option value="Drainage">Drainage Pump</option>
+                                    <option value="Itap">Itap</option>
+                                    <option value="Maxwell">Maxwell</option>
+                                    <option value="Spare Parts">Spare Parts</option>
+                                    <option value="Others">Others</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -512,7 +529,7 @@
                         <h6 class="text-primary fw-bold">Pump Selection</h6>
                         <button data-mdb-toggle="modal" data-mdb-target="#pumpSelectionModal"
                             class="float-end btn btn-sm btn-primary fs-07rem p-1 m-1 modalBtn"
-                            onclick="setModalNumber(0)">Select Pump</button>
+                            onclick="setModalNumber(0)">Select Item</button>
                     </center>
                     @include('sales.modals.pumpSelectionModal')
                     <div class="selectedPumps border p-2">
@@ -608,7 +625,7 @@
         let totalPrice = (Number(productUP) * Number(productQty));
         let discountAmount = totalPrice * (Number(productDiscountPercentage) / 100);
         let productTotalPrice = totalPrice - discountAmount;
-
+        let spare = row[11].innerText;
         if (productQty < 1) {
             Swal.fire({
                 position: 'top-end',
@@ -620,6 +637,7 @@
         }
 
         let html = "<tr>";
+        html += "<td class='d-none'><input name='spare[]' value='" + spare + "'>" + spare + "</td>";
         html += "<td class='d-none'><input name='product_id[]' value='" + productId + "'>" + productId + "</td>";
         html += "<td class='d-none'><input name='product_unitPrice[]' value='" + productUP + "'></td>";
         html += "<td class='d-none'><input name='product_qty[]' value='" + productQty + "'></td>";

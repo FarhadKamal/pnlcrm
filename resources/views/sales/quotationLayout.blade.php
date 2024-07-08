@@ -262,6 +262,11 @@
                     </div>
 
                     <div>
+                        <?php
+                        $allSurfaceTermFlag = 0;
+                        $allSubmersibleTermFlag = 0;
+                        $pedDrainageTermFlag = 0;
+                        ?>
                         @foreach ($reqInfo as $itemReq)
                             <div class="pagebreakAvoid">
                                 <p class="boldText" style="margin-top: 2%;">Your Requirement:</p>
@@ -299,13 +304,36 @@
                                     <tbody>
                                         @foreach ($pumpInfo as $itemPump)
                                             @if ($itemPump->req_id == $itemReq->id)
+                                                <?php
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Surface') {
+                                                    $allSurfaceTermFlag = 1;
+                                                }
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Submersible') {
+                                                    $allSubmersibleTermFlag = 1;
+                                                }
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->brand_name == 'Pedrollo') {
+                                                    $pedDrainageTermFlag = 1;
+                                                }
+                                                
+                                                if ($itemPump->spare_parts == 0) {
+                                                    $brandName = $itemPump->productInfo->brand_name;
+                                                    $productName = $itemPump->productInfo->mat_name;
+                                                    $power = 'HP: '.$itemPump->productInfo->hp.', KW: '.$itemPump->productInfo->kw;
+                                                    $head = 'Min '. $itemPump->productInfo->min_head.' - Max '. $itemPump->productInfo->max_head;
+                                                } else {
+                                                    $brandName = $itemPump->spareInfo->brand_name;
+                                                    $productName = $itemPump->spareInfo->mat_name;
+                                                    $power = 'N/A';
+                                                    $head = 'N/A';
+                                                }
+                                                ?>
                                                 <tr class="tableRow">
                                                     <td class="table1RowCol1">
-                                                        <p class="colText">{{ $itemPump->productInfo->brand_name }}
+                                                        <p class="colText">{{ $brandName }}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="">{{ $itemPump->productInfo->mat_name }}
+                                                        <p class="">{{ $productName }}
 
                                                         </p>
                                                     </td>
@@ -314,14 +342,14 @@
                                                 </p>
                                             </td> --}}
                                                     <td class="table1RowCol1">
-                                                        <p class="text-center colText">HP:
-                                                            {{ $itemPump->productInfo->hp }}, KW:
-                                                            {{ $itemPump->productInfo->kw }}</p>
+                                                        <p class="text-center colText">
+                                                            {{ $power }}
+                                                        </p>
                                                     </td>
                                                     <td class="table1RowCol1">
                                                         <p class="text-center colText">
-                                                            Min {{ $itemPump->productInfo->min_head }} -
-                                                            Max {{ $itemPump->productInfo->max_head }}</p>
+                                                            {{ $head }}
+                                                        </p>
                                                     </td>
                                                     <td class="table1RowCol1">
                                                         <p class="text-end colText">
@@ -352,16 +380,27 @@
 
                     <div class="pagebreakAvoid">
                         <p class="boldText" style="margin-top: 2%;">Terms & Condition:</p>
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i></i> Payment
-                            shall be
-                            made
-                            through crossed cheque
-                            within 30 days and Purchase Order in favor of PNL
-                            Holdings Limited.</p>
+                        @if ($leadInfo->payment_type == 'Cash')
+                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i></i> Payment
+                                shall be
+                                made
+                                <b>Cash Advance/Pay Order</b> and Purchase Order in favor of <b>PNL Holdings
+                                    Limited</b>.
+                            </p>
+                        @else
+                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i></i> Payment
+                                shall be
+                                made
+                                through crossed cheque
+                                within <b>30 days</b> and Purchase Order in favor of <b>PNL
+                                    Holdings Limited</b>.</p>
+                        @endif
+
                         <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Provide your
                             concern
-                            Factory address & BIN
-                            number for issue the Vat Challan (Mushak-6.3).</p>
+                            <b>Factory address & BIN
+                                number</b> for issue the <b>Vat Challan (Mushak-6.3)</b>.
+                        </p>
                         <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery after
                             5 days
                             from
@@ -373,11 +412,27 @@
                             Plaza, 5, Jubilee road,
                             Chittagong.</p>
 
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two) Years’
-                            Service
-                            Warranty for Pump-moto.
-                        </p>
-
+                        @if ($allSurfaceTermFlag == 1)
+                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 3 (Three)
+                                Years’
+                                Service
+                                Warranty for Surface Pump.
+                            </p>
+                        @endif
+                        @if ($allSubmersibleTermFlag == 1)
+                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two)
+                                Years’
+                                Service
+                                Warranty for Submersible Pump.
+                            </p>
+                        @endif
+                        @if ($pedDrainageTermFlag == 1)
+                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two)
+                                Years’
+                                Service
+                                Warranty for Pedrollo Drainage Pump.
+                            </p>
+                        @endif
                         <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Price offer
                             validity 7
                             days
@@ -421,7 +476,8 @@
                 class="fa-solid fa-headset"></i>&nbsp;16308 (9:00 AM - 9:00 PM)
         </p>
 
-        <div style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">
+        <div
+            style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">
             <div class="col-md-2">
                 <img src="{{ asset('images/system/pedrollo.svg') }}" alt="" width="100">
             </div>

@@ -1,4 +1,8 @@
 @include('layouts.navbar')
+<div class="float-end m-2">
+    <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
+            class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+</div>
 <div class="">
     @include('sales.quotationLayout')
 </div>
@@ -121,7 +125,17 @@
     {{-- Submit To Customer  --}}
     <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
     @if ($leadInfo->lead_email)
-        <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button></center>
+        <div class="container">
+            <div class="row" id="attachmentDiv">
+                <div class="col-md-3 mt-1"><input type="file" name="attachmentFiles[]"
+                        class="form-control fs-07rem p-1 attachmentFiles"></div>
+            </div>
+            <center>
+                <p class="btn btn-primary btn-sm fs-06rem p-1 mt-2" onclick="addAttachment()">Add Attchment</p>
+            </center>
+        </div>
+        <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button>
+        </center>
     @else
         <div class="bg-danger text-white p-2 text-center">
             <h5 class="">No Email Found For The Client. Please Add An Email First.</h5>
@@ -129,7 +143,8 @@
                 @csrf
                 <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
                 <label for="">Email</label>
-                <input type="email" name="lead_email" id="lead_email" class="border-0 rounded fs-08rem p-1" required>
+                <input type="email" name="lead_email" id="lead_email" class="border-0 rounded fs-08rem p-1"
+                    required>
                 <button class="btn btn-darkblue btn-sm">Add Email</button>
             </form>
         </div>
@@ -170,8 +185,9 @@
 
                 let serialNo = Number(json.checkQuotationSerial[0]['sl'] + 1).toString().padStart(3,
                     '0');
-
-                let refPreText = 'REF: PNL/P/QUT/' + refYear + '/' + refMonth + refDate + serialNo;
+                let sellerZone = '<?= Auth()->user()->assign_to ?>';
+                let refPreText = 'REF: PNL/' + sellerZone + '/QUT/' + refYear + '/' + refMonth + refDate +
+                    serialNo;
                 // console.log(refPreText);
                 document.getElementById('quotationRef').innerText = refPreText;
                 $('#quotationRef').val(refPreText);
@@ -202,12 +218,22 @@
                 blob = docPDF.output('blob');
                 let leadId = $('#QleadId').val();
                 let quotationRef = $('#quotationRef').val();
+                let otherAttachment = document.getElementsByClassName('attachmentFiles');
+                // console.log(otherAttachment);
                 let _token = '<?php echo csrf_token(); ?>';
                 var formData = new FormData();
                 formData.append('leadId', leadId);
                 formData.append('quotationRef', quotationRef);
                 formData.append('doc', blob);
                 formData.append('_token', _token);
+
+                // Append each file in the otherAttachment collection
+                for (let i = 0; i < otherAttachment.length; i++) {
+                    let fileInput = otherAttachment[i];
+                    for (let j = 0; j < fileInput.files.length; j++) {
+                        formData.append('otherAttachment[]', fileInput.files[j]);
+                    }
+                }
 
                 $.ajaxSetup({
                     headers: {
@@ -243,5 +269,13 @@
             width: 190, //target width in the PDF document
             windowWidth: 675 //window width in CSS pixels
         });
+    }
+</script>
+
+<script>
+    function addAttachment() {
+        let html =
+            '<div class="col-md-3 mt-1"><input type="file" name="attachmentFiles[]" class="form-control fs-07rem p-1 attachmentFiles"></div>';
+        $('#attachmentDiv').append(html);
     }
 </script>

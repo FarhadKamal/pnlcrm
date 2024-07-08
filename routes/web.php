@@ -58,7 +58,7 @@ Route::post('topQuotationApprove', [QuotationController::class, 'topQuotationApp
 Route::get('quotationReferenceCheck', [QuotationController::class, 'quotationReferenceCheck'])->name('quotationReferenceCheck')->middleware('auth');
 Route::post('submitQuotation', [QuotationController::class, 'submitQuotation'])->name('submitQuotation')->middleware('auth');
 Route::post('quotationAccept', [QuotationController::class, 'acceptLeadQuotation'])->name('quotationAccept')->middleware('auth');
-// Route::post('quotationNotAccept', [QuotationController::class, 'notAcceptLeadQuotation'])->name('quotationNotAccept')->middleware('auth');
+Route::post('quotationNotAccept', [QuotationController::class, 'notAcceptLeadQuotation'])->name('quotationNotAccept')->middleware('auth');
 
 Route::get('newSapForm/{leadId}', [BookingController::class, 'newSapForm'])->name('newSapForm')->middleware('auth');
 Route::post('newSapInsertion', [BookingController::class, 'insertNewSapID'])->name('newSapInsertion')->middleware('auth');
@@ -79,9 +79,14 @@ Route::get('invoiceSetForm/{leadId}', [DeliveryController::class, 'invoiceSetFor
 Route::post('checkSAPInvoice', [DeliveryController::class, 'checkSAPInvoice'])->name('checkSAPInvoice')->middleware('auth');
 Route::post('invoiceSetInsertion', [DeliveryController::class, 'insertInvoice'])->name('invoiceSetInsertion')->middleware('auth');
 Route::get('deliveryPage/{leadId}', [DeliveryController::class, 'deliveryPage'])->name('deliveryPage')->middleware('auth');
+Route::get('deliveryReferenceCheck', [DeliveryController::class, 'deliveryReferenceCheck'])->name('deliveryReferenceCheck')->middleware('auth');
 Route::post('deliveryInformation', [DeliveryController::class, 'storeDeliveryInformation'])->name('deliveryInformation')->middleware('auth');
 Route::post('delivered', [DeliveryController::class, 'storeDelivered'])->name('delivered')->middleware('auth');
 
+Route::get('lost/{leadId}', [Controller::class, 'lostForm'])->name('lost')->middleware('auth');
+Route::post('lostEntry', [Controller::class, 'storeLost'])->name('lostEntry')->middleware('auth');
+
+Route::get('detailsLog/{leadId}', [Controller::class, 'salesLog'])->name('detailsLog')->middleware('auth');
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

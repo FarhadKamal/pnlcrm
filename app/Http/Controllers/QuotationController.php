@@ -52,10 +52,13 @@ class QuotationController extends Controller
         $need_top_approval = 0;
         $need_credit_approval = 0;
         $current_subStage = 'SUBMIT';
+        $logNext = 'Quotation Submit';
 
-        if ($request->credit_approved == 1)
+        if ($request->credit_approved == 1) {
             $need_credit_approval = 2;
-        else $need_credit_approval = 0;
+        } else {
+            $need_credit_approval = 0;
+        }
 
         $choiceInfo = PumpChoice::where(['lead_id' => $lead_id])->get();
 
@@ -63,12 +66,53 @@ class QuotationController extends Controller
             $proposed_discount = $row->discount_percentage;
             $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
 
-            if ($proposed_discount > $trade_discount)
+            if ($proposed_discount > $trade_discount) {
                 $need_discount_approval = 2;
+            }
 
             if ($proposed_discount > ($trade_discount + 3)) {
                 $need_top_approval = 1;
                 $current_subStage = 'MANAGEMENT';
+                $logNext = 'Management Approval';
+            }
+        }
+
+        if ($need_top_approval == 1) {
+            $dealApproveUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="dealTopApprove"');
+            if ($dealApproveUsersEmail) {
+                foreach ($dealApproveUsersEmail as $email) {
+                    $assignEmail = $email->user_email;
+                    $assignName = $email->user_name;
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
+                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a deal is waiting for top management approval. Please approve the deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    });
+                }
+            }
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
+                    $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Waiting for top management approval.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
+        } else {
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
+                    $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
             }
         }
 
@@ -78,6 +122,16 @@ class QuotationController extends Controller
         $leadInfo->need_top_approval = $need_top_approval;
         $leadInfo->current_subStage = $current_subStage;
         $leadInfo->save();
+
+        $log_data = array(
+            'lead_id' => $lead_id,
+            'log_stage' => 'QUOTATION',
+            'log_task' => 'Quotation Approved',
+            'log_by' => Auth()->user()->id,
+            'log_next' => $logNext
+        );
+        SalesLog::create($log_data);
+
         return redirect()->route('home');
     }
 
@@ -102,6 +156,27 @@ class QuotationController extends Controller
         $leadInfo->need_top_approval = 2;
         $leadInfo->current_subStage = 'SUBMIT';
         $leadInfo->save();
+
+        $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+        foreach ($assignedUsersEmail as $email) {
+            $assignEmail = $email->user_email;
+            $assignName = $email->user_name;
+            Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
+                $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved by the top managment. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+            });
+        }
+
+        $log_data = array(
+            'lead_id' => $lead_id,
+            'log_stage' => 'QUOTATION',
+            'log_task' => 'Management Approved',
+            'log_by' => Auth()->user()->id,
+            'log_next' => 'Quotation Submit'
+        );
+        SalesLog::create($log_data);
+
         return redirect()->route('home');
     }
 
@@ -123,6 +198,17 @@ class QuotationController extends Controller
             $data['errors'] = $validator->errors()->all();
             // return back()->with('errors', $data['errors']);
         } else {
+            //First Handle Other Attachment 
+            $otherAttachment = $request->file('otherAttachment');
+            $attachmentArr = [];
+            if ($otherAttachment) {
+                foreach ($otherAttachment as $item) {
+                    if ($item) {
+                        $attachmentArr[] = $item;
+                    }
+                }
+            }
+
             $lead = Lead::find($request->leadId);
             $leadEmail = $lead->lead_email;
             $leadName = $lead->clientInfo->customer_name;
@@ -132,7 +218,7 @@ class QuotationController extends Controller
             $customFileName = "Price Quotation_" . $leadName . "_" . date("d-M-Y") . ".pdf";
             $acceptAttachment = storage_path('app/public/' . $request->file('doc')->storeAs('folder', $customFileName, 'public'));
 
-            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName);
+            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr);
 
             $quotationAttachment = new \Symfony\Component\HttpFoundation\File\File($acceptAttachment);
             $newFileName = time() . "." . $quotationAttachment->getExtension();
@@ -166,14 +252,14 @@ class QuotationController extends Controller
                 });
 
 
-                // $log_data = array(
-                //     'lead_id' => $request->leadId,
-                //     'log_stage' => 'QUOTATION',
-                //     'log_task' => 'Quotatation Approved. Remarks: ' . $request->signRemark . '',
-                //     'log_by' => Auth()->user()->id,
-                //     'log_next' => 'Quotation feedback'
-                // );
-                // SalesLog::create($log_data);
+                $log_data = array(
+                    'lead_id' => $request->leadId,
+                    'log_stage' => 'QUOTATION',
+                    'log_task' => 'Quotatation Submitted',
+                    'log_by' => Auth()->user()->id,
+                    'log_next' => 'Quotation feedback'
+                );
+                SalesLog::create($log_data);
                 return redirect()->route('home');
             } else {
                 $data['errors'] = "Mail is not sent. Please check lead's email.";
@@ -205,12 +291,44 @@ class QuotationController extends Controller
             $sapId = $lead->clientInfo->sap_id;
             if (!$sapId) {
                 $lead->current_subStage = 'SAPIDSET';
+                $logNext = 'New SAP ID Set';
+                $SAPUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapIDCreation"');
+                if ($SAPUsersEmail) {
+                    foreach ($SAPUsersEmail as $email) {
+                        $assignEmail = $email->user_email;
+                        $assignName = $email->user_name;
+                        Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                            $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP ID SET');
+                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP ID generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        });
+                    }
+                }
             } else {
                 if ($lead->payment_type == 'Cash') {
-                    //Discount Set Check
                     $lead->current_subStage = 'TRANSACTION';
+                    $logNext = 'Cash Transaction';
                 } elseif ($lead->payment_type == 'Credit') {
                     $lead->current_subStage = 'CREDITSET';
+                    $logNext = 'Credit Limit Set';
+                    $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapCreditSet"');
+                    if ($SAPCreditUsersEmail) {
+                        foreach ($SAPCreditUsersEmail as $email) {
+                            $assignEmail = $email->user_email;
+                            $assignName = $email->user_name;
+                            Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                                $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
+                                $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP Credit SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                            });
+                        }
+                    }
                 }
             }
             $lead->save();
@@ -239,7 +357,7 @@ class QuotationController extends Controller
                 'log_stage' => 'QUOTATION',
                 'log_task' => 'Quotatation accept by lead. Description: ' . $request->quotationAcceptFeedback . '.',
                 'log_by' => Auth()->user()->id,
-                'log_next' => 'Booking Transaction'
+                'log_next' => $logNext
             );
             SalesLog::create($log_data);
 
@@ -247,106 +365,65 @@ class QuotationController extends Controller
         }
     }
 
-    // public function notAcceptLeadQuotation(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'quotationNotFeedbackModal_leadId' => 'required|numeric',
-    //         'quotationNotAcceptReason' => 'required',
-    //         'quotationNotAcceptFeedback' => 'required'
-    //     ]);
-    //     if ($validator->fails()) {
-    //         $data['errors'] = $validator->errors()->all();
-    //         // echo "<pre>";
-    //         // var_dump($data['errors']);
-    //         // echo "</pre>";
-    //         // die();
-    //         return back()->with('errors', $data['errors']);
-    //     } else {
-    //         //Update Lead Table
-    //         $lead = Lead::find($request->quotationNotFeedbackModal_leadId);
-    //         $lead->current_stage = 'DEAL';
-    //         $lead->is_return = 1;
-    //         $lead->current_subStage = 'FORM';
-    //         $lead->save();
+    public function notAcceptLeadQuotation(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'quotationNotFeedbackModal_leadId' => 'required|numeric',
+            'quotationNotAcceptReason' => 'required',
+            'quotationNotAcceptFeedback' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            //Update Lead Table
+            $leadId = $request->quotationNotFeedbackModal_leadId;
+            $lead = Lead::find($request->quotationNotFeedbackModal_leadId);
+            $lead->current_stage = 'DEAL';
+            $lead->is_return = 1;
+            $lead->current_subStage = 'FORM';
+            $lead->save();
 
-    //         $dealInfo = Deal::where('lead_id', $request->quotationNotFeedbackModal_leadId)->orderBy('id', 'desc')->limit(1)->get();
-
-    //         $dealDetails = DealDetail::where(['lead_id' => $request->quotationNotFeedbackModal_leadId, 'deal_id' => $dealInfo[0]->id])->get();
-    //         foreach ($dealDetails as $item) {
-    //             $inventoryId = $item->inventory_id;
-    //             if ($inventoryId) {
-    //                 $inventoryInfo = Inventory::find($inventoryId);
-    //                 $inventoryInfo->deal_status = 0;
-    //                 $inventoryInfo->save();
-    //             }
-    //         }
-
-    //         //Quotation Table Data Update
-    //         $dealId = $lead->current_deal;
-    //         $update_data = array(
-    //             'accept_file' => ' ',
-    //             'accept_description' => ' ',
-    //             'is_return' => 1,
-    //             'return_reason' => $request->quotationNotAcceptReason,
-    //             'return_description' => $request->quotationNotAcceptFeedback
-    //         );
-    //         Quotation::where(['lead_id' => $request->quotationNotFeedbackModal_leadId, 'deal_id' => $dealId])->update($update_data);
+            //Quotation Table Data Update
+            $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $leadId ORDER BY id DESC LIMIT 1");
+            $quotationId = $quotationRef[0]->id;
+            $quotationInfo = Quotation::find($quotationId);
+            $quotationInfo->is_return = 1;
+            $quotationInfo->return_reason = $request->quotationNotAcceptReason;
+            $quotationInfo->return_description = $request->quotationNotAcceptFeedback;
+            $quotationInfo->save();
 
 
-    //         $quotationApproveUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
-    //         INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
-    //         INNER JOIN users ON users.id=user_permissions.user_id
-    //         WHERE permissions.permission_code="quotationApprove"');
+            $log_data = array(
+                'lead_id' => $request->quotationNotFeedbackModal_leadId,
+                'log_stage' => 'QUOTATION',
+                'log_task' => 'Quotatation not accept by lead. Reason: ' . $request->quotationNotAcceptReason . '. Description: ' . $request->quotationNotAcceptFeedback . '',
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'Deal form submission'
+            );
+            SalesLog::create($log_data);
 
-    //         foreach ($quotationApproveUsersEmail as $email) {
-    //             $assignEmail = $email->user_email;
-    //             $assignName = $email->user_name;
-    //             Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
-    //                 $message->to($assignEmail, $assignName)->subject('Subaru Bangladesh - CRM Quotation Accepted By Customer');
-    //                 $message->from('info@subaru-bd.com', 'Subaru Bangladesh');
-    //                 $message->setBody('<h3>Greetings From SUBARU BANGLADESH!</h3><p>Dear ' . $assignName . ', a quotation is not accepted by the customer. Need to deal again.</p><p>Regards,<br>Subaru Bangladesh</p>', 'text/html');
-    //             });
-    //         }
-
-    //         $dealApproveUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
-    //         INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
-    //         INNER JOIN users ON users.id=user_permissions.user_id
-    //         WHERE permissions.permission_code="dealApprove"');
-
-    //         foreach ($dealApproveUsersEmail as $email) {
-    //             $assignEmail = $email->user_email;
-    //             $assignName = $email->user_name;
-    //             Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
-    //                 $message->to($assignEmail, $assignName)->subject('Subaru Bangladesh - CRM Quotation Accepted By Customer');
-    //                 $message->from('info@subaru-bd.com', 'Subaru Bangladesh');
-    //                 $message->setBody('<h3>Greetings From SUBARU BANGLADESH!</h3><p>Dear ' . $assignName . ', a quotation is not accepted by the customer. Need to deal again.</p><p>Regards,<br>Subaru Bangladesh</p>', 'text/html');
-    //             });
-    //         }
+            return redirect()->route('home');
+        }
+    }
 
 
-    //         $log_data = array(
-    //             'lead_id' => $request->quotationNotFeedbackModal_leadId,
-    //             'log_stage' => 'QUOTATION',
-    //             'log_task' => 'Quotatation not accept by lead. Reason: ' . $request->quotationNotAcceptReason . '. Description: ' . $request->quotationNotAcceptFeedback . '',
-    //             'log_by' => Auth()->user()->id,
-    //             'log_next' => 'Deal form submission'
-    //         );
-    //         SalesLog::create($log_data);
-
-    //         return redirect()->route('sales');
-    //     }
-    // }
-
-
-    public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName)
+    public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr)
     {
 
         $data = array('name' => "PNL Holdings Limited");
-        Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName) {
+        Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr) {
             $message->to($leadEmail, $leadName)->subject('PNL Holdings Limited Price Quotation');
             $message->from('info@subaru-bd.com', 'PNL Holdings Ltd.');
             $message->cc($assignEmail, $assignName);
             $message->attach($attachment);
+            // Attach additional attachments from the array
+            foreach ($attachmentArr as $file) {
+                $message->attach($file->getPathname(), [
+                    'as' => $file->getClientOriginalName(),
+                    'mime' => $file->getMimeType()
+                ]);
+            }
             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Thank you for your interest in PNL Holdings Limited.<br>Please Find the quotation attachment and reply your feedback to this email. For any query you can call us directly at +8801844494444</p><p>Regards,<br>Subaru Bangladesh</p>', 'text/html');
         });
 

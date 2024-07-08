@@ -96,93 +96,92 @@
         </div>
     </div>
 
-    @if ($leadInfo->payment_type == 'Cash')
-        <div class="row mt-5 mb-3 container m-auto">
-            <h6 class="text-center"><kbd>Transaction Summary</kbd></h6>
-            <table class="table table-bordered fs-08rem log-table text-center">
-                <thead>
-                    <tr>
-                        <th class="p-1">Net Price</th>
-                        <th class="p-1">Deposited</th>
-                        <th class="p-1">Balance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="p-1">{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</td>
-                        <?php $totalPaid = 0; ?>
-                        @foreach ($transactionInfo as $item)
-                            <?php
-                            if ($item->is_verified == 1) {
-                                $totalPaid = $totalPaid + $item->pay_amount;
-                            }
-                            ?>
-                        @endforeach
-                        <td class="p-1">{{ number_format((float) $totalPaid, 2, '.', ',') }}</td>
-                        <td class="p-1">{{ number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="row mt-5 mb-3 container m-auto">
-            <h6 class="text-center"><kbd>Booking Transaction List</kbd></h6>
-            <table class="table table-bordered fs-08rem log-table text-center">
-                <thead>
-                    <tr>
-                        <th class="p-1">SL.</th>
-                        <th class="p-1">Deposit Date</th>
-                        <th class="p-1">Taka</th>
-                        <th class="p-1">Statement Date</th>
-                        <th class="p-1">Statement Remarks</th>
-                        <th class="p-1">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php $sl = 1; ?>
+    <div class="row mt-5 mb-3 container m-auto">
+        <h6 class="text-center"><kbd>Transaction Summary</kbd></h6>
+        <table class="table table-bordered fs-08rem log-table text-center">
+            <thead>
+                <tr>
+                    <th class="p-1">Net Price</th>
+                    <th class="p-1">Deposited</th>
+                    <th class="p-1">Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="p-1">{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</td>
+                    <?php $totalPaid = 0; ?>
                     @foreach ($transactionInfo as $item)
-                        <tr>
-                            <td class="p-1">{{ $sl }}</td>
-                            <td class="p-1">{{ date('d-M-Y', strtotime($item->deposit_date)) }}</td>
-                            <td class="p-1">{{ number_format((float) $item->pay_amount, 2, '.', ',') }}</td>
-
-                            @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction') && $item->is_verified == 0)
-                                <form action="{{ route('verifiedTransaction') }}" method="POST"
-                                    id="verifyTransactionForm">
-                                    @csrf
-                                    <input type="hidden" name="transactionId" value="{{ $item->id }}">
-                                    <td>
-                                        <input type="text" class="flatpickr form-control p-1 fs-07rem"
-                                            name="depositedDate" id="depositedDate" required>
-                                    </td>
-                                    <td>
-                                        <textarea name="depositedRemarks" id="depositedRemarks" cols="30" rows="2"></textarea>
-                                    </td>
-                                    <td><button class="btn btn-darkblue btn-sm fs-06rem mt-2">Click Here To
-                                            Verify</button>
-                                    </td>
-                                </form>
-                            @else
-                                @if ($item->deposited_date)
-                                    <td class="p-1">{{ date('d-M-Y', strtotime($item->deposited_date)) }}</td>
-                                @else
-                                    <td class="p-1"></td>
-                                @endif
-                                <td class="p-1">{{ $item->deposited_remarks }}</td>
-                                @if ($item->is_verified == 0)
-                                    <td class="p-1"><button class="btn btn-sm btn-danger badge">unverified</button>
-                                    </td>
-                                @else
-                                    <td class="p-1"><button class="btn btn-sm btn-success badge">verified</button>
-                                    </td>
-                                @endif
-                            @endif
-                        </tr>
-                        <?php $sl++; ?>
+                        <?php
+                        if ($item->is_verified == 1) {
+                            $totalPaid = $totalPaid + $item->pay_amount;
+                        }
+                        ?>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endif
+                    <td class="p-1">{{ number_format((float) $totalPaid, 2, '.', ',') }}</td>
+                    <td class="p-1">{{ number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row mt-5 mb-3 container m-auto">
+        <h6 class="text-center"><kbd>Booking Transaction List</kbd></h6>
+        <table class="table table-bordered fs-08rem log-table text-center">
+            <thead>
+                <tr>
+                    <th class="p-1">SL.</th>
+                    <th class="p-1">Deposit Date</th>
+                    <th class="p-1">Taka</th>
+                    <th class="p-1">Statement Date</th>
+                    <th class="p-1">Statement Remarks</th>
+                    <th class="p-1">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $sl = 1; ?>
+                @foreach ($transactionInfo as $item)
+                    <tr>
+                        <td class="p-1">{{ $sl }}</td>
+                        <td class="p-1">{{ date('d-M-Y', strtotime($item->deposit_date)) }}</td>
+                        <td class="p-1">{{ number_format((float) $item->pay_amount, 2, '.', ',') }}</td>
+
+                        @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction') && $item->is_verified == 0)
+                            <form action="{{ route('verifiedTransaction') }}" method="POST"
+                                id="verifyTransactionForm">
+                                @csrf
+                                <input type="hidden" name="transactionId" value="{{ $item->id }}">
+                                <td>
+                                    <input type="text" class="flatpickr form-control p-1 fs-07rem"
+                                        name="depositedDate" id="depositedDate" required>
+                                </td>
+                                <td>
+                                    <textarea name="depositedRemarks" id="depositedRemarks" cols="30" rows="2"></textarea>
+                                </td>
+                                <td><button class="btn btn-darkblue btn-sm fs-06rem mt-2">Click Here To
+                                        Verify</button>
+                                </td>
+                            </form>
+                        @else
+                            @if ($item->deposited_date)
+                                <td class="p-1">{{ date('d-M-Y', strtotime($item->deposited_date)) }}</td>
+                            @else
+                                <td class="p-1"></td>
+                            @endif
+                            <td class="p-1">{{ $item->deposited_remarks }}</td>
+                            @if ($item->is_verified == 0)
+                                <td class="p-1"><button class="btn btn-sm btn-danger badge">unverified</button>
+                                </td>
+                            @else
+                                <td class="p-1"><button class="btn btn-sm btn-success badge">verified</button>
+                                </td>
+                            @endif
+                        @endif
+                    </tr>
+                    <?php $sl++; ?>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
 
     <div>
         @if ($leadInfo->is_outstanding == 1)

@@ -1,7 +1,25 @@
 @include('layouts.navbar')
 <div class="container-fluid mt-3 mb-5">
-    <div class="d-flex  flex-row salesStageFlex" id="salesStageFlex">
 
+    <!---------------------------- DropDown for Mobile view ---------------- -->
+
+    <div class="col mb-3 d-block d-sm-none">
+        {{-- <form method="POST" action="{{route('changeMobileViewStage')}}" id="category-form">
+            @csrf --}}
+        <select class="form-select" name="mobileSalesSatges" id="mobileSalesSatges" onchange="changeMobileStage()">
+            <option value="lead">Lead</option>
+            <option value="deal">Deal</option>
+            <option value="quotation">Quotation</option>
+            <option value="booking">Booking</option>
+            <option value="delivery">Ready To Deliver</option>
+            <option value="won">Won</option>
+            <option value="lost">Lost</option>
+        </select>
+        {{-- </form> --}}
+
+    </div>
+
+    <div class="d-flex  flex-row salesStageFlex" id="salesStageFlex">
         <!----------------------------Lead Column---------------- -->
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadStage') ||
                 App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadStageAll'))
@@ -60,15 +78,10 @@
                 @foreach ($dealStage as $item)
                     <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
                         <div class="card-body">
-                            {{-- @if ($item->current_subStage == 'APPROVE')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Approval</small>
-                        @endif
-                        @if ($item->current_subStage == 'CHECK')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Checking</small>
-                        @endif
-                        @if ($item->current_subStage == 'FORM')
-                            <small class="badge badge-info blink p-1 m-0 ">Waiting for Dealing</small>
-                        @endif --}}
+                            @if ($item->is_return == 1)
+                                <small class="badge badge-danger blink p-1 m-0 ">Return. Resubmit Deal</small>
+                            @endif
+
                             <div class="row">
                                 <div class="col-10">
                                     <h6 class="card-title fs-09rem">
@@ -96,7 +109,7 @@
                                             Choice</button>
                                     </a>
                                 @else
-                                    <a href="#">
+                                    <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                         <button type="button"
                                             class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                     </a>
@@ -111,7 +124,7 @@
         <!----------------------------Quotation Column---------------- -->
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'quotationStage') ||
                 App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'quotationStageAll'))
-            <div class="col-sm p-1 stageColumn" id="dealColumn">
+            <div class="col-sm p-1 stageColumn" id="quotationColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 ">Quotation</h6>
                 @if (count($quotationStage) <= 0)
                     <p class="text-danger">No Quotation Stage Found</p>
@@ -157,7 +170,7 @@
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Approve</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -170,7 +183,7 @@
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Managmement</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -183,7 +196,7 @@
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Submit</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -199,7 +212,7 @@
                                             Feedback
                                         </button>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -216,7 +229,7 @@
         <!----------------------------Booking Column---------------- -->
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'bookingStage') ||
                 App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'bookingStageAll'))
-            <div class="col-sm p-1 stageColumn" id="dealColumn">
+            <div class="col-sm p-1 stageColumn" id="bookingColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 ">Booking</h6>
                 @if (count($bookingStage) <= 0)
                     <p class="text-danger">No Booking Found</p>
@@ -263,7 +276,7 @@
                                                 SET</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -277,7 +290,7 @@
                                                 Discount Set</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -291,7 +304,7 @@
                                                 Credit Set</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -311,7 +324,7 @@
                                                     Transaction</button>
                                             </a>
                                         @else
-                                            <a href="">
+                                            <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                                 <button type="button"
                                                     class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                             </a>
@@ -329,7 +342,7 @@
         <!----------------------------Ready To Deliver Column---------------- -->
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'deliveryStage') ||
                 App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'deliveryStageAll'))
-            <div class="col-sm p-1 stageColumn" id="dealColumn">
+            <div class="col-sm p-1 stageColumn" id="deliveryColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 ">Ready To Deliver</h6>
                 @if (count($deliveryStage) <= 0)
                     <p class="text-danger">No Delivery Found</p>
@@ -374,7 +387,7 @@
                                                 Discount Set</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -388,7 +401,7 @@
                                                 Invoice Set</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -401,7 +414,7 @@
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Delivery</button>
                                         </a>
                                     @else
-                                        <a href="">
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
                                         </a>
@@ -417,7 +430,7 @@
         <!----------------------------WON Column---------------- -->
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'wonStage') ||
                 App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'wonStageAll'))
-            <div class="col-sm p-1 stageColumn" id="dealColumn">
+            <div class="col-sm p-1 stageColumn" id="wonColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 ">Won</h6>
                 @if (count($wonStage) <= 0)
                     <p class="text-danger">No Won Found</p>
@@ -448,9 +461,10 @@
                             <small class="card-text mb-1"><b>Created By:</b>
                                 {{ $item['createdBy']->user_name }}</small>
                             <div>
-                                <a href="">
+                                <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                     <button type="button"
-                                        class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                        class="btn btn-sm btn-success  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Win
+                                        Log</button>
                                 </a>
                             </div>
                         </div>
@@ -462,7 +476,7 @@
         <!----------------------------Lost Column---------------- -->
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'lostStage') ||
                 App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'lostStageAll'))
-            <div class="col-sm p-1 stageColumn" id="dealColumn">
+            <div class="col-sm p-1 stageColumn" id="lostColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 ">Lost</h6>
                 @if (count($lostStage) <= 0)
                     <p class="text-danger">No Lost Found</p>
@@ -490,9 +504,10 @@
                             <small class="card-text mb-1"><b>Created By:</b>
                                 {{ $item['createdBy']->user_name }}</small>
                             <div>
-                                <a href="">
+                                <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                     <button type="button"
-                                        class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                        class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Lost
+                                        Log</button>
                                 </a>
                             </div>
                         </div>
@@ -502,3 +517,95 @@
         @endif
     </div>
 </div>
+
+<?php
+if (isset($_COOKIE['MobileStage'])) {
+    $sessionMobileStage = $_COOKIE['MobileStage'];
+    // echo $sessionMobileStage;
+} else {
+    $sessionMobileStage = null;
+}
+?>
+
+<script>
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
+        $(document).ready(function() {
+            if ({{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'lostStageAll') }} ||
+                {{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'lostStage') }}) {
+                const $select = document.querySelector('#mobileSalesSatges');
+                $select.value = 'lost';
+            }
+            if ({{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'wonStage') }} ||
+                {{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'wonStageAll') }}) {
+                const $select = document.querySelector('#mobileSalesSatges');
+                $select.value = 'won';
+            }
+            if ({{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'deliveryStage') }} ||
+                {{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'deliveryStageAll') }}) {
+                const $select = document.querySelector('#mobileSalesSatges');
+                $select.value = 'delivery';
+            }
+            if ({{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'bookingStage') }} ||
+                {{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'bookingStageAll') }}) {
+                const $select = document.querySelector('#mobileSalesSatges');
+                $select.value = 'booking';
+            }
+            if ({{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'quotationStage') }} ||
+                {{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'quotationStageAll') }}) {
+                const $select = document.querySelector('#mobileSalesSatges');
+                $select.value = 'quotation';
+            }
+            if ({{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'dealStage') }} ||
+                {{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'dealStageAll') }}) {
+                const $select = document.querySelector('#mobileSalesSatges');
+                $select.value = 'deal';
+            }
+            if ({{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadStage') }} ||
+                {{ App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadStageAll') }}) {
+                const $select = document.querySelector('#mobileSalesSatges');
+                $select.value = 'lead';
+            }
+
+            if ("<?= $sessionMobileStage ?>") {
+                const $select = document.querySelector('#mobileSalesSatges');
+                $select.value = "<?= $sessionMobileStage ?>";
+            }
+
+            changeMobileStage();
+        });
+    }
+
+    function changeMobileStage() {
+        let stage = $('#mobileSalesSatges').val();
+        let columns = document.getElementsByClassName('stageColumn');
+        for (let i = 0; i < columns.length; i++) {
+            columns[i].style.display = "none";
+        }
+
+        switch (stage) {
+            case 'lead':
+                document.getElementById("leadColumn").style.display = "block";
+                break;
+            case 'deal':
+                document.getElementById("dealColumn").style.display = "block";
+                break;
+            case 'quotation':
+                document.getElementById("quotationColumn").style.display = "block";
+                break;
+            case 'booking':
+                document.getElementById("bookingColumn").style.display = "block";
+                break;
+            case 'delivery':
+                document.getElementById("deliveryColumn").style.display = "block";
+                break;
+            case 'won':
+                document.getElementById("wonColumn").style.display = "block";
+                break;
+            case 'lost':
+                document.getElementById("lostColumn").style.display = "block";
+        }
+        // console.log($('#mobileSalesSatges').val());
+
+        document.cookie = escape('MobileStage') + "=" + escape(stage);
+    }
+</script>

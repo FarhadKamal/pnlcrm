@@ -14,6 +14,9 @@
 </div>
 
 <div class="container-fluid mb-3 mt-2">
+    <div class="float-end">
+        <a href="{{ route('detailsLog', ['leadId'=>$leadId]) }}" target="_blank"><button class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+    </div>
     <center>
         <h4 class="mt-3">Requirement & Pump Selection Form</h4>
         <h6>Total Requirement <span class="bg-darkblue text-white p-2 rounded blink">{{ count($reqList) }}</span> And

@@ -24,7 +24,7 @@ class CreatePumpChoicesTable extends Migration
             $table->double('discount_price')->default(0);
             $table->double('discount_percentage')->default(0);
             $table->double('net_price')->default(0);
-
+            $table->integer('spare_parts')->default(0);
             $table->timestamps();
         });
     }

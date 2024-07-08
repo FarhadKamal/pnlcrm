@@ -17,11 +17,16 @@ class PumpChoice extends Model
         'qty',
         'discount_price',
         'discount_percentage',
-        'net_price'
+        'net_price',
+        'spare_parts'
     ];
 
     public function productInfo()
     {
         return $this->hasOne(Items::class, 'id', 'product_id');
+    }
+    public function spareInfo()
+    {
+        return $this->hasOne(SpareItems::class, 'id', 'product_id');
     }
 }

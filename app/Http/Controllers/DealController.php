@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Requirements;
 use App\Models\PumpChoice;
 use App\Models\SalesLog;
+use App\Models\SpareItems;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -111,32 +112,45 @@ class DealController extends Controller
     public function getFilterPumpInfo(Request $request)
     {
         $data = $request->json()->all();
+        $filterType = $data['filterType'];
         $filterBrand = $data['filterBrand'];
         $filterHP = $data['filterHP'];
         $filterModel = $data['filterModel'];
         $filterHead = $data['filterHead'];
         $filterPhase = $data['filterPhase'];
+        $filterSpare = $data['filterSpare'];
 
-        $query = Items::query();
+        if ($filterType == 'Spare Parts') {
+            $query = SpareItems::query();
+            if ($filterSpare != 'all') {
+                $query->where('mat_name', $filterSpare);
+            }
+            if ($filterBrand != 'all') {
+                $query->where('brand_name', $filterBrand);
+            }
+        } else {
+            $query = Items::query();
+            $query->where('pump_type', $filterType);
+            if ($filterBrand != 'all') {
+                $query->where('brand_name', $filterBrand);
+            }
+            if ($filterHP != 'all') {
+                $query->where('hp', $filterHP);
+            }
+            if ($filterModel != 'all') {
+                $query->where('mat_name', $filterModel);
+            }
+            if ($filterHead) {
+                $query->where(function ($q) use ($filterHead) {
+                    $q->where('min_head', '<=', $filterHead)
+                        ->where('max_head', '>=', $filterHead);
+                });
+            }
+            if ($filterPhase != 'all') {
+                $query->where('phase', $filterPhase);
+            }
+        }
 
-        if ($filterBrand != 'all') {
-            $query->where('brand_name', $filterBrand);
-        }
-        if ($filterHP != 'all') {
-            $query->where('hp', $filterHP);
-        }
-        if ($filterModel != 'all') {
-            $query->where('mat_name', $filterModel);
-        }
-        if ($filterHead) {
-            $query->where(function ($q) use ($filterHead) {
-                $q->where('min_head', '<=', $filterHead)
-                    ->where('max_head', '>=', $filterHead);
-            });
-        }
-        if ($filterPhase != 'all') {
-            $query->where('phase', $filterPhase);
-        }
 
         $itemInfo = $query->get();
 
@@ -243,9 +257,13 @@ class DealController extends Controller
                     'discount_price' => $request->product_discountAmt[$key],
                     'discount_percentage' => $request->product_discountPercentage[$key],
                     'net_price' => $request->product_netPrice[$key],
+                    'spare_parts' => $request->spare[$key]
                 ];
                 $data[] = $eachItem;
             }
+            usort($data, function ($a, $b) {
+                return $b['product_id'] <=> $a['product_id'];
+            });
             PumpChoice::insert($data);
             return back()->with('success', 'Pump chocie data saved!');
         } else {
@@ -279,9 +297,18 @@ class DealController extends Controller
             $need_credit_approval = 1;
         }
 
+        $AllSP = 1; // By Default Assume That All Item Are Spare Parts
         foreach ($choiceInfo as $row) {
+            // First Check All Are Spare Item or not 
+            if ($row->spare_parts == 0) {
+                $AllSP = 0;
+            }
             $proposed_discount = $row->discount_percentage;
-            $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
+            if ($row->spare_parts == 0) {
+                $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
+            }else{
+                $trade_discount = $proposed_discount; // For Spare Parts Assume for Package
+            }
 
             if ($proposed_discount > $trade_discount) {
                 $need_discount_approval = 1;
@@ -289,6 +316,16 @@ class DealController extends Controller
 
             if ($proposed_discount > ($trade_discount + 3)) {
                 $need_top_approval = 1;
+            }
+        }
+
+        if ($AllSP == 1) {
+            // If All Are Spare Parts and If any proposed discount, need discount approval
+            foreach ($choiceInfo as $row) {
+                $proposed_discount = $row->discount_percentage;
+                if ($proposed_discount > 0) {
+                    $need_discount_approval = 1;
+                }
             }
         }
 

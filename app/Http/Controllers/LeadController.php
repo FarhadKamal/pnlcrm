@@ -15,6 +15,7 @@ use App\Models\Requirements;
 
 use App\Models\LeadZone;
 use App\Models\PumpChoice;
+use App\Models\SpareItems;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -282,6 +283,7 @@ class LeadController extends Controller
         $data['allPumpHP'] = Items::distinct()->orderBy('hp', 'ASC')->get('hp');
         $data['allPumpPhase'] = Items::distinct()->orderBy('phase', 'ASC')->get('phase');
         $data['allPumpModel'] = Items::distinct()->orderBy('mat_name', 'ASC')->get('mat_name');
+        $data['allSpareParts'] = SpareItems::distinct()->orderBy('mat_name', 'ASC')->get('mat_name');
         // $data['allPumpHead'] = Items::distinct()->orderBy('head', 'ASC')->get('head');
 
         return view('sales.dealForm', $data);

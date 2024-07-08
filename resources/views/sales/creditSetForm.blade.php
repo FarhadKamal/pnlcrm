@@ -100,10 +100,17 @@
                         <?php
                         $totalDiscountAmt = $totalDiscountAmt + $pumps->discount_price;
                         $totalNetPrice = $totalNetPrice + $pumps->net_price;
+                        if ($pumps->spare_parts == 0) {
+                            $brandName = $pumps->productInfo->brand_name;
+                            $prName = $pumps->productInfo->mat_name;
+                        } else {
+                            $brandName = $pumps->spareInfo->brand_name;
+                            $prName = $pumps->spareInfo->mat_name;
+                        }
                         ?>
                         <tr>
-                            <td class="p-1">{{ $pumps->productInfo->brand_name }}</td>
-                            <td class="p-1">{{ $pumps->productInfo->mat_name }}</td>
+                            <td class="p-1">{{ $brandName }}</td>
+                            <td class="p-1">{{ $prName }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $pumps->unit_price, 2, '.', ',') }}</td>
                             <td class="p-1 text-center">{{ $pumps->qty }}</td>
                             <td class="p-1 text-center">{{ $pumps->discount_percentage }}</td>

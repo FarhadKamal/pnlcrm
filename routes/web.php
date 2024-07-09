@@ -88,6 +88,11 @@ Route::post('lostEntry', [Controller::class, 'storeLost'])->name('lostEntry')->m
 
 Route::get('detailsLog/{leadId}', [Controller::class, 'salesLog'])->name('detailsLog')->middleware('auth');
 
+
+Route::get('myProfile', [Controller::class, 'myProfilePage'])->name('myProfile')->middleware('auth');
+Route::get('myProfileEdit', [Controller::class, 'myProfileEdit'])->name('myProfileEdit')->middleware('auth');
+Route::post('updateMyProfile', [Controller::class, 'updateMyProfile'])->name('updateMyProfile')->middleware('auth');
+
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');
 Route::post('users', [AdminController::class, 'storeUser'])->name('users')->middleware('auth');

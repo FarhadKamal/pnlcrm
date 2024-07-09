@@ -51,7 +51,7 @@
         <div class="container-fluid">
             <!-- Navbar brand -->
             <a class="navbar-brand me-2" href="{{ route('dashboard') }}">
-                <img src="{{ asset('images/system/logo.png') }}" class="rounded" height="43" alt="PNL Logo"
+                <img src="{{ asset('images/system/logo.png') }}" class="rounded" height="30" alt="PNL Logo"
                     loading="lazy" style="margin-top: -2px;" />
             </a>
 
@@ -61,7 +61,7 @@
                 <ul class="navbar-nav d-flex flex-row justify-content-evenly">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('customerForm') }}"><button
-                                class="btn btn-sm create-lead-btn"><strong>New
+                                class="btn btn-sm create-lead-btn fs-07rem p-1"><strong>Create New
                                     Customer</strong></button></a>
                     </li>
                 </ul>
@@ -162,19 +162,23 @@
                     {{-- @endif --}}
                 </ul>
                 <!-- Left links -->
-
+                <?php
+                $desgName = DB::select('SELECT desg_name FROM designations WHERE id = ' . Auth()->user()->user_desg . '');
+                $deptName = DB::select('SELECT dept_name FROM departments WHERE id = ' . Auth()->user()->user_dept . '');
+                ?>
                 <div class="d-flex align-items-center">
                     <ul class="navbar-nav">
                         {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm')) --}}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('customerForm') }}"><button
-                                    class="btn btn-sm create-lead-btn"><strong>New
+                                    class="btn btn-sm create-lead-btn"><strong>Create New
                                         Customer</strong></button></a>
                         </li>
                         {{-- @endif --}}
                         <li class="nav-item">
-                            <p class="bg-white ps-2 pe-2 pt-1 pb-1 rounded mt-2 me-2 fs-08rem"><b>
-                                    Irfanul Kalam Chowdhury, <small>Sr Executive</small>
+                            <p class="bg-white ps-2 pe-2 pt-1 pb-1 rounded mt-2 me-2 fs-08rem"><small>LogIn as:
+                                </small><b>
+                                    {{ Auth()->user()->user_name }}, <small>{{ $desgName[0]->desg_name }}</small>
                             </p>
                         </li>
 
@@ -188,7 +192,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="left:-110px">
                                 <li>
-                                    <a class="dropdown-item" href="#">My profile</a>
+                                    <a class="dropdown-item" href="{{ route('myProfile') }}">My profile</a>
                                 </li>
                                 {{-- <li>
                                 <a class="dropdown-item" href="#">Settings</a>
@@ -262,11 +266,11 @@
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownMenuLink"
                 role="button" data-mdb-toggle="dropdown" aria-expanded="false">
                 <img src="{{ asset('images/system/avatar.png') }}" class="rounded-circle" height="22"
-                    alt="Portrait of a Woman" loading="lazy" />
+                    alt="Portrait of a man" loading="lazy" />
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <li>
-                    <a class="dropdown-item" href="#">My profile</a>
+                    <a class="dropdown-item" href="{{ route('myProfile') }}">My profile</a>
                 </li>
                 {{-- <li>
                     <a class="dropdown-item" href="#">Settings</a>

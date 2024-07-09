@@ -219,4 +219,69 @@ class Controller extends BaseController
         $data['salesLog'] = SalesLog::where('lead_id', $leadId)->orderBy('id', 'DESC')->get();
         return view('sales.leadDetailsLog', $data);
     }
+
+
+    public function myProfilePage()
+    {
+        $userId = Auth()->user()->id;
+        $data['userInfo'] = User::with('designation:id,desg_name', 'department:id,dept_name', 'location:id,loc_name')->find($userId);
+        return view('myProfile', $data);
+    }
+
+    public function myProfileEdit()
+    {
+        $userId = Auth()->user()->id;
+        $data['userInfo'] = User::with('designation:id,desg_name', 'department:id,dept_name', 'location:id,loc_name')->find($userId);
+        $data['userEdit'] = true;
+        return view('myProfile', $data);
+    }
+
+    public function updateMyProfile(Request $request)
+    {
+        $userId = Auth()->user()->id;
+        $userInfo = User::find($userId);
+        if ($request->userEmail != $userInfo['user_email']) {
+            $validator = Validator::make($request->all(), [
+                'userEmail' => 'required|email|unique:users,user_email',
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'userName' => 'required|max:255',
+            'userPhone' => 'numeric|nullable',
+            'userSignature' => 'mimes:jpeg,jpg,png||max:5120'
+        ]);
+
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors()->all());
+            // var_dump($validator->errors()->all());
+        }
+
+        $insert_data = array();
+        if (isset($request->userPassword)) {
+            $userPassword = $request->userPassword;
+            $userHashPassword = Hash::make($userPassword);
+            $insert_data['password'] = $userHashPassword;
+        }
+
+        if (isset($request->userSignature)) {
+            $signature = $request->file('userSignature');
+            $newFileName = time() . "." . $signature->getClientOriginalExtension();
+            $destinationPath = 'images/userSignature/';
+            $signature->move($destinationPath, $newFileName);
+            $insert_data['user_signature'] = $newFileName;
+        }
+
+        if (isset($request->userPhone)) {
+            $insert_data['user_phone'] = $request->userPhone;
+        } else {
+            $insert_data['user_phone'] = '';
+        }
+
+        $insert_data['user_name'] = $request->userName;
+        $insert_data['user_email'] = $request->userEmail;
+
+        User::where('id', $userId)->update($insert_data);
+        return back()->with('success', 'User Information Updated');
+    }
 }

@@ -55,7 +55,7 @@ class BookingController extends Controller
                         $assignName = $email->user_name;
                         Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
-                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP Credit SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
@@ -66,7 +66,7 @@ class BookingController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP ID SET');
-                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a new SAP ID set for the lead. Waiting for SAP Credit Set.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
@@ -79,7 +79,7 @@ class BookingController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP ID SET');
-                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a new SAP ID set for the lead.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
@@ -133,7 +133,7 @@ class BookingController extends Controller
                         $assignName = $email->user_name;
                         Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP DISCOUNT SET');
-                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for SAP Discount SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
@@ -144,7 +144,7 @@ class BookingController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP Credit SET');
-                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', SAP Credit set for the lead. Waiting for Discount Set</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
@@ -161,7 +161,7 @@ class BookingController extends Controller
                         $assignName = $email->user_name;
                         Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP INVOICE GENERATION');
-                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
@@ -172,7 +172,7 @@ class BookingController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP Credit SET');
-                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', SAP Credit set for the lead. Waiting for Invoice generation</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
@@ -233,7 +233,7 @@ class BookingController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Transaction Inserted');
-                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a transaction is inserted. Please verify the transaction.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
@@ -290,7 +290,7 @@ class BookingController extends Controller
                 $assignName = $email->user_name;
                 Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Transaction Verified');
-                    $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                    $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                     $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted transaction is verified.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
             }
@@ -349,7 +349,7 @@ class BookingController extends Controller
                             $assignName = $email->user_name;
                             Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                                 $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP DISCOUNT SET');
-                                $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                                $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                                 $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for SAP Discount SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                             });
                         }
@@ -360,7 +360,7 @@ class BookingController extends Controller
                         $assignName = $email->user_name;
                         Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM ACCOUNTS CLEARED');
-                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', The lead cleared from accounts. Waiting for Discount Set</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
@@ -378,7 +378,7 @@ class BookingController extends Controller
                             $assignName = $email->user_name;
                             Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                                 $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP INVOICE GENERATION');
-                                $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                                $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                                 $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                             });
                         }
@@ -389,7 +389,7 @@ class BookingController extends Controller
                         $assignName = $email->user_name;
                         Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM ACCOUNTS CLEARED');
-                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', The lead cleared from accounts. Waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }

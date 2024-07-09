@@ -19,9 +19,9 @@
                 class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
     </div>
     <center>
-        <h4 class="mt-3">Requirement & Pump Selection Form</h4>
+        <h4 class="mt-3">Requirement & Item Selection Form</h4>
         <h6>Total Requirement <span class="bg-darkblue text-white p-2 rounded blink">{{ count($reqList) }}</span> And
-            Total Pump Selection <span><span
+            Total Item Selection <span><span
                     class="bg-darkblue text-white p-2 rounded blink">{{ count($selectedPumpList) }}</span></span></h6>
     </center>
     <hr>
@@ -268,7 +268,7 @@
                     </div>
                     <div class="col-md-7 bg-white rounded shadow p-1">
                         <center>
-                            <h6 class="text-primary fw-bold">Pump Selection</h6>
+                            <h6 class="text-primary fw-bold">Item Selection</h6>
                             <button data-mdb-toggle="modal" data-mdb-target="#pumpSelectionModal"
                                 class="float-end btn btn-sm btn-primary fs-07rem p-1 m-1 modalBtn"
                                 onclick="setModalNumber({{ $modalNo }})">Select Item</button>
@@ -370,7 +370,7 @@
                                     </tbody>
                                 </table>
                                 <center><button class="btn btn-sm btn-darkblue fs-06rem p-1">Save Selected
-                                        Pump</button>
+                                        Item</button>
                                 </center>
                             </form>
                         </div>
@@ -526,7 +526,7 @@
                 </div>
                 <div class="col-md-7 bg-white rounded shadow p-1">
                     <center>
-                        <h6 class="text-primary fw-bold">Pump Selection</h6>
+                        <h6 class="text-primary fw-bold">Item Selection</h6>
                         <button data-mdb-toggle="modal" data-mdb-target="#pumpSelectionModal"
                             class="float-end btn btn-sm btn-primary fs-07rem p-1 m-1 modalBtn"
                             onclick="setModalNumber(0)">Select Item</button>
@@ -701,26 +701,26 @@
                 position: 'top-end',
                 icon: 'error',
                 title: 'Requirement Error!',
-                text: "No requirement is saved. Please save requrirement and releted pump selection.",
+                text: "No requirement is saved. Please save requrirement and releted Item Selection.",
                 showConfirmButton: false,
                 timer: 5000
             });
             return;
         } else {
             let pumpList = '<?php echo count($selectedPumpList); ?>';
-            // Second Check How Many Pump Selection Saved
+            // Second Check How Many Item Selection Saved
             if (pumpList < 1) {
                 Swal.fire({
                     position: 'top-end',
                     icon: 'error',
-                    title: 'Pump Selection Error!',
-                    text: "No pump selection is saved. Please save releted pump selection.",
+                    title: 'Item Selection Error!',
+                    text: "No Item Selection is saved. Please save releted Item Selection.",
                     showConfirmButton: false,
                     timer: 5000
                 });
                 return;
             } else {
-                // Third Check All Requirement Has The Pump Selection
+                // Third Check All Requirement Has The Item Selection
                 let reqInfo = JSON.parse('<?php echo $reqList; ?>');
                 let pumpSelectionInfo = JSON.parse('<?php echo $selectedPumpList; ?>');
 
@@ -744,8 +744,8 @@
                         Swal.fire({
                             position: 'top-end',
                             icon: 'error',
-                            title: 'Pump Selection Empty!',
-                            text: "No pump selection is saved for one of the requirement",
+                            title: 'Item Selection Empty!',
+                            text: "No Item Selection is saved for one of the requirement",
                             showConfirmButton: false,
                             timer: 5000
                         });

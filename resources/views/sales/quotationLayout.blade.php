@@ -318,8 +318,12 @@
                                                 if ($itemPump->spare_parts == 0) {
                                                     $brandName = $itemPump->productInfo->brand_name;
                                                     $productName = $itemPump->productInfo->mat_name;
-                                                    $power = 'HP: '.$itemPump->productInfo->hp.', KW: '.$itemPump->productInfo->kw;
-                                                    $head = 'Min '. $itemPump->productInfo->min_head.' - Max '. $itemPump->productInfo->max_head;
+                                                    $power = 'HP: ' . $itemPump->productInfo->hp . ', KW: ' . $itemPump->productInfo->kw;
+                                                    $head = 'Min ' . $itemPump->productInfo->min_head . ' - Max ' . $itemPump->productInfo->max_head;
+                                                    if ($brandName == 'MAXWELL' || $brandName == 'ITAP') {
+                                                        $power = 'N/A';
+                                                        $head = 'N/A';
+                                                    }
                                                 } else {
                                                     $brandName = $itemPump->spareInfo->brand_name;
                                                     $productName = $itemPump->spareInfo->mat_name;

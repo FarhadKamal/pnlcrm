@@ -51,7 +51,7 @@ class DeliveryController extends Controller
                         $assignName = $email->user_name;
                         Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP INVOICE GENERATION');
-                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
@@ -62,7 +62,7 @@ class DeliveryController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM DISCOUNT SET');
-                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', Discount Set for the lead. Waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
@@ -143,7 +143,7 @@ class DeliveryController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM INVOICE GENERATED');
-                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', Invoice generated for the lead. Waiting for your Delivery process.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }

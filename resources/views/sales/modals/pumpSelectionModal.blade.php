@@ -33,6 +33,7 @@
                                 <option value="Pedrollo">Pedrollo</option>
                                 <option value="BGFlow">BGFlow</option>
                                 <option value="HCP">HCP</option>
+                                <option value="Panelli">Panelli</option>
                                 <option value="Itap">Itap</option>
                                 <option value="Maxwell">Maxwell</option>
                             </select>

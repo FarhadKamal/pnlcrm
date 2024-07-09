@@ -102,22 +102,6 @@ class LeadController extends Controller
         $customerId = Customer::create($insert_client_data);
         $customerId = $customerId->id;
 
-        // for later
-        // $domainName = URL::to('/');
-        // $stoURL = $domainName . '/sales/';
-        // $notifyUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
-        //     INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
-        //     INNER JOIN users ON users.id=user_permissions.user_id
-        //     WHERE permissions.permission_code="leadAssign"');
-        // foreach ($notifyUsersEmail as $email) {
-        //     $assignEmail = $email->user_email;
-        //     $assignName = $email->user_name;
-        //     Mail::send([], [], function ($message) use ($assignEmail, $assignName, $stoURL) {
-        //         $message->to($assignEmail, $assignName)->subject('Subaru Bangladesh - CRM Lead Assign Process');
-        //         $message->from('info@subaru-bd.com', 'Subaru Bangladesh');
-        //         $message->setBody('<h3>Greetings From SUBARU BANGLADESH!</h3><p>Dear ' . $assignName . ', you have a lead on lead stage for assigning process.<br><a href="' . $stoURL . '">CLICK HERE</a> to assign the lead.</p><p>Regards,<br>Subaru Bangladesh</p>', 'text/html');
-        //     });
-        // }
 
         $insert_lead_data = array(
             'lead_source' => $request->leadSource,

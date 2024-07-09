@@ -88,7 +88,7 @@ class QuotationController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
-                        $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a deal is waiting for top management approval. Please approve the deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
@@ -99,7 +99,7 @@ class QuotationController extends Controller
                 $assignName = $email->user_name;
                 Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
-                    $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                    $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                     $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Waiting for top management approval.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
             }
@@ -110,7 +110,7 @@ class QuotationController extends Controller
                 $assignName = $email->user_name;
                 Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
-                    $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                    $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                     $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
             }
@@ -163,7 +163,7 @@ class QuotationController extends Controller
             $assignName = $email->user_name;
             Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                 $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
-                $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                 $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved by the top managment. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
             });
         }
@@ -218,7 +218,9 @@ class QuotationController extends Controller
             $customFileName = "Price Quotation_" . $leadName . "_" . date("d-M-Y") . ".pdf";
             $acceptAttachment = storage_path('app/public/' . $request->file('doc')->storeAs('folder', $customFileName, 'public'));
 
-            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr);
+            $ccEmails = $request->input('ccEmails', []);
+
+            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails);
 
             $quotationAttachment = new \Symfony\Component\HttpFoundation\File\File($acceptAttachment);
             $newFileName = time() . "." . $quotationAttachment->getExtension();
@@ -247,7 +249,7 @@ class QuotationController extends Controller
                 $leadURL = $domainName . '/detailsLog/' . $request->leadId;
                 Mail::send([], [], function ($message) use ($assignEmail, $assignName, $leadURL) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Waiting For Quotation Feedback Process');
-                    $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                    $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                     $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', your submitted quotation is send to the customer. Please take the feedback from customer and update in the software.<br><a href="' . $leadURL . '">CLICK HERE</a> for details.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
 
@@ -302,7 +304,7 @@ class QuotationController extends Controller
                         $assignName = $email->user_name;
                         Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP ID SET');
-                            $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                            $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP ID generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
@@ -324,7 +326,7 @@ class QuotationController extends Controller
                             $assignName = $email->user_name;
                             Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                                 $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
-                                $message->from('info@subaru-bd.com', 'PNL Holdings Limited');
+                                $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
                                 $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP Credit SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                             });
                         }
@@ -408,14 +410,19 @@ class QuotationController extends Controller
     }
 
 
-    public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr)
+    public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails)
     {
 
         $data = array('name' => "PNL Holdings Limited");
-        Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr) {
+        Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails) {
             $message->to($leadEmail, $leadName)->subject('PNL Holdings Limited Price Quotation');
-            $message->from('info@subaru-bd.com', 'PNL Holdings Ltd.');
+            $message->from('info@pnlholdings.com', 'PNL Holdings Ltd.');
             $message->cc($assignEmail, $assignName);
+            if (!empty($ccEmails)) {
+                foreach ($ccEmails as $ccEmail) {
+                    $message->cc($ccEmail);
+                }
+            }
             $message->attach($attachment);
             // Attach additional attachments from the array
             foreach ($attachmentArr as $file) {
@@ -424,7 +431,7 @@ class QuotationController extends Controller
                     'mime' => $file->getMimeType()
                 ]);
             }
-            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Thank you for your interest in PNL Holdings Limited.<br>Please Find the quotation attachment and reply your feedback to this email. For any query you can call us directly at +8801844494444</p><p>Regards,<br>Subaru Bangladesh</p>', 'text/html');
+            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Thank you for your interest in PNL Holdings Limited.<br>Please Find the quotation attachment and reply your purchase order/feedback to this email. For any query you can call us directly at +8801844494444</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
         });
 
         if (Mail::failures()) {

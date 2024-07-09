@@ -134,6 +134,11 @@
                 <p class="btn btn-primary btn-sm fs-06rem p-1 mt-2" onclick="addAttachment()">Add Attchment</p>
             </center>
         </div>
+        <div class="container">
+            <label for="" class="fs-08rem">Add CC Email <small class="text-success">Use comma (,) for multiple
+                    email</small></label>
+            <input type="text" class="form-control fs-08rem" name="ccEmails" id="ccEmails">
+        </div>
         <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button>
         </center>
     @else
@@ -219,14 +224,24 @@
                 let leadId = $('#QleadId').val();
                 let quotationRef = $('#quotationRef').val();
                 let otherAttachment = document.getElementsByClassName('attachmentFiles');
-                // console.log(otherAttachment);
+                let ccEmails = '';
+                if ($('#ccEmails').val() != '') {
+                    ccEmails = $('#ccEmails').val().split(',').map(email => email
+                .trim()); // Split and trim emails
+                }
+                // console.log($('#ccEmails').val() != '');
+                // console.log(ccEmails);
                 let _token = '<?php echo csrf_token(); ?>';
                 var formData = new FormData();
                 formData.append('leadId', leadId);
                 formData.append('quotationRef', quotationRef);
                 formData.append('doc', blob);
                 formData.append('_token', _token);
-
+                if (ccEmails.length > 0) {
+                    ccEmails.forEach(email => {
+                        formData.append('ccEmails[]', email);
+                    });
+                }
                 // Append each file in the otherAttachment collection
                 for (let i = 0; i < otherAttachment.length; i++) {
                     let fileInput = otherAttachment[i];

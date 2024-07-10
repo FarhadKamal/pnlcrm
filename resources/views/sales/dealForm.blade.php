@@ -36,7 +36,8 @@
                             <div class="row">
                                 <h6 class="text-primary fw-bold col-md-6">Client Requirement <i
                                         class="fas fa-check text-success blink"></i></h6>
-                                <form action="{{ route('deleteDealRequirement') }}" method="POST" class="col-md-6">
+                                <form action="{{ route('deleteDealRequirement') }}" method="POST"
+                                    class="col-md-6 reqDeleteForm">
                                     @csrf
                                     <input type="hidden" name="req_id" value="{{ $item->id }}">
                                     <button class="btn btn-sm btn-danger fs-06rem p-1">Delete
@@ -45,9 +46,10 @@
                             </div>
                         </center>
 
-                        <form action="{{ route('requirement') }}" method="POST">
+                        <form action="{{ route('requirement') }}" method="POST" class="existReq_form">
                             @csrf
                             <input type="hidden" name="lead_id" value="{{ $leadId }}">
+                            <input type="hidden" class="existReq_id" name="req_id" value="{{ $item->id }}">
                             <div class="row fs-07rem p-1">
                                 <div class="col-md-6">
                                     <label for="">Type Of Use <small class="text-danger">*</small></label>
@@ -66,7 +68,8 @@
                                         <option value="Bore-hole"
                                             <?= $item->type_of_use == 'Bore-hole' ? 'selected' : '' ?>>Tube Well
                                         </option>
-                                        <option value="Any" <?= $item->type_of_use == 'Any' ? 'selected' : '' ?>>Any Other
+                                        <option value="Any" <?= $item->type_of_use == 'Any' ? 'selected' : '' ?>>Any
+                                            Other
                                         </option>
                                     </select>
                                 </div>
@@ -315,7 +318,7 @@
                                             @if ($seletedItem->req_id == $item->id)
                                                 <tr>
                                                     <td class="d-none"><input name='spare[]'
-                                                        value='{{ $seletedItem->spare_parts }}'></td>
+                                                            value='{{ $seletedItem->spare_parts }}'></td>
                                                     <td class='d-none'><input name='product_id[]'
                                                             value='{{ $seletedItem->product_id }}'>
                                                     </td>
@@ -678,6 +681,8 @@
     function addNewRequirement() {
         const clonedDiv = document.querySelectorAll('.requirementSlectionDiv');
         const clone = clonedDiv[0].cloneNode(true);
+        // console.log(clone);
+
         let newSelectedTbody = clone.querySelector('#selectedPumpsTbody');
         let totalRequirementSection = clonedDiv.length;
         newSelectedTbody.innerHTML = '';
@@ -686,6 +691,30 @@
         if (checkSign) {
             checkSign.remove();
         }
+        let deleteForm = clone.querySelector('.reqDeleteForm');
+        if (deleteForm) {
+            deleteForm.remove();
+        }
+        let reqId = clone.querySelector(".existReq_id");
+        if (reqId) {
+            reqId.remove();
+        }
+
+        let reqForm = clone.querySelector('.existReq_form');
+        reqForm.type_of_use.options.selectedIndex = 0;
+        reqForm.pump_type.options.selectedIndex = 0;
+        reqForm.suction_type.options.selectedIndex = 0;
+        reqForm.delivery_head.value = '';
+        reqForm.suction_pipe_dia.options.selectedIndex = 0;
+        reqForm.delivery_pipe_dia.options.selectedIndex = 0;
+        reqForm.horizontal_pipe_length.options.selectedIndex = 0;
+        reqForm.source_of_water.options.selectedIndex = 0;
+        reqForm.water_hour.value = '';
+        reqForm.water_consumption.value = '';
+        reqForm.liquid_type.options.selectedIndex = 0;
+        reqForm.pump_running_hour.options.selectedIndex = 0;
+        
+
 
         let newModalBtn = clone.querySelector('.modalBtn');
         newModalBtn.setAttribute("onclick", "setModalNumber(" + (totalRequirementSection) + ")");

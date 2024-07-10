@@ -59,6 +59,10 @@
                     <td class="p-2">{{ $userInfo['location']->loc_name }}</td>
                 </tr>
                 <tr>
+                    <td class="p-2">User Tag</td>
+                    <td class="p-2">{{ $userInfo->assign_to }}</td>
+                </tr>
+                <tr>
                     <td class="p-2">Signature</td>
                     @empty(!$userInfo->user_signature)
                         <td class="p-2"><img src="{{ asset('images/userSignature/') . '/' . $userInfo->user_signature }}"

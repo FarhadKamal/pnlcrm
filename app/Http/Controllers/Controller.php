@@ -95,10 +95,10 @@ class Controller extends BaseController
 
         //Deal Stage
         if (Helper::permissionCheck(Auth()->user()->id, 'dealStageAll')) {
-            $data['dealStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DEAL')->get();
+            $data['dealStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DEAL')->get();
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'dealStage')) {
-            $data['dealStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where(['current_stage' => 'DEAL'])->whereHas('clientInfo', function ($query) {
-                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+            $data['dealStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where(['current_stage' => 'DEAL'])->whereHas('clientInfo', function ($query) {
+                $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
         }
 
@@ -114,7 +114,7 @@ class Controller extends BaseController
             }
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'quotationStage')) {
             $data['quotationStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->whereHas('clientInfo', function ($query) {
-                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+                $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
             foreach ($data['quotationStage'] as $item) {
                 $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $item->id ORDER BY id DESC LIMIT 1");
@@ -131,7 +131,7 @@ class Controller extends BaseController
             $data['bookingStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->get();
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'bookingStage')) {
             $data['bookingStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->whereHas('clientInfo', function ($query) {
-                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+                $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
         }
 
@@ -141,7 +141,7 @@ class Controller extends BaseController
             $data['deliveryStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DELIVERY')->get();
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'deliveryStage')) {
             $data['deliveryStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'DELIVERY')->whereHas('clientInfo', function ($query) {
-                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+                $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
         }
 
@@ -150,7 +150,7 @@ class Controller extends BaseController
             $data['wonStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->get();
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'wonStage')) {
             $data['wonStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->whereHas('clientInfo', function ($query) {
-                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+                $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
         }
 
@@ -159,7 +159,7 @@ class Controller extends BaseController
             $data['lostStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LOST')->get();
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'lostStage')) {
             $data['lostStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LOST')->whereHas('clientInfo', function ($query) {
-                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+                $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
         }
 

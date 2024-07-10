@@ -139,7 +139,8 @@ class LeadController extends Controller
         foreach ($assignList as $item) {
 
             if (Helper::permissionCheck($item->id, 'salesPerson')) {
-                $workLoad = DB::select('SELECT COUNT(leads.id) AS count, leads.current_stage FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE customers.assign_to LIKE "%' . $item->assign_to . '%"  AND leads.current_stage != "WON" AND leads.current_stage != "LOST" GROUP BY leads.current_stage');
+                // $workLoad = DB::select('SELECT COUNT(leads.id) AS count, leads.current_stage FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE customers.assign_to LIKE "%' . $item->assign_to . '%"  AND leads.current_stage != "WON" AND leads.current_stage != "LOST" GROUP BY leads.current_stage');
+                $workLoad = DB::select('SELECT COUNT(leads.id) AS count, leads.current_stage FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE customers.assign_to =' . $item->assign_to . '  AND leads.current_stage != "WON" AND leads.current_stage != "LOST" GROUP BY leads.current_stage');
                 $html .= '<tr>';
                 $html .= '<td class="p-1">' . $item->user_name . '</td>';
                 $html .= '<td class="p-1">' . $item['designation']->desg_name . '</td>';
@@ -185,7 +186,8 @@ class LeadController extends Controller
     {
         $userTag = Auth()->user()->assign_to;
         // $data['companyList'] = Customer::where(['assign_to'=>$userTag])->get();
-        $data['companyList'] = Customer::where('assign_to', 'like', "%{$userTag}%")->get();
+        // $data['companyList'] = Customer::where('assign_to', 'like', "%{$userTag}%")->get();
+        $data['companyList'] = Customer::where(['assign_to'=>$userTag])->get();
         $data['sourceList'] = LeadSource::where(['is_active' => 1])->get();
         return view('sales.leadForm', $data);
     }

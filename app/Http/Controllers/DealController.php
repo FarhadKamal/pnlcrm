@@ -54,25 +54,40 @@ class DealController extends Controller
             return back()->with('errorsData', $data);
         }
 
+        if (isset($request->req_id)) {
+            $reqInfo = Requirements::find($request->req_id);
+            $reqInfo->type_of_use = $request->type_of_use;
+            $reqInfo->pump_type = $request->pump_type;
+            $reqInfo->suction_type = $request->suction_type;
+            $reqInfo->suction_pipe_dia = $request->suction_pipe_dia;
+            $reqInfo->delivery_head = $request->delivery_head;
+            $reqInfo->delivery_pipe_dia = $request->delivery_pipe_dia;
+            $reqInfo->horizontal_pipe_length = $request->horizontal_pipe_length;
+            $reqInfo->source_of_water = $request->source_of_water;
+            $reqInfo->water_hour = $request->water_hour;
+            $reqInfo->water_consumption = $request->water_consumption;
+            $reqInfo->liquid_type = $request->liquid_type;
+            $reqInfo->pump_running_hour = $request->pump_running_hour;
+            $reqInfo->save();
+        } else {
+            $insert_req_data = array(
+                'lead_id' => $request->lead_id,
+                'type_of_use' => $request->type_of_use,
+                'pump_type' => $request->pump_type,
+                'suction_type' => $request->suction_type,
+                'suction_pipe_dia' => $request->suction_pipe_dia,
+                'delivery_head' => $request->delivery_head,
+                'delivery_pipe_dia' => $request->delivery_pipe_dia,
+                'horizontal_pipe_length' => $request->horizontal_pipe_length,
+                'source_of_water' => $request->source_of_water,
+                'water_hour' => $request->water_hour,
+                'water_consumption' => $request->water_consumption,
+                'liquid_type' => $request->liquid_type,
+                'pump_running_hour' => $request->pump_running_hour
+            );
 
-
-        $insert_req_data = array(
-            'lead_id' => $request->lead_id,
-            'type_of_use' => $request->type_of_use,
-            'pump_type' => $request->pump_type,
-            'suction_type' => $request->suction_type,
-            'suction_pipe_dia' => $request->suction_pipe_dia,
-            'delivery_head' => $request->delivery_head,
-            'delivery_pipe_dia' => $request->delivery_pipe_dia,
-            'horizontal_pipe_length' => $request->horizontal_pipe_length,
-            'source_of_water' => $request->source_of_water,
-            'water_hour' => $request->water_hour,
-            'water_consumption' => $request->water_consumption,
-            'liquid_type' => $request->liquid_type,
-            'pump_running_hour' => $request->pump_running_hour
-        );
-
-        $reqlist = Requirements::create($insert_req_data);
+            $reqlist = Requirements::create($insert_req_data);
+        }
 
         //Auth()->user()->id,
         return back()->with('success', 'Requirement saved success');
@@ -306,7 +321,7 @@ class DealController extends Controller
             $proposed_discount = $row->discount_percentage;
             if ($row->spare_parts == 0) {
                 $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
-            }else{
+            } else {
                 $trade_discount = $proposed_discount; // For Spare Parts Assume for Package
             }
 

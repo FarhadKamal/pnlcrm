@@ -427,7 +427,7 @@ class BookingController extends Controller
             $data['outstandings'] = Lead::where(['is_outstanding' => 1])->get();
         } else if (Helper::permissionCheck(Auth()->user()->id, 'bookingStage')) {
             $data['outstandings'] = Lead::where(['is_outstanding' => 1])->whereHas('clientInfo', function ($query) {
-                $query->where('assign_to', 'like', '%' . Auth()->user()->assign_to . '%');
+                $query->where('assign_to', '=', Auth()->user()->assign_to);
             })->get();
         }
 

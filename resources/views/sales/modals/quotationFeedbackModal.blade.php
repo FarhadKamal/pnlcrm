@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-top modal-lg">
         <div class="modal-content ">
             <div class="modal-header p-2">
-                <button class="btn btn-sm btn-darkblue fs-07rem p-1" onclick="printAck()">Print Acknowledgement</button>
+                {{-- <button class="btn btn-sm btn-darkblue fs-07rem p-1" onclick="printAck()">Print Acknowledgement</button> --}}
 
                 <div class="col d-flex justify-content-end" id="detailsBtn2">
 

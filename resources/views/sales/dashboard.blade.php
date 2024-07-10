@@ -101,7 +101,7 @@
                             <small class="card-text mb-1"><b>Created By:</b>
                                 {{ $item['createdBy']->user_name }}</small>
                             <div>
-                                @if ((string) strpos($item->clientInfo->assign_to, (string) Auth()->user()->assign_to) !== false)
+                                @if (Auth()->user()->assign_to && $item->clientInfo->assign_to == Auth()->user()->assign_to)
                                     <a href="{{ route('dealPage', ['leadId' => $item->id]) }}">
                                         <button type="button"
                                             class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Requirement
@@ -190,7 +190,7 @@
                                     @endif
                                 @endif
                                 @if ($item->current_subStage == 'SUBMIT')
-                                    @if ((string) strpos($item->clientInfo->assign_to, (string) Auth()->user()->assign_to) !== false)
+                                    @if ($item->clientInfo->assign_to == Auth()->user()->assign_to)
                                         <a href="{{ route('quotationCheck', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Submit</button>
@@ -203,7 +203,7 @@
                                     @endif
                                 @endif
                                 @if ($item->current_subStage == 'FEEDBACK')
-                                    @if ((string) strpos($item->clientInfo->assign_to, (string) Auth()->user()->assign_to) !== false)
+                                    @if ($item->clientInfo->assign_to == Auth()->user()->assign_to)
                                         <?php $encoded = json_encode($item); ?>
                                         <button type="button" data-mdb-toggle="modal"
                                             data-mdb-target="#quotationFeedbackModal"
@@ -311,7 +311,7 @@
                                     @endif
                                 @endif
                                 @if ($item->current_subStage == 'TRANSACTION')
-                                    @if ((string) strpos($item->clientInfo->assign_to, (string) Auth()->user()->assign_to) !== false)
+                                    @if ($item->clientInfo->assign_to == Auth()->user()->assign_to)
                                         <a href="{{ route('transaction', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Transaction</button>
@@ -408,7 +408,7 @@
                                     @endif
                                 @endif
                                 @if ($item->current_subStage == 'READY')
-                                    @if ((string) strpos($item->clientInfo->assign_to, (string) Auth()->user()->assign_to) !== false)
+                                    @if ($item->clientInfo->assign_to == Auth()->user()->assign_to)
                                         <a href="{{ route('deliveryPage', ['leadId' => $item->id]) }}">
                                             <button type="button"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Delivery</button>

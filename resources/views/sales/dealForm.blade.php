@@ -66,7 +66,7 @@
                                         <option value="Bore-hole"
                                             <?= $item->type_of_use == 'Bore-hole' ? 'selected' : '' ?>>Tube Well
                                         </option>
-                                        <option value="Any" <?= $item->type_of_use == 'Any' ? 'selected' : '' ?>>Any
+                                        <option value="Any" <?= $item->type_of_use == 'Any' ? 'selected' : '' ?>>Any Other
                                         </option>
                                     </select>
                                 </div>
@@ -398,7 +398,7 @@
                                     <option value="Industrial">Industrial</option>
                                     <option value="Agricultural">Agricultural</option>
                                     <option value="Bore-hole">Tube Well</option>
-                                    <option value="Any">Any</option>
+                                    <option value="Any">Any Other</option>
                                 </select>
                             </div>
                             <div class="col-md-6">

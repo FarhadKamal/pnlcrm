@@ -18,8 +18,14 @@
         <a href="{{ route('detailsLog', ['leadId' => $leadId]) }}" target="_blank"><button
                 class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
     </div>
+    <div>
+        <center>
+            <h6><kbd>Customer Requirement:
+                    {{ $leadInfo->product_requirement }}<kbd></h6>
+        </center>
+    </div>
     <center>
-        <h4 class="mt-3">Requirement & Item Selection Form</h4>
+        <h5 class="mt-3">Requirement & Item Selection Form</h5>
         <h6>Total Requirement <span class="bg-darkblue text-white p-2 rounded blink">{{ count($reqList) }}</span> And
             Total Item Selection <span><span
                     class="bg-darkblue text-white p-2 rounded blink">{{ count($selectedPumpList) }}</span></span></h6>
@@ -713,7 +719,7 @@
         reqForm.water_consumption.value = '';
         reqForm.liquid_type.options.selectedIndex = 0;
         reqForm.pump_running_hour.options.selectedIndex = 0;
-        
+
 
 
         let newModalBtn = clone.querySelector('.modalBtn');

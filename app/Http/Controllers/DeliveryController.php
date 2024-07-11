@@ -102,7 +102,8 @@ class DeliveryController extends Controller
         $fyear = $y1 . "-" . $y2;
 
         // URL of the API endpoint
-        $url = 'http://103.4.66.107:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
+        // $url = 'http://103.4.66.107:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
+        $url = 'http://192.168.1.226:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
 
         // Make the request and get the response
         $rtnvalue = file_get_contents($url);

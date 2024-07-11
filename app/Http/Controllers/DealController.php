@@ -96,7 +96,8 @@ class DealController extends Controller
     public function SAPstockDetails($productId)
     {
         $ch = curl_init();
-        $url = "http://103.4.66.107:8989/api/get_item_stock.php?code=" . $productId . "";
+        // $url = "http://103.4.66.107:8989/api/get_item_stock.php?code=" . $productId . "";
+        $url = "http://192.168.1.226:8989/api/get_item_stock.php?code=" . $productId . "";
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);

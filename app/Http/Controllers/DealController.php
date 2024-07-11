@@ -187,7 +187,7 @@ class DealController extends Controller
                 if ($subnet == "192.168.1") {
                     $url = "http://192.168.1.226:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
                 } else {
-                    $url = "http://103.4.66.107:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
+                    $url = "http://192.168.1.226:8989/api/get_price_stock.php?item_code=" . $itemCode . "";
                 }
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

@@ -264,6 +264,7 @@ class LeadController extends Controller
     public function dealForm($leadId)
     {
         $data['leadId'] = $leadId;
+        $data['leadInfo'] = Lead::find($leadId);
         $data['reqList'] = Requirements::where('lead_id', $leadId)->get();
         $data['selectedPumpList'] = PumpChoice::with('productInfo:id,mat_name,brand_name,hp,min_head,max_head')->where('lead_id', $leadId)->get();
         $data['allPumpHP'] = Items::distinct()->orderBy('hp', 'ASC')->get('hp');

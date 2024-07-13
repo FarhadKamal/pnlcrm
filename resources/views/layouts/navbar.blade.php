@@ -31,7 +31,7 @@
 </head>
 
 <body>
-    @if (session('error'))
+    @if (session('error') && count(session('error')) > 0)
         @foreach (session('error') as $errorMsg)
             <script>
                 Swal.fire({

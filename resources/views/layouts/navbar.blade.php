@@ -31,19 +31,7 @@
 </head>
 
 <body>
-    {{-- @if (session('error') && count(session('error')) > 0)
-        @foreach (session('error') as $errorMsg)
-            <script>
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: "<?php echo $errorMsg; ?>",
-                    showConfirmButton: false,
-                    timer: 2000
-                })
-            </script>
-        @endforeach
-    @endif --}}
+  
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: #0B2E41">

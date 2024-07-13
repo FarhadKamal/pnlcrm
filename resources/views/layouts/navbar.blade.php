@@ -31,7 +31,7 @@
 </head>
 
 <body>
-    @if (session('error') && count(session('error')) > 0)
+    {{-- @if (session('error') && count(session('error')) > 0)
         @foreach (session('error') as $errorMsg)
             <script>
                 Swal.fire({
@@ -43,7 +43,7 @@
                 })
             </script>
         @endforeach
-    @endif
+    @endif --}}
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: #0B2E41">

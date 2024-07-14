@@ -47,7 +47,7 @@
 
             <div class="navbar-toggler">
                 <ul class="navbar-nav d-flex flex-row justify-content-evenly">
-                    <li class="nav-item">
+                    <li class="nav-item d-none">
                         <a class="nav-link" href="{{ route('customerForm') }}"><button
                                 class="btn btn-sm create-lead-btn fs-07rem p-1"><strong>Create New
                                     Customer</strong></button></a>
@@ -157,7 +157,7 @@
                 <div class="d-flex align-items-center">
                     <ul class="navbar-nav">
                         {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm')) --}}
-                        <li class="nav-item">
+                        <li class="nav-item d-none">
                             <a class="nav-link" href="{{ route('customerForm') }}"><button
                                     class="btn btn-sm create-lead-btn"><strong>Create New
                                         Customer</strong></button></a>

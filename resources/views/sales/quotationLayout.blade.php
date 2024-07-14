@@ -444,18 +444,21 @@
                             hereof.</p>
 
                     </div>
-                    <div style="margin-top: 2%" class="pagebreakAvoid">
-                        <p class="colText boldText">Contact Person: {{ Auth()->user()->user_name }}</p>
-                        <p class="colText boldText">{{ $desgName->desg_name }}, {{ $deptName->dept_name }}, Cell No:
-                            {{ Auth()->user()->user_phone }}, E-mail: {{ Auth()->user()->user_email }}</p>
-                        <br>
-                        <p>Thanking You,</p>
-                        <img src="{{ asset('images/system/quotationSign.png') }}" width="120" alt="">
-                        <p>Md. Afzal Hamid</p>
-                        <p>Chief Operating Officer</p>
-                        <p>PNL Holdings Limited</p>
-                        <p>E-mail: afzal@pnlholdings.com</p>
-                    </div>
+                    @if ($leadInfo->current_stage == 'QUOTATION' && $leadInfo->current_subStage == 'SUBMIT')
+                        <div style="margin-top: 2%" class="pagebreakAvoid">
+                            <p class="colText boldText">Contact Person: {{ Auth()->user()->user_name }}</p>
+                            <p class="colText boldText">{{ $desgName->desg_name }}, {{ $deptName->dept_name }}, Cell
+                                No:
+                                {{ Auth()->user()->user_phone }}, E-mail: {{ Auth()->user()->user_email }}</p>
+                            <br>
+                            <p>Thanking You,</p>
+                            <img src="{{ asset('images/system/quotationSign.png') }}" width="120" alt="">
+                            <p>Md. Afzal Hamid</p>
+                            <p>Chief Operating Officer</p>
+                            <p>PNL Holdings Limited</p>
+                            <p>E-mail: afzal@pnlholdings.com</p>
+                        </div>
+                    @endif
                 </td>
             </tr>
         </tbody>

@@ -64,16 +64,18 @@ class QuotationController extends Controller
 
         foreach ($choiceInfo as $row) {
             $proposed_discount = $row->discount_percentage;
-            $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
+            if ($row->spare_parts == 0) {
+                $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
 
-            if ($proposed_discount > $trade_discount) {
-                $need_discount_approval = 2;
-            }
+                if ($proposed_discount > $trade_discount) {
+                    $need_discount_approval = 2;
+                }
 
-            if ($proposed_discount > ($trade_discount + 3)) {
-                $need_top_approval = 1;
-                $current_subStage = 'MANAGEMENT';
-                $logNext = 'Management Approval';
+                if ($proposed_discount > ($trade_discount + 3)) {
+                    $need_top_approval = 1;
+                    $current_subStage = 'MANAGEMENT';
+                    $logNext = 'Management Approval';
+                }
             }
         }
 

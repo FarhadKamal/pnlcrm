@@ -486,16 +486,12 @@
         </tfoot>
     </table>
     <div class="footerContainer">
-        <p class="text-primary fw-bold">PNL HOLDINGS LIMITED, Head Office: Pedrollo Plaza, 5 Jubilee Road,
+        <p class="text-primary fw-bold" style="font-size:11px">PNL HOLDINGS LIMITED, Head Office: Pedrollo Plaza, 5 Jubilee Road,
             Chattogram-400. Phone: +88 031 621531-35</p>
-        <p class="text-primary fw-bold">Dhaka Office: Pedrollo House, 12 Topkhana Road, Segunbagicha, Dhaka-1000.
+        <p class="text-primary fw-bold" style="font-size:11px">Dhaka Office: Pedrollo House, 12 Topkhana Road, Segunbagicha, Dhaka-1000.
             Phone: ++88 02 9571210</p>
         <p class="text-primary fw-bold" style="display:inline; font-size:11px">
-            <i class="fas fa-envelope"></i>&nbsp;sales@pnlholdings.com&nbsp;<i
-                class="fas fa-globe"></i>&nbsp;www.pnlholdings.com&nbsp;<i
-                class="fa-brands fa-facebook"></i>&nbsp;facebook.com/thinkPNL&nbsp;<i
-                class="fa-brands fa-linkedin"></i>&nbsp;pnl-holdings-limited&nbsp;<i
-                class="fa-solid fa-headset"></i>&nbsp;16308 (9:00 AM - 9:00 PM)
+            <img src="{{asset('images/system/email.png')}}" alt="" height="10">&nbsp;sales@pnlholdings.com&nbsp;<img src="{{asset('images/system/web.png')}}" alt="" height="12">&nbsp;www.pnlholdings.com&nbsp;<img src="{{asset('images/system/facebook.png')}}" alt="" height="12">&nbsp;facebook.com/thinkPNL&nbsp;<img src="{{asset('images/system/linkedin.png')}}" alt="" height="12">&nbsp;pnl-holdings-limited&nbsp;<img src="{{asset('images/system/call.png')}}" alt="" height="12">&nbsp;16308 (9:00 AM - 9:00 PM)
         </p>
 
         <div style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">

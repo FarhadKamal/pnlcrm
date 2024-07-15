@@ -89,6 +89,7 @@
             <table class="table table-bordered fs-08rem">
                 <thead>
                     <tr>
+                        <th class="p-1 text-center">SAP Code</th>
                         <th class="p-1 text-center">Brand</th>
                         <th class="p-1 text-center">Model</th>
                         <th class="p-1 text-center">Unit Price (TK)</th>
@@ -108,12 +109,15 @@
                         if ($pumps->spare_parts == 0) {
                             $brandName = $pumps->productInfo->brand_name;
                             $prName = $pumps->productInfo->mat_name;
+                            $sapNewCode = $pumps->productInfo->new_code;
                         } else {
                             $brandName = $pumps->spareInfo->brand_name;
                             $prName = $pumps->spareInfo->mat_name;
+                            $sapNewCode = $pumps->spareInfo->new_code;
                         }
                         ?>
                         <tr>
+                            <td class="p-1">{{ $sapNewCode }}</td>
                             <td class="p-1">{{ $brandName }}</td>
                             <td class="p-1">{{ $prName }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $pumps->unit_price, 2, '.', ',') }}</td>

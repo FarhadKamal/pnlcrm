@@ -275,12 +275,13 @@ class DealController extends Controller
                     'net_price' => $request->product_netPrice[$key],
                     'spare_parts' => $request->spare[$key]
                 ];
+                PumpChoice::create($eachItem);
                 $data[] = $eachItem;
             }
-            usort($data, function ($a, $b) {
-                return $b['product_id'] <=> $a['product_id'];
-            });
-            PumpChoice::insert($data);
+            // usort($data, function ($a, $b) {
+            //     return $b['product_id'] <=> $a['product_id'];
+            // });
+            // PumpChoice::insert($data);
             return back()->with('success', 'Pump chocie data saved!');
         } else {
             PumpChoice::where(['lead_id' => $leadId, 'req_id' => $reqId])->delete();

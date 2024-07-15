@@ -1,10 +1,17 @@
-<button onclick="printWithLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Print Quotation</button>
-<button onclick="printWithoutLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Pad Print Quotation</button>
-
 <div class="quotDiv" id="section-to-print">
     <style>
-        body {
+        /* body {
             font-family: 'Helvetica';
+        } */
+
+        #section-to-print {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
         .quotDiv {
@@ -188,7 +195,9 @@
             .headerContainer {
                 position: fixed;
                 top: 0;
-                width: 100%;
+                right: 0;
+                /* width: 100%; */
+                text-align: right;
             }
 
             .quotDiv .colText {
@@ -485,23 +494,26 @@
 
         <div
             style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <img src="{{ asset('images/system/pedrollo.svg') }}" alt="" width="100">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <img src="{{ asset('images/system/BGFlow.svg') }}" alt="" width="100">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <img src="{{ asset('images/system/panelli.svg') }}" alt=""width="120">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <img src="{{ asset('images/system/hcp.svg') }}" alt=""width="60">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <img src="{{ asset('images/system/maxwell.svg') }}" alt="" width="60">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <img src="{{ asset('images/system/itap.svg') }}" alt="" width="80">
+            </div>
+            <div class="col-md-1">
+                <img src="{{ asset('images/system/firenza.svg') }}" alt="" width="80">
             </div>
         </div>
     </div>
@@ -511,13 +523,19 @@
 <script>
     function printWithLogo() {
         showHeaderFooter();
+        document.querySelector('#quotationPageTop').style.visibility = "hidden";
         document.querySelector('#quotationPageBottom').style.visibility = "hidden";
+        document.querySelector('#navbarButtonsSidebar').style.visibility = "hidden";
+        document.querySelector('#mainNavbar').style.visibility = "hidden";
         window.print();
     }
 
     function printWithoutLogo() {
         hideHeaderFooter();
+        document.querySelector('#quotationPageTop').style.visibility = "hidden";
         document.querySelector('#quotationPageBottom').style.visibility = "hidden";
+        document.querySelector('#navbarButtonsSidebar').style.visibility = "hidden";
+        document.querySelector('#mainNavbar').style.visibility = "hidden";
         window.print();
     }
 
@@ -538,6 +556,9 @@
     // Ensure header and footer are always visible after print dialog
     window.onafterprint = function() {
         showHeaderFooter();
+        document.querySelector('#quotationPageTop').style.visibility = "visible";
         document.querySelector('#quotationPageBottom').style.visibility = "visible";
+        document.querySelector('#navbarButtonsSidebar').style.visibility = "visible";
+        document.querySelector('#mainNavbar').style.visibility = "visible";
     };
 </script>

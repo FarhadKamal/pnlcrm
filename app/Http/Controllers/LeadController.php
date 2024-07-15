@@ -266,7 +266,7 @@ class LeadController extends Controller
         $data['leadId'] = $leadId;
         $data['leadInfo'] = Lead::find($leadId);
         $data['reqList'] = Requirements::where('lead_id', $leadId)->get();
-        $data['selectedPumpList'] = PumpChoice::with('productInfo:id,mat_name,brand_name,hp,min_head,max_head')->where('lead_id', $leadId)->get();
+        $data['selectedPumpList'] = PumpChoice::with('productInfo:id,mat_name,brand_name,hp,min_head,max_head')->where('lead_id', $leadId)->orderBy('id', 'ASC')->get();
         $data['allPumpHP'] = Items::distinct()->orderBy('hp', 'ASC')->get('hp');
         $data['allPumpPhase'] = Items::distinct()->orderBy('phase', 'ASC')->get('phase');
         $data['allPumpModel'] = Items::distinct()->orderBy('mat_name', 'ASC')->get('mat_name');

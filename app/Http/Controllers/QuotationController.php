@@ -26,7 +26,7 @@ class QuotationController extends Controller
     {
         $data['leadInfo'] = Lead::with('clientInfo:id,customer_name,contact_person,address,district')->find($leadId);
         $data['reqInfo'] = Requirements::where(['lead_id' => $leadId])->get();
-        $data['pumpInfo'] = PumpChoice::where('lead_id', $leadId)->get();
+        $data['pumpInfo'] = PumpChoice::where('lead_id', $leadId)->orderby('id', 'ASC')->get();
         $data['desgName'] = Designation::find(Auth()->user()->user_desg);
         $data['deptName'] = Department::find(Auth()->user()->user_dept);
         return view('sales.quotation', $data);

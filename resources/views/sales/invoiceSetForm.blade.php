@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="col-md-7 col-sm-7">
-            <h6 class="text-center"><kbd>SAP Discount Information</kbd></h6>
+            <h6 class="text-center"><kbd>SAP Invoice Information</kbd></h6>
             <form action="{{ route('invoiceSetInsertion') }}" method="POST" id="invoiceSetInsertionForm">
                 @csrf
                 <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">

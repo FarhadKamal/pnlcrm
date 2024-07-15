@@ -18,6 +18,7 @@
                         <div class="text-center">
                             <h6><kbd>Quotation Customer Feedback</kbd></h6>
                         </div>
+                        <p class="text-danger">Quotation Ref: <span id="quotationAckRef2"></span></p>
                         <form action="{{ route('quotationAccept') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-1">

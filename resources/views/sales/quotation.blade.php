@@ -1,7 +1,12 @@
 @include('layouts.navbar')
-<div class="float-end m-2">
-    <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
-            class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+<div id="quotationPageTop">
+    <div class="float-end m-2">
+        <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
+                class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+    </div>
+    <button onclick="printWithLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Print Quotation</button>
+    <button onclick="printWithoutLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Pad Print
+        Quotation</button>
 </div>
 <div class="">
     @include('sales.quotationLayout')
@@ -41,15 +46,23 @@
                             @foreach ($pumpInfo as $item)
                                 <?php
                                 $proposed_discount = $item->discount_percentage;
-                                $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
-                                if ($proposed_discount > $trade_discount) {
+                                if ($item->spare_parts == 0) {
+                                    $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
+                                    $brandName = $item->productInfo->brand_name;
+                                    $matName = $item->productInfo->mat_name;
+                                }else{
+                                    $trade_discount = 'N/A'; 
+                                    $brandName = $item->spareInfo->brand_name;
+                                    $matName = $item->spareInfo->mat_name;
                                 }
+                                // if ($proposed_discount > $trade_discount) {
+                                // }
                                 ?>
                                 <tr>
                                     <td class="d-none"><input name="approvePumpChoice[]" value="{{ $item->id }}">
                                     </td>
-                                    <td class="p-1 text-center">{{ $item->productInfo->brand_name }}</td>
-                                    <td class="p-1 text-center">{{ $item->productInfo->mat_name }}</td>
+                                    <td class="p-1 text-center">{{ $brandName }}</td>
+                                    <td class="p-1 text-center">{{ $matName }}</td>
                                     <td class="p-1 text-end">{{ $item->unit_price }}</td>
                                     <td class="p-1 text-center">{{ $trade_discount }}</td>
                                     <td class="p-1 text-center">{{ $item->qty }}</td>
@@ -95,15 +108,23 @@
                             @foreach ($pumpInfo as $item)
                                 <?php
                                 $proposed_discount = $item->discount_percentage;
-                                $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
-                                if ($proposed_discount > $trade_discount) {
+                                if ($item->spare_parts == 0) {
+                                    $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
+                                    $brandName = $item->productInfo->brand_name;
+                                    $matName = $item->productInfo->mat_name;
+                                }else{
+                                    $trade_discount = 'N/A'; 
+                                    $brandName = $item->spareInfo->brand_name;
+                                    $matName = $item->spareInfo->mat_name;
                                 }
+                                // if ($proposed_discount > $trade_discount) {
+                                // }
                                 ?>
                                 <tr>
                                     <td class="d-none"><input name="approvePumpChoice[]" value="{{ $item->id }}">
                                     </td>
-                                    <td class="p-1 text-center">{{ $item->productInfo->brand_name }}</td>
-                                    <td class="p-1 text-center">{{ $item->productInfo->mat_name }}</td>
+                                    <td class="p-1 text-center">{{ $brandName }}</td>
+                                    <td class="p-1 text-center">{{ $matName }}</td>
                                     <td class="p-1 text-end">{{ $item->unit_price }}</td>
                                     <td class="p-1 text-center">{{ $trade_discount }}</td>
                                     <td class="p-1 text-center">{{ $item->qty }}</td>
@@ -217,7 +238,7 @@
         var blob;
         window.jsPDF = window.jspdf.jsPDF;
         var docPDF = new jsPDF();
-        docPDF.setFont("Helvetica", "normal");
+        // docPDF.setFont("Helvetica", "normal");
 
         var elementHTML = document.querySelector("#section-to-print");
         docPDF.html(elementHTML, {

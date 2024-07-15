@@ -6,156 +6,159 @@
 <div class="">
     @include('sales.quotationLayout')
 </div>
-
-@if ($leadInfo->current_subStage == 'APPROVE')
-    {{-- COO Aproval  --}}
-    <div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(0,84,166, 0.2)">
-        <form action="{{ route('preQuotationApprove') }}" method="POST">
-            @csrf
-            <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
-            @if ($leadInfo->need_credit_approval)
-                <label for="">Credit Approval</label><br>
-                <select name="credit_approved" id="" required>
-                    <option value="1" selected>Approved</option>
-                    <option value="0">Not Approved</option>
-                </select>
-                <br>
-            @endif
-            @if ($leadInfo->need_discount_approval)
-                <label for="">Discount Approval</label>
-                <table class="table table-bordered border-dark">
-                    <thead>
-                        <tr>
-                            <th class="p-1 text-center">Brand</th>
-                            <th class="p-1 text-center">Model</th>
-                            <th class="p-1 text-center">Unit Price (TK)</th>
-                            <th class="p-1 text-center">Trade Discount (%)</th>
-                            <th class="p-1 text-center">Qty.</th>
-                            <th class="p-1 text-center">Deal Discount (%)</th>
-                            <th class="p-1 text-center">Net Price (TK)</th>
-                            <th class="p-1 text-center">Set New Discount (%)</th>
-                            <th class="p-1 text-center">New Net Price (TK)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($pumpInfo as $item)
-                            <?php
-                            $proposed_discount = $item->discount_percentage;
-                            $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
-                            if ($proposed_discount > $trade_discount) {
-                            }
-                            ?>
-                            <tr>
-                                <td class="d-none"><input name="approvePumpChoice[]" value="{{ $item->id }}"></td>
-                                <td class="p-1 text-center">{{ $item->productInfo->brand_name }}</td>
-                                <td class="p-1 text-center">{{ $item->productInfo->mat_name }}</td>
-                                <td class="p-1 text-end">{{ $item->unit_price }}</td>
-                                <td class="p-1 text-center">{{ $trade_discount }}</td>
-                                <td class="p-1 text-center">{{ $item->qty }}</td>
-                                <td class="p-1 text-center">{{ $proposed_discount }}</td>
-                                <td class="p-1 text-end">{{ $item->net_price }}</td>
-                                <td class="p-1 text-center"><input type="number" min="0" step="any"
-                                        name="set_discount[]" onkeyup="updatePrice(this)"
-                                        value="{{ $proposed_discount }}" required /></td>
-                                <td class="p-1 text-end">{{ $item->net_price }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @endif
-            <center><button class="btn btn-sm btn-darkblue">Submit Approval</button></center>
-        </form>
-    </div>
-@endif
-
-@if ($leadInfo->current_subStage == 'MANAGEMENT')
-    {{-- Top Management Approval  --}}
-    <div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(0,84,166, 0.2)">
-        <form action="{{ route('topQuotationApprove') }}" method="POST">
-            @csrf
-            <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
-            @if ($leadInfo->need_discount_approval)
-                <label for="">Discount Approval</label>
-                <table class="table table-bordered border-dark">
-                    <thead>
-                        <tr>
-                            <th class="p-1 text-center">Brand</th>
-                            <th class="p-1 text-center">Model</th>
-                            <th class="p-1 text-center">Unit Price (TK)</th>
-                            <th class="p-1 text-center">Trade Discount (%)</th>
-                            <th class="p-1 text-center">Qty.</th>
-                            <th class="p-1 text-center">Deal Discount (%)</th>
-                            <th class="p-1 text-center">Net Price (TK)</th>
-                            <th class="p-1 text-center">Set New Discount (%)</th>
-                            <th class="p-1 text-center">New Net Price (TK)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($pumpInfo as $item)
-                            <?php
-                            $proposed_discount = $item->discount_percentage;
-                            $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
-                            if ($proposed_discount > $trade_discount) {
-                            }
-                            ?>
-                            <tr>
-                                <td class="d-none"><input name="approvePumpChoice[]" value="{{ $item->id }}"></td>
-                                <td class="p-1 text-center">{{ $item->productInfo->brand_name }}</td>
-                                <td class="p-1 text-center">{{ $item->productInfo->mat_name }}</td>
-                                <td class="p-1 text-end">{{ $item->unit_price }}</td>
-                                <td class="p-1 text-center">{{ $trade_discount }}</td>
-                                <td class="p-1 text-center">{{ $item->qty }}</td>
-                                <td class="p-1 text-center">{{ $proposed_discount }}</td>
-                                <td class="p-1 text-end">{{ $item->net_price }}</td>
-                                <td class="p-1 text-center"><input type="number" min="0" step="any"
-                                        name="set_discount[]" onkeyup="updatePrice(this)"
-                                        value="{{ $proposed_discount }}" required /></td>
-                                <td class="p-1 text-end">{{ $item->net_price }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @endif
-            <center><button class="btn btn-sm btn-darkblue">Submit Approval</button></center>
-        </form>
-    </div>
-@endif
-
-@if ($leadInfo->current_subStage == 'SUBMIT')
-    {{-- Submit To Customer  --}}
-    <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
-    @if ($leadInfo->lead_email)
-        <div class="container">
-            <div class="row" id="attachmentDiv">
-                <div class="col-md-3 mt-1"><input type="file" name="attachmentFiles[]"
-                        class="form-control fs-07rem p-1 attachmentFiles"></div>
-            </div>
-            <center>
-                <p class="btn btn-primary btn-sm fs-06rem p-1 mt-2" onclick="addAttachment()">Add Attchment</p>
-            </center>
-        </div>
-        <div class="container">
-            <label for="" class="fs-08rem">Add CC Email <small class="text-success">Use comma (,) for multiple
-                    email</small></label>
-            <input type="text" class="form-control fs-08rem" name="ccEmails" id="ccEmails">
-        </div>
-        <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button>
-        </center>
-    @else
-        <div class="bg-danger text-white p-2 text-center">
-            <h5 class="">No Email Found For The Client. Please Add An Email First.</h5>
-            <form action="{{ route('updateLeadEmail') }}" class="m-3">
+<div id="quotationPageBottom">
+    @if ($leadInfo->current_subStage == 'APPROVE')
+        {{-- COO Aproval  --}}
+        <div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(0,84,166, 0.2)">
+            <form action="{{ route('preQuotationApprove') }}" method="POST">
                 @csrf
-                <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
-                <label for="">Email</label>
-                <input type="email" name="lead_email" id="lead_email" class="border-0 rounded fs-08rem p-1"
-                    required>
-                <button class="btn btn-darkblue btn-sm">Add Email</button>
+                <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
+                @if ($leadInfo->need_credit_approval)
+                    <label for="">Credit Approval</label><br>
+                    <select name="credit_approved" id="" required>
+                        <option value="1" selected>Approved</option>
+                        <option value="0">Not Approved</option>
+                    </select>
+                    <br>
+                @endif
+                @if ($leadInfo->need_discount_approval)
+                    <label for="">Discount Approval</label>
+                    <table class="table table-bordered border-dark">
+                        <thead>
+                            <tr>
+                                <th class="p-1 text-center">Brand</th>
+                                <th class="p-1 text-center">Model</th>
+                                <th class="p-1 text-center">Unit Price (TK)</th>
+                                <th class="p-1 text-center">Trade Discount (%)</th>
+                                <th class="p-1 text-center">Qty.</th>
+                                <th class="p-1 text-center">Deal Discount (%)</th>
+                                <th class="p-1 text-center">Net Price (TK)</th>
+                                <th class="p-1 text-center">Set New Discount (%)</th>
+                                <th class="p-1 text-center">New Net Price (TK)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($pumpInfo as $item)
+                                <?php
+                                $proposed_discount = $item->discount_percentage;
+                                $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
+                                if ($proposed_discount > $trade_discount) {
+                                }
+                                ?>
+                                <tr>
+                                    <td class="d-none"><input name="approvePumpChoice[]" value="{{ $item->id }}">
+                                    </td>
+                                    <td class="p-1 text-center">{{ $item->productInfo->brand_name }}</td>
+                                    <td class="p-1 text-center">{{ $item->productInfo->mat_name }}</td>
+                                    <td class="p-1 text-end">{{ $item->unit_price }}</td>
+                                    <td class="p-1 text-center">{{ $trade_discount }}</td>
+                                    <td class="p-1 text-center">{{ $item->qty }}</td>
+                                    <td class="p-1 text-center">{{ $proposed_discount }}</td>
+                                    <td class="p-1 text-end">{{ $item->net_price }}</td>
+                                    <td class="p-1 text-center"><input type="number" min="0" step="any"
+                                            name="set_discount[]" onkeyup="updatePrice(this)"
+                                            value="{{ $proposed_discount }}" required /></td>
+                                    <td class="p-1 text-end">{{ $item->net_price }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+                <center><button class="btn btn-sm btn-darkblue">Submit Approval</button></center>
             </form>
         </div>
     @endif
-@endif
 
+    @if ($leadInfo->current_subStage == 'MANAGEMENT')
+        {{-- Top Management Approval  --}}
+        <div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(0,84,166, 0.2)">
+            <form action="{{ route('topQuotationApprove') }}" method="POST">
+                @csrf
+                <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
+                @if ($leadInfo->need_discount_approval)
+                    <label for="">Discount Approval</label>
+                    <table class="table table-bordered border-dark">
+                        <thead>
+                            <tr>
+                                <th class="p-1 text-center">Brand</th>
+                                <th class="p-1 text-center">Model</th>
+                                <th class="p-1 text-center">Unit Price (TK)</th>
+                                <th class="p-1 text-center">Trade Discount (%)</th>
+                                <th class="p-1 text-center">Qty.</th>
+                                <th class="p-1 text-center">Deal Discount (%)</th>
+                                <th class="p-1 text-center">Net Price (TK)</th>
+                                <th class="p-1 text-center">Set New Discount (%)</th>
+                                <th class="p-1 text-center">New Net Price (TK)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($pumpInfo as $item)
+                                <?php
+                                $proposed_discount = $item->discount_percentage;
+                                $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
+                                if ($proposed_discount > $trade_discount) {
+                                }
+                                ?>
+                                <tr>
+                                    <td class="d-none"><input name="approvePumpChoice[]" value="{{ $item->id }}">
+                                    </td>
+                                    <td class="p-1 text-center">{{ $item->productInfo->brand_name }}</td>
+                                    <td class="p-1 text-center">{{ $item->productInfo->mat_name }}</td>
+                                    <td class="p-1 text-end">{{ $item->unit_price }}</td>
+                                    <td class="p-1 text-center">{{ $trade_discount }}</td>
+                                    <td class="p-1 text-center">{{ $item->qty }}</td>
+                                    <td class="p-1 text-center">{{ $proposed_discount }}</td>
+                                    <td class="p-1 text-end">{{ $item->net_price }}</td>
+                                    <td class="p-1 text-center"><input type="number" min="0" step="any"
+                                            name="set_discount[]" onkeyup="updatePrice(this)"
+                                            value="{{ $proposed_discount }}" required /></td>
+                                    <td class="p-1 text-end">{{ $item->net_price }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+                <center><button class="btn btn-sm btn-darkblue">Submit Approval</button></center>
+            </form>
+        </div>
+    @endif
+
+    @if ($leadInfo->current_subStage == 'SUBMIT')
+        {{-- Submit To Customer  --}}
+        <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
+        @if ($leadInfo->lead_email)
+            <div class="container">
+                <div class="row" id="attachmentDiv">
+                    <div class="col-md-3 mt-1"><input type="file" name="attachmentFiles[]"
+                            class="form-control fs-07rem p-1 attachmentFiles"></div>
+                </div>
+                <center>
+                    <p class="btn btn-primary btn-sm fs-06rem p-1 mt-2" onclick="addAttachment()">Add Attchment</p>
+                </center>
+            </div>
+            <div class="container">
+                <label for="" class="fs-08rem">Add CC Email <small class="text-success">Use comma (,) for
+                        multiple
+                        email</small></label>
+                <input type="text" class="form-control fs-08rem" name="ccEmails" id="ccEmails">
+            </div>
+            <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button>
+            </center>
+        @else
+            <div class="bg-danger text-white p-2 text-center">
+                <h5 class="">No Email Found For The Client. Please Add An Email First.</h5>
+                <form action="{{ route('updateLeadEmail') }}" class="m-3">
+                    @csrf
+                    <input type="hidden" name="QleadId" id="QleadId" value="{{ $leadInfo->id }}" required>
+                    <label for="">Email</label>
+                    <input type="email" name="lead_email" id="lead_email" class="border-0 rounded fs-08rem p-1"
+                        required>
+                    <button class="btn btn-darkblue btn-sm">Add Email</button>
+                </form>
+            </div>
+        @endif
+    @endif
+</div>
 
 <script>
     function updatePrice(e) {
@@ -227,7 +230,7 @@
                 let ccEmails = '';
                 if ($('#ccEmails').val() != '') {
                     ccEmails = $('#ccEmails').val().split(',').map(email => email
-                .trim()); // Split and trim emails
+                        .trim()); // Split and trim emails
                 }
                 // console.log($('#ccEmails').val() != '');
                 // console.log(ccEmails);

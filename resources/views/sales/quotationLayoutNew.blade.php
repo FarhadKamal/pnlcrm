@@ -1,5 +1,6 @@
-<br>
-<button onclick="window.print()" class="btn btn-sm btn-darkblue printBtn float-end mt-2 me-2">Print Quotation</button>
+<button onclick="printWithLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Print Quotation</button>
+<button onclick="printWithoutLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Pad Print Quotation</button>
+
 <div class="quotDiv" id="section-to-print">
     <style>
         body {
@@ -155,6 +156,7 @@
 
         .quotDiv .colText {
             margin-left: 10px;
+            font-size: 12px;
         }
 
         .quotDiv .tableRow {
@@ -189,6 +191,10 @@
                 width: 100%;
             }
 
+            .quotDiv .colText {
+                width: max-content;
+            }
+
             .quotDiv .pagebreakAvoid {
                 page-break-inside: avoid;
             }
@@ -199,25 +205,25 @@
                 width: 100%;
             }
 
-            body * {
+            /* body * {
                 visibility: hidden;
-            }
+            } */
 
             #section-to-print,
             #section-to-print * {
                 /* visibility: visible; */
             }
 
-            #quotationLayoutTable * {
+            /* #quotationLayoutTable * {
                 visibility: visible;
-            }
+            } */
 
             #section-to-print .quotContainer {
                 margin-top: -90px;
             }
         }
     </style>
-    <div class="headerContainer">
+    <div class="headerContainer float-end">
         <img style="padding:0;margin:0;" src="{{ asset('images/system/logo.png') }}" alt="" height="50">
     </div>
 
@@ -250,11 +256,16 @@
                             <p><span>Email: </span>{{ $leadInfo->lead_email }}</p>
                         @endif
 
-                        <p>Subject :<span class="boldText"><u>Price Quotation for the supply of electric water pump.</u></span>
+                        <p>Subject :<span class="boldText"><u>Price Quotation for the supply of electric water
+                                    pump.</u></span>
                         </p>
 
                         <p class="boldText" style="margin-top: 2%">Greetings,</p>
-                        <p>Thank you for your enquiry and interest to purchase product from us. We are pleased to submit our price offer below along with other required details:</p>
+                        <p>Thank you for your enquiry and interest to purchase product from us. We are pleased to submit
+                            our price offer below along with other required details:</p>
+                    </div>
+                    <div>
+                        <p>Please send the purchase order to: <b>sales@pnlholdings.com</b></p>
                     </div>
 
                     <div>
@@ -265,39 +276,37 @@
                         ?>
                         @foreach ($reqInfo as $itemReq)
                             <div class="pagebreakAvoid">
-                                {{-- <p class="boldText" style="margin-top: 2%;">Your Requirement:</p>
-                                <p>Type: {{ $itemReq->type_of_use }}</p> --}}
                                 <table cellspacing="0" style="margin-top: 2%;">
-                                    <tr class="tableRow">
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Brand</p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Model</p>
-                                        </td>
-                                        {{-- <td class="table1RowCol1">
-                                    <p class="colText boldText text-center">Phase</p>
-                                </td> --}}
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Power</p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Head</p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Unit Price <br> (Taka) </p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Qty.</p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Less Discount <br> (Taka) </p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Total Price <br> (Taka) </p>
-                                        </td>
-                                    </tr>
+                                    <thead>
+                                        <tr class="tableRow">
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Sl
+                                                    No</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Product Description</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Unit
+                                                    Price (Taka)</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Qty.
+                                                </p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Less
+                                                    Discount (Taka)</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Net
+                                                    Payable (Taka)</p>
+                                            </td>
+                                        </tr>
+                                    </thead>
                                     <tbody>
+                                        <?php $sl = 1;
+                                        $totalNetPay = 0; ?>
                                         @foreach ($pumpInfo as $itemPump)
                                             @if ($itemPump->req_id == $itemReq->id)
                                                 <?php
@@ -310,45 +319,26 @@
                                                 if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->brand_name == 'Pedrollo') {
                                                     $pedDrainageTermFlag = 1;
                                                 }
-                                                
                                                 if ($itemPump->spare_parts == 0) {
-                                                    $brandName = $itemPump->productInfo->brand_name;
-                                                    $productName = $itemPump->productInfo->mat_name;
-                                                    $power = 'HP: ' . $itemPump->productInfo->hp . ', KW: ' . $itemPump->productInfo->kw;
-                                                    $head = 'Min ' . $itemPump->productInfo->min_head . ' - Max ' . $itemPump->productInfo->max_head;
-                                                    if ($brandName == 'MAXWELL' || $brandName == 'ITAP') {
-                                                        $power = 'N/A';
-                                                        $head = 'N/A';
+                                                    if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
+                                                        $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' pump.</b> <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head Range:</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head;
+                                                    } else {
+                                                        $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' </b>' . $itemPump->productInfo->mat_name;
                                                     }
                                                 } else {
-                                                    $brandName = $itemPump->spareInfo->brand_name;
-                                                    $productName = $itemPump->spareInfo->mat_name;
-                                                    $power = 'N/A';
-                                                    $head = 'N/A';
+                                                    $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b>' . $itemPump->spareInfo->mat_name;
                                                 }
+                                                
+                                                $totalNetPay = $totalNetPay + $itemPump->net_price;
                                                 ?>
                                                 <tr class="tableRow">
                                                     <td class="table1RowCol1">
-                                                        <p class="colText">{{ $brandName }}
+                                                        <p class="colText text-center">{{ $sl }}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="">{{ $productName }}
-
-                                                        </p>
-                                                    </td>
-                                                    {{-- <td class="table1RowCol1">
-                                                <p class="colText text-center">{{ $itemPump['productInfo']->phase }}
-                                                </p>
-                                            </td> --}}
-                                                    <td class="table1RowCol1">
-                                                        <p class="text-center colText">
-                                                            {{ $power }}
-                                                        </p>
-                                                    </td>
-                                                    <td class="table1RowCol1">
-                                                        <p class="text-center colText">
-                                                            {{ $head }}
+                                                        <p class="colText" style="width: max-content;">
+                                                            {!! $productDesc !!}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
@@ -370,9 +360,22 @@
                                                         </p>
                                                     </td>
                                                 </tr>
+                                                <?php $sl++; ?>
                                             @endif
                                         @endforeach
                                     </tbody>
+                                    <tfoot>
+                                        <tr class="tableRow">
+                                            <td class="table1RowCol1" colspan="5">
+                                                <p class="colText boldText text-center">Total Payable</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-end">
+                                                    {{ number_format((float) $totalNetPay, 2, '.', ',') }}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         @endforeach
@@ -396,41 +399,42 @@
                                     Holdings Limited</b>.</p>
                         @endif
 
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Provide your
-                            concern
-                            <b>Factory address & BIN
-                                number</b> for issue the <b>Vat Challan (Mushak-6.3)</b>.
+                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i>
+                            VAT/TAX as per government rules and BIN number should be provided.
                         </p>
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery after
+                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery
+                            after
                             5 days
                             from
                             the date of your
                             confirmed Purchase Order subject to available in our
                             stock.</p>
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery from
+                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery
+                            from
                             Pedrollo
                             Plaza, 5, Jubilee road,
                             Chittagong.</p>
 
                         @if ($allSurfaceTermFlag == 1)
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 3 (Three)
+                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 3
+                                (Three)
                                 Years’
                                 Service
-                                Warranty for Surface Pump.
+                                Warranty as per our company policy.
                             </p>
                         @endif
                         @if ($allSubmersibleTermFlag == 1)
                             <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two)
                                 Years’
                                 Service
-                                Warranty for Submersible Pump.
+                                Warranty as per our company policy.
                             </p>
                         @endif
                         @if ($pedDrainageTermFlag == 1)
                             <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two)
                                 Years’
                                 Service
-                                Warranty for Pedrollo Drainage Pump.
+                                Warranty as per our company policy.
                             </p>
                         @endif
                         <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Price offer
@@ -502,3 +506,38 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    function printWithLogo() {
+        showHeaderFooter();
+        document.querySelector('#quotationPageBottom').style.visibility = "hidden";
+        window.print();
+    }
+
+    function printWithoutLogo() {
+        hideHeaderFooter();
+        document.querySelector('#quotationPageBottom').style.visibility = "hidden";
+        window.print();
+    }
+
+    function showHeaderFooter() {
+        let header = document.querySelector('.headerContainer');
+        let footer = document.querySelector('.footerContainer');
+        header.style.visibility = "visible";
+        footer.style.visibility = "visible";
+    }
+
+    function hideHeaderFooter() {
+        let header = document.querySelector('.headerContainer');
+        let footer = document.querySelector('.footerContainer');
+        header.style.visibility = "hidden";
+        footer.style.visibility = "hidden";
+    }
+
+    // Ensure header and footer are always visible after print dialog
+    window.onafterprint = function() {
+        showHeaderFooter();
+        document.querySelector('#quotationPageBottom').style.visibility = "visible";
+    };
+</script>

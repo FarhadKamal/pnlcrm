@@ -356,7 +356,7 @@ class DealController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Submitted');
-                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
+                        $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<p>Dear Sir, A deal is submitted. Please approve the deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }

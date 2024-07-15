@@ -75,7 +75,7 @@
                                 $matName = $pumps->productInfo->mat_name;
                             } else {
                                 $brandName = $pumps->spareInfo->brand_name;
-                                $matName = $item->spareInfo->mat_name;
+                                $matName = $pumps->spareInfo->mat_name;
                             }
                             ?>
                             <tr>

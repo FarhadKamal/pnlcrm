@@ -7,8 +7,9 @@
         #section-to-print {
             font-family: Arial, sans-serif;
             font-size: 12px;
-            width: 100%;
+            /* width: 100%; */
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -175,8 +176,8 @@
         .quotDiv .footerContainer {
             /* font-family: Arial, sans-serif; */
             font-size: .7rem;
-            margin-top: 15px;
-            width: 100%;
+            /* margin-top: 15px; */
+            /* width: 100%; */
         }
 
         @page {
@@ -240,7 +241,7 @@
         <thead>
             <tr>
                 <td>
-                    <div style="height: 80px"></div>
+                    <div style="height: 10px"></div>
                 </td>
             </tr>
         </thead>
@@ -393,14 +394,14 @@
                     <div class="pagebreakAvoid">
                         <p class="boldText" style="margin-top: 2%;">Terms & Condition:</p>
                         @if ($leadInfo->payment_type == 'Cash')
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i></i> Payment
+                            <p class="">1. Payment
                                 shall be
                                 made
                                 <b>Cash Advance/Pay Order</b> and Purchase Order in favor of <b>PNL Holdings
                                     Limited</b>.
                             </p>
                         @else
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i></i> Payment
+                            <p class="">1. Payment
                                 shall be
                                 made
                                 through crossed cheque
@@ -408,49 +409,54 @@
                                     Holdings Limited</b>.</p>
                         @endif
 
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i>
-                            VAT/TAX as per government rules and BIN number should be provided.
+                        <p class="">2. VAT/TAX as per government rules and BIN number should be provided.
                         </p>
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery
+                        <p class="">3. Delivery
                             after
                             5 days
                             from
                             the date of your
                             confirmed Purchase Order subject to available in our
                             stock.</p>
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery
+                        <p class="">4. Delivery
                             from
                             Pedrollo
                             Plaza, 5, Jubilee road,
                             Chittagong.</p>
+                        <p class="">5. Price offer
+                            validity 7
+                            days
+                            from the date
+                            hereof.</p>
 
                         @if ($allSurfaceTermFlag == 1)
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 3
+                            <p class="">6. 3
                                 (Three)
                                 Years’
                                 Service
                                 Warranty as per our company policy.
                             </p>
                         @endif
-                        @if ($allSubmersibleTermFlag == 1)
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two)
+                        @if ($allSubmersibleTermFlag == 1 || $pedDrainageTermFlag == 1)
+                            <?php if ($allSurfaceTermFlag == 1) {
+                                $ts = 7;
+                            } else {
+                                $ts = 6;
+                            } ?>
+                            <p class="">{{ $ts }}. 2 (Two)
                                 Years’
                                 Service
                                 Warranty as per our company policy.
                             </p>
                         @endif
-                        @if ($pedDrainageTermFlag == 1)
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two)
+                        {{-- @if ($pedDrainageTermFlag == 1)
+                            <p class=""> 2 (Two)
                                 Years’
                                 Service
                                 Warranty as per our company policy.
                             </p>
-                        @endif
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Price offer
-                            validity 7
-                            days
-                            from the date
-                            hereof.</p>
+                        @endif --}}
+
 
                     </div>
                     @if ($leadInfo->current_stage == 'QUOTATION' && $leadInfo->current_subStage == 'SUBMIT')
@@ -474,7 +480,7 @@
         <tfoot>
             <tr>
                 <td>
-                    <div style="height: 100px"></div>
+                    <div style="height: 10px"></div>
                 </td>
             </tr>
         </tfoot>
@@ -492,8 +498,7 @@
                 class="fa-solid fa-headset"></i>&nbsp;16308 (9:00 AM - 9:00 PM)
         </p>
 
-        <div
-            style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">
+        <div style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">
             <div class="col-md-1">
                 <img src="{{ asset('images/system/pedrollo.svg') }}" alt="" width="100">
             </div>

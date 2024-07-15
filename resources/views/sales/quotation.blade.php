@@ -4,9 +4,9 @@
         <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
                 class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
     </div>
-    <button onclick="printWithLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Print Quotation</button>
+    {{-- <button onclick="printWithLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Print Quotation</button>
     <button onclick="printWithoutLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Pad Print
-        Quotation</button>
+        Quotation</button> --}}
 </div>
 <div class="">
     @include('sales.quotationLayout')
@@ -238,7 +238,8 @@
         var blob;
         window.jsPDF = window.jspdf.jsPDF;
         var docPDF = new jsPDF();
-        // docPDF.setFont("Helvetica", "normal");
+        docPDF.setFont("Helvetica", "normal");
+        docPDF.setFontSize(12);
 
         var elementHTML = document.querySelector("#section-to-print");
         docPDF.html(elementHTML, {
@@ -301,11 +302,11 @@
                 });
 
             },
-            margin: [10, 10, 10, 10],
+            margin: [1, 1, 1, 1],
             autoPaging: true,
             x: 5,
             y: 2,
-            width: 190, //target width in the PDF document
+            width: 170, //target width in the PDF document
             windowWidth: 675 //window width in CSS pixels
         });
     }

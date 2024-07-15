@@ -21,8 +21,61 @@
         <h5 class="text-center text-white fs-5 p-3 m-0">Payment Mood: {{ $leadInfo->payment_type }}</h5>
     </div>
     <hr>
-    <div class="row d-none">
-        <div class="col-md-12">
+    <div class="row container-fluid">
+        <div class="col-md-5 col-sm-5">
+            <h6 class="text-center"><kbd>Lead Information</kbd></h6>
+            <div class="container fs-09rem">
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Client SAP ID</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->sap_id }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Client</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->customer_name }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Group Name</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->group_name }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Address</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->address }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">District</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->district }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Division</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->division }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Tin</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->tin }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">BIN</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->bin }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Trade License</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->trade_license }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Contact Person</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->contact_person }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Mobile</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->contact_mobile }}</small>
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Email</p>
+                    <small class="col-md-8">{{ $leadInfo->clientInfo->contact_email }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7 col-sm-7">
             <table class="table table-bordered fs-08rem">
                 <thead>
                     <tr>
@@ -42,10 +95,17 @@
                         <?php
                         $totalDiscountAmt = $totalDiscountAmt + $pumps->discount_price;
                         $totalNetPrice = $totalNetPrice + $pumps->net_price;
+                        if ($pumps->spare_parts == 0) {
+                            $brandName = $pumps->productInfo->brand_name;
+                            $prName = $pumps->productInfo->mat_name;
+                        } else {
+                            $brandName = $pumps->spareInfo->brand_name;
+                            $prName = $pumps->spareInfo->mat_name;
+                        }
                         ?>
                         <tr>
-                            <td class="p-1">{{ $pumps->productInfo->brand_name }}</td>
-                            <td class="p-1">{{ $pumps->productInfo->mat_name }}</td>
+                            <td class="p-1">{{ $brandName }}</td>
+                            <td class="p-1">{{ $prName }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $pumps->unit_price, 2, '.', ',') }}</td>
                             <td class="p-1 text-center">{{ $pumps->qty }}</td>
                             <td class="p-1 text-center">{{ $pumps->discount_percentage }}</td>
@@ -64,11 +124,6 @@
                     </tr>
                 </tfoot>
             </table>
-        </div>
-    </div>
-
-    @if ($leadInfo->payment_type == 'Cash')
-        <div class="row mt-5 mb-3 container m-auto">
             <h6 class="text-center"><kbd>Transaction Summary</kbd></h6>
             <table class="table table-bordered fs-08rem log-table text-center">
                 <thead>
@@ -95,6 +150,9 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    @if ($leadInfo->payment_type == 'Cash')
         <div class="row mt-5 mb-3 container m-auto">
             <h6 class="text-center"><kbd>Booking Transaction List</kbd></h6>
             <table class="table table-bordered fs-08rem log-table text-center">

@@ -14,6 +14,14 @@
             <h6 class="text-center"><kbd>Lead Information</kbd></h6>
             <div class="container fs-09rem">
                 <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Client SAP ID</p>
+                    @if ($leadInfo->clientInfo->sap_id)
+                        <small class="col-md-8">{{ $leadInfo->clientInfo->sap_id }}</small>
+                    @else
+                        <small class="col-md-8">N/A</small>
+                    @endif
+                </div>
+                <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">Name</p>
                     <small class="col-md-8">{{ $leadInfo->clientInfo->customer_name }}</small>
                 </div>

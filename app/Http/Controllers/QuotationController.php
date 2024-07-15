@@ -88,7 +88,7 @@ class QuotationController extends Controller
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
-                        $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
+                        $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
                         $message->setBody('<p>Dear Sir, A deal is waiting for top management approval. Please approve the deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
@@ -99,7 +99,7 @@ class QuotationController extends Controller
                 $assignName = $email->user_name;
                 Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
-                    $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
                     $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Waiting for top management approval.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
             }
@@ -110,7 +110,7 @@ class QuotationController extends Controller
                 $assignName = $email->user_name;
                 Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
-                    $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
                     $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
             }
@@ -163,7 +163,7 @@ class QuotationController extends Controller
             $assignName = $email->user_name;
             Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                 $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
-                $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
+                $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
                 $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved by the top managment. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
             });
         }
@@ -249,7 +249,7 @@ class QuotationController extends Controller
                 $leadURL = $domainName . '/detailsLog/' . $request->leadId;
                 Mail::send([], [], function ($message) use ($assignEmail, $assignName, $leadURL) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Waiting For Quotation Feedback Process');
-                    $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
                     $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', your submitted quotation is send to the customer. Please take the feedback from customer and update in the software.<br><a href="' . $leadURL . '">CLICK HERE</a> for details.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
 
@@ -304,7 +304,7 @@ class QuotationController extends Controller
                         $assignName = $email->user_name;
                         Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP ID SET');
-                            $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
+                            $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
                             $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP ID generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
@@ -326,7 +326,7 @@ class QuotationController extends Controller
                             $assignName = $email->user_name;
                             Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                                 $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
-                                $message->from('info@pnlholdings.com', 'PNL Holdings Limited');
+                                $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
                                 $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP Credit SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                             });
                         }
@@ -416,7 +416,7 @@ class QuotationController extends Controller
         $data = array('name' => "PNL Holdings Limited");
         Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails) {
             $message->to($leadEmail, $leadName)->subject('PNL Holdings Limited Price Quotation');
-            $message->from('info@pnlholdings.com', 'PNL Holdings Ltd.');
+            $message->from('sales@pnlholdings.com', 'PNL Holdings Ltd.');
             $message->cc($assignEmail, $assignName);
             if (!empty($ccEmails)) {
                 foreach ($ccEmails as $ccEmail) {

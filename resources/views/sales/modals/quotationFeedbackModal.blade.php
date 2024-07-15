@@ -110,7 +110,7 @@
             <p style="margin-left: 5px;font-size: 1rem;">
                 5 Jubilee Road, Chattogram.
                 <br>
-                Email: info@pnlholdings.com
+                Email: sales@pnlholdings.com
                 <br>
                 www.pnlholdings.com
             </p>

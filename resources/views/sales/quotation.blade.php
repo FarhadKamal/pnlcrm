@@ -1,6 +1,6 @@
 @include('layouts.navbar')
 <div id="quotationPageTop">
-    <div class="float-end m-2">
+    <div class=" m-2">
         <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
                 class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
     </div>
@@ -215,7 +215,7 @@
                 let serialNo = Number(json.checkQuotationSerial[0]['sl'] + 1).toString().padStart(3,
                     '0');
                 let sellerZone = '<?= Auth()->user()->assign_to ?>';
-                let refPreText = 'REF: PNL/' + sellerZone + '/QUT/' + refYear + '/' + refMonth + refDate +
+                let refPreText = 'REF: PNL/' + sellerZone + '/QUOT/' + refYear + '/' + refMonth + refDate +
                     serialNo;
                 // console.log(refPreText);
                 document.getElementById('quotationRef').innerText = refPreText;

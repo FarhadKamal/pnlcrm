@@ -84,8 +84,8 @@
         }
 
         .quotDiv .container1 {
-            display: flex;
-            justify-content: space-between;
+            /* display: flex; */
+            /* justify-content: space-between; */
             align-items: center;
             margin: 0;
             padding: 0;
@@ -180,6 +180,11 @@
             /* width: 100%; */
         }
 
+        .headerContainer {
+                /* width: 100%; */
+                text-align: right;
+            }
+
         @page {
             size: auto;
             size: A4;
@@ -233,7 +238,7 @@
             }
         }
     </style>
-    <div class="headerContainer float-end">
+    <div class="headerContainer">
         <img style="padding:0;margin:0;" src="{{ asset('images/system/logo.png') }}" alt="" height="50">
     </div>
 
@@ -271,11 +276,9 @@
                         </p>
 
                         <p class="boldText" style="margin-top: 2%">Greetings,</p>
-                        <p>Thank you for your enquiry and interest to purchase product from us. We are pleased to submit
-                            our price offer below along with other required details:</p>
-                    </div>
-                    <div>
-                        <p>Please send the purchase order to: <b>sales@pnlholdings.com</b></p>
+                        <p>Thank you for your enquiry and interest to purchase product from our company. We are pleased
+                            to submit
+                            our price quotation below along with other required details:</p>
                     </div>
 
                     <div>
@@ -331,7 +334,7 @@
                                                 }
                                                 if ($itemPump->spare_parts == 0) {
                                                     if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
-                                                        $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' pump.</b> <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head Range:</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head;
+                                                        $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' pump.</b> <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <br><b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head(M):</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head . '. <b>Suction Dia:</b> ' . $itemPump->productInfo->suction_dia . 'Inch. ' . '<b>Delivery Dia:</b> ' . $itemPump->productInfo->delivery_dia . 'Inch.';
                                                     } else {
                                                         $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' </b>' . $itemPump->productInfo->mat_name;
                                                     }
@@ -392,11 +395,14 @@
                     </div>
 
                     <div class="pagebreakAvoid">
-                        <p class="boldText" style="margin-top: 2%;">Terms & Condition:</p>
+                        <div style="margin-top: 1%;">
+                            <p>Please send the purchase order to: <b>sales@pnlholdings.com</b></p>
+                        </div>
+                        <p class="boldText" style="margin-top: 1%;">Terms & Conditions:</p>
                         @if ($leadInfo->payment_type == 'Cash')
                             <p class="">1. Payment
                                 shall be
-                                made
+                                made through
                                 <b>Cash Advance/Pay Order</b> and Purchase Order in favor of <b>PNL Holdings
                                     Limited</b>.
                             </p>
@@ -486,35 +492,41 @@
         </tfoot>
     </table>
     <div class="footerContainer">
-        <p class="text-primary fw-bold" style="font-size:11px">PNL HOLDINGS LIMITED, Head Office: Pedrollo Plaza, 5 Jubilee Road,
+        <p class="text-primary fw-bold" style="font-size:11px">PNL HOLDINGS LIMITED, Head Office: Pedrollo Plaza, 5
+            Jubilee Road,
             Chattogram-400. Phone: +88 031 621531-35</p>
-        <p class="text-primary fw-bold" style="font-size:11px">Dhaka Office: Pedrollo House, 12 Topkhana Road, Segunbagicha, Dhaka-1000.
+        <p class="text-primary fw-bold" style="font-size:11px">Dhaka Office: Pedrollo House, 12 Topkhana Road,
+            Segunbagicha, Dhaka-1000.
             Phone: ++88 02 9571210</p>
-        <p class="text-primary fw-bold" style="display:inline; font-size:11px">
-            <img src="{{asset('images/system/email.png')}}" alt="" height="10">&nbsp;sales@pnlholdings.com&nbsp;<img src="{{asset('images/system/web.png')}}" alt="" height="12">&nbsp;www.pnlholdings.com&nbsp;<img src="{{asset('images/system/facebook.png')}}" alt="" height="12">&nbsp;facebook.com/thinkPNL&nbsp;<img src="{{asset('images/system/linkedin.png')}}" alt="" height="12">&nbsp;pnl-holdings-limited&nbsp;<img src="{{asset('images/system/call.png')}}" alt="" height="12">&nbsp;16308 (9:00 AM - 9:00 PM)
+        <p class="text-primary fw-bold" style="display:inline; font-size:10px">
+            <i class="fas fa-envelope"></i>&nbsp;sales@pnlholdings.com&nbsp;<i
+                class="fas fa-globe"></i>&nbsp;www.pnlholdings.com&nbsp;<i
+                class="fa-brands fa-facebook"></i>&nbsp;facebook.com/thinkPNL&nbsp;<i
+                class="fa-brands fa-linkedin"></i>&nbsp;pnl-holdings-limited&nbsp;<i
+                class="fa-solid fa-headset"></i>&nbsp;16308 (9:00 AM - 9:00 PM)
         </p>
 
         <div style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">
             <div class="col-md-1">
-                <img src="{{ asset('images/system/pedrollo.svg') }}" alt="" width="100">
+                <img src="{{ asset('images/system/com/pedrollo.png') }}" alt="" width="100">
             </div>
             <div class="col-md-1">
-                <img src="{{ asset('images/system/BGFlow.svg') }}" alt="" width="100">
+                <img src="{{ asset('images/system/com/BGFlow.jpg') }}" alt="" width="100">
             </div>
             <div class="col-md-1">
-                <img src="{{ asset('images/system/panelli.svg') }}" alt=""width="120">
+                <img src="{{ asset('images/system/com/panelli.jpg') }}" alt=""width="120">
             </div>
             <div class="col-md-1">
-                <img src="{{ asset('images/system/hcp.svg') }}" alt=""width="60">
+                <img src="{{ asset('images/system/com/hcp.png') }}" alt=""width="60">
             </div>
             <div class="col-md-1">
-                <img src="{{ asset('images/system/maxwell.svg') }}" alt="" width="60">
+                <img src="{{ asset('images/system/com/maxwell.jpg') }}" alt="" width="60">
             </div>
             <div class="col-md-1">
-                <img src="{{ asset('images/system/itap.svg') }}" alt="" width="80">
+                <img src="{{ asset('images/system/com/itap.png') }}" alt="" width="80">
             </div>
             <div class="col-md-1">
-                <img src="{{ asset('images/system/firenza.svg') }}" alt="" width="80">
+                <img src="{{ asset('images/system/com/firenza.png') }}" alt="" width="80">
             </div>
         </div>
     </div>

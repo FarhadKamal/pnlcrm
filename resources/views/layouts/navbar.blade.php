@@ -34,7 +34,7 @@
   
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar" style="background-color: #0B2E41">
+    <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar" style="background-color: #0B2E41;position: fixed;width: -webkit-fill-available;top: 0;">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Navbar brand -->
@@ -197,6 +197,7 @@
         </div>
         <!-- Container wrapper -->
     </nav>
+    
     <!-- Navbar -->
     <nav class="bg-info navClose pt-2" id="navbarButtonsSidebar">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-wrap flex-row justify-content-evenly text-white">
@@ -314,6 +315,9 @@
     <div>
         <img src="{{ asset('images/system/droplet.gif') }}" alt="" id="loadingGif">
         <h1 id="loadingText">Loading...</h1>
+    </div>
+    <div style="margin-top: 5rem;">
+
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>

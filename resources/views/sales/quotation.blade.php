@@ -4,12 +4,12 @@
         <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
                 class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
     </div>
-    {{-- <button onclick="printWithLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Print Quotation</button>
+    <button onclick="printWithLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Print Quotation</button>
     <button onclick="printWithoutLogo()" class=" m-2 btn btn-sm btn-darkblue printBtn  mt-2 me-2">Pad Print
-        Quotation</button> --}}
+        Quotation</button>
 </div>
 <div class="">
-    @include('sales.quotationLayout')
+    @include('sales.quotationLayoutNew')
 </div>
 <div id="quotationPageBottom">
     @if ($leadInfo->current_subStage == 'APPROVE')
@@ -163,6 +163,10 @@
                         email</small></label>
                 <input type="text" class="form-control fs-08rem" name="ccEmails" id="ccEmails">
             </div>
+            <div class="container">
+                <label for="" class="fs-08rem">Remarks <small class="text-success">(show on mail body)</small></label>
+                <input type="text" class="form-control fs-08rem" name="emailRemarks" id="emailRemarks">
+            </div>
             <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button>
             </center>
         @else
@@ -238,8 +242,7 @@
         var blob;
         window.jsPDF = window.jspdf.jsPDF;
         var docPDF = new jsPDF();
-        docPDF.setFont("Helvetica", "normal");
-        docPDF.setFontSize(12);
+        docPDF.setFont("Arial", "sans-serif");
 
         var elementHTML = document.querySelector("#section-to-print");
         docPDF.html(elementHTML, {
@@ -249,6 +252,7 @@
                 let leadId = $('#QleadId').val();
                 let quotationRef = $('#quotationRef').val();
                 let otherAttachment = document.getElementsByClassName('attachmentFiles');
+                let emailRemarks = $('#emailRemarks').val();
                 let ccEmails = '';
                 if ($('#ccEmails').val() != '') {
                     ccEmails = $('#ccEmails').val().split(',').map(email => email
@@ -267,6 +271,7 @@
                         formData.append('ccEmails[]', email);
                     });
                 }
+                formData.append('emailRemarks', emailRemarks);
                 // Append each file in the otherAttachment collection
                 for (let i = 0; i < otherAttachment.length; i++) {
                     let fileInput = otherAttachment[i];
@@ -274,7 +279,7 @@
                         formData.append('otherAttachment[]', fileInput.files[j]);
                     }
                 }
-
+                console.log(formData);
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
@@ -306,7 +311,7 @@
             autoPaging: true,
             x: 5,
             y: 2,
-            width: 170, //target width in the PDF document
+            width: 195, //target width in the PDF document
             windowWidth: 675 //window width in CSS pixels
         });
     }

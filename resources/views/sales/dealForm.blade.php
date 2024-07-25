@@ -14,10 +14,13 @@
 </div>
 
 <div class="container-fluid mb-3 mt-2">
-    <div class="float-end">
+    <div style="text-align:-webkit-right;">
         <a href="{{ route('detailsLog', ['leadId' => $leadId]) }}" target="_blank"><button
                 class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+        <a href="{{ route('lost', ['leadId' => $leadId]) }}"><button type='button'
+                class='btn btn-sm btn-danger'>Lost</button></a>
     </div>
+
     <div>
         <center>
             <h6><kbd>Customer Requirement:
@@ -577,15 +580,26 @@
     </div>
     <center><button class="btn btn-sm btn-darkblue p-1 mt-3" onclick="addNewRequirement()">Add Another
             Requirement</button></center>
-    <form action="{{ route('dealFormSubmission') }}" method="POST" id="dealSubmitForm">
+    <form action="{{ route('dealFormSubmission') }}" method="POST" id="dealSubmitForm" class="container row">
         @csrf
         <input type="hidden" name="lead_id" value="{{ $leadId }}">
-        <label for="">Payment Type</label>
-        <select name="dealPaymentType" id="dealPaymentType" class="form-select" style="width: 50%" required>
-            <option value="" selected disabled>--Select One--</option>
-            <option value="Credit">Credit</option>
-            <option value="Cash">Cash</option>
-        </select>
+        <div class="col-md-6">
+            <label for="">Payment Type</label>
+            <select name="dealPaymentType" id="dealPaymentType" class="form-select" style="width: 50%" required>
+                <option value="" selected disabled>--Select One--</option>
+                <option value="Credit">Credit</option>
+                <option value="Cash">Cash</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="">Select Delivery Location</label>
+            <select name="deliveryLocation" id="deliveryLocation" class="form-select" style="width: 50%" required>
+                <option value="" selected disabled>--Select One--</option>
+                <option value="CTG Pedrollo Plaza">CTG Pedrollo Plaza</option>
+                <option value="CTG Shagorika">CTG Shagorika Warehouse</option>
+                <option value="Dhaka Segunbagicha">Dhaka Segunbagicha</option>
+            </select>
+        </div>
         <center><button class="btn btn-sm btn-success p-1 mt-3" onclick="saveReqPump(event)">Save and Create
                 Quotation</button></center>
     </form>
@@ -795,6 +809,20 @@
                         icon: 'error',
                         title: 'Payment Type Error!',
                         text: "No Payment Type Selected",
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return;
+                }
+                // Check Delivery Location Checked 
+                let checkDelivery = $('#deliveryLocation').val();
+                if (checkDelivery == '' || checkDelivery == null) {
+                    found = false;
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Delivery Location Error!',
+                        text: "No Delivery Location Is Selected",
                         showConfirmButton: false,
                         timer: 3000
                     });

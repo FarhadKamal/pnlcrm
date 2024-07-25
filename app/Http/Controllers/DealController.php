@@ -294,7 +294,8 @@ class DealController extends Controller
 
         $validator = Validator::make($request->all(), [
             'lead_id' => 'required|numeric',
-            'dealPaymentType' => 'required'
+            'dealPaymentType' => 'required',
+            'deliveryLocation' => 'required'
         ]);
         if ($validator->fails()) {
             $data['errors'] = $validator->errors()->all();
@@ -364,8 +365,18 @@ class DealController extends Controller
             }
         }
 
+        $deliveryLocation = $request->deliveryLocation;
+        if ($deliveryLocation == 'CTG Pedrollo Plaza') {
+            $deliveryLocation = 'Pedrollo Plaza, 05 Jubilee Road, Chattogram';
+        } elseif ($deliveryLocation == 'CTG Shagorika') {
+            $deliveryLocation = 'Central Warehouse, Shagorika, Chattogram';
+        } else {
+            $deliveryLocation = 'Pedrollo House, 12 Topkhana Road, Segunbagicha, Dhaka';
+        }
+
         $leadInfo = Lead::find($leadId);
         $leadInfo->payment_type = $payment_type;
+        $leadInfo->delivery_from = $deliveryLocation;
         $leadInfo->need_credit_approval = $need_credit_approval;
         $leadInfo->need_discount_approval = $need_discount_approval;
         $leadInfo->need_top_approval = $need_top_approval;

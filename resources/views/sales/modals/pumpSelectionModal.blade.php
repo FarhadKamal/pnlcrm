@@ -52,7 +52,9 @@
                             <select name="filterHP" id="filterHP" class="form-select fs-07rem p-1">
                                 <option value="all">All HP</option>
                                 @foreach ($allPumpHP as $item)
-                                    <option value="{{ $item->hp }}">{{ $item->hp }}</option>
+                                    @if ($item->hp)
+                                        <option value="{{ $item->hp }}">{{ $item->hp }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -80,7 +82,9 @@
                             <select name="filterPhase" id="filterPhase" class="form-select fs-07rem p-1">
                                 <option value="all">All Phase</option>
                                 @foreach ($allPumpPhase as $item)
-                                    <option value="{{ $item->phase }}">{{ $item->phase }}</option>
+                                    @if ($item->phase)
+                                        <option value="{{ $item->phase }}">{{ $item->phase }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>

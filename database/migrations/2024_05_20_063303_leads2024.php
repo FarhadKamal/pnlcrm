@@ -33,6 +33,7 @@ class Leads2024 extends Migration
             $table->integer('need_discount_approval')->default(0);
             $table->integer('need_top_approval')->default(0);
             $table->string('payment_type')->nullable();
+            $table->text('delivery_from')->nullable();
             $table->integer('accounts_clearance')->default(0);
             $table->integer('is_outstanding')->default(0);
             $table->integer('sap_invoice')->default(0);

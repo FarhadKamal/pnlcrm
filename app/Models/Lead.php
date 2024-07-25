@@ -27,6 +27,7 @@ class Lead extends Model
         'need_discount_approval',
         'need_top_approval',
         'payment_type',
+        'delivery_from',
         'accounts_clearance',
         'is_outstanding',
         'sap_invoice',

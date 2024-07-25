@@ -27,8 +27,58 @@ class QuotationController extends Controller
         $data['leadInfo'] = Lead::with('clientInfo:id,customer_name,contact_person,address,district')->find($leadId);
         $data['reqInfo'] = Requirements::where(['lead_id' => $leadId])->get();
         $data['pumpInfo'] = PumpChoice::where('lead_id', $leadId)->orderby('id', 'ASC')->get();
+        $subPump = false;
+        $subSpare = false;
+        $subItap = false;
+        $subMaxwell = false;
+        foreach ($data['pumpInfo'] as $item) {
+            if ($item->spare_parts == 1) {
+                $subSpare = true;
+            } else {
+                if ($item->productInfo->brand_name == 'ITAP') {
+                    $subItap = true;
+                }
+                if ($item->productInfo->brand_name == 'MAXWELL') {
+                    $subMaxwell = true;
+                }
+                if ($item->productInfo->brand_name != 'ITAP' && $item->productInfo->brand_name != 'MAXWELL') {
+                    $subPump = true;
+                }
+            }
+        }
+        $subjectText = 'Price Quotation for the supply of';
+        $showAnd = false;
+        if ($subPump) {
+            $subjectText = $subjectText . ' Electric Water Pump';
+            $showAnd = true;
+        }
+        if ($subSpare) {
+            if ($showAnd) {
+                $subjectText = $subjectText . ', Accessories';
+            } else {
+                $subjectText = $subjectText . ' Accessories';
+                $showAnd = true;
+            }
+        }
+        if ($subMaxwell) {
+            if ($showAnd) {
+                $subjectText = $subjectText . ', Maxwell';
+            } else {
+                $subjectText = $subjectText . ' Maxwell';
+                $showAnd = true;
+            }
+        }
+        if ($subItap) {
+            if ($showAnd) {
+                $subjectText = $subjectText . ', ITAP';
+            } else {
+                $subjectText = $subjectText . ' ITAP';
+                $showAnd = true;
+            }
+        }
         $data['desgName'] = Designation::find(Auth()->user()->user_desg);
         $data['deptName'] = Department::find(Auth()->user()->user_dept);
+        $data['subjectText'] = $subjectText;
         return view('sales.quotation', $data);
     }
 
@@ -221,8 +271,8 @@ class QuotationController extends Controller
             $acceptAttachment = storage_path('app/public/' . $request->file('doc')->storeAs('folder', $customFileName, 'public'));
 
             $ccEmails = $request->input('ccEmails', []);
-
-            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails);
+            $emailRemarks = $request->input('emailRemarks');
+            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails, $emailRemarks);
 
             $quotationAttachment = new \Symfony\Component\HttpFoundation\File\File($acceptAttachment);
             $newFileName = time() . "." . $quotationAttachment->getExtension();
@@ -290,7 +340,7 @@ class QuotationController extends Controller
             //Update Lead Table
             $lead = Lead::find($request->quotationFeedbackModal_leadId);
             $lead->current_stage = 'BOOKING';
-
+            $customerName = $lead->clientInfo->customer_name;
             // Check Customer Has SAP ID 
             $sapId = $lead->clientInfo->sap_id;
             if (!$sapId) {
@@ -322,14 +372,16 @@ class QuotationController extends Controller
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
             WHERE permissions.permission_code="sapCreditSet"');
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/creditSetForm/' . $lead->id;
                     if ($SAPCreditUsersEmail) {
                         foreach ($SAPCreditUsersEmail as $email) {
                             $assignEmail = $email->user_email;
                             $assignName = $email->user_name;
-                            Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                            Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
                                 $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
                                 $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP Credit SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is waiting for new SAP Credit SET.<br><a href="' . $leadURL . '">CLICK HERE</a> for SAP credit set.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                             });
                         }
                     }
@@ -412,11 +464,11 @@ class QuotationController extends Controller
     }
 
 
-    public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails)
+    public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails, $emailRemarks)
     {
 
         $data = array('name' => "PNL Holdings Limited");
-        Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails) {
+        Mail::send([], [], function ($message) use ($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails, $emailRemarks) {
             $message->to($leadEmail, $leadName)->subject('PNL Holdings Limited Price Quotation');
             $message->from('sales@pnlholdings.com', 'PNL Holdings Ltd.');
             $message->cc($assignEmail, $assignName);
@@ -433,7 +485,7 @@ class QuotationController extends Controller
                     'mime' => $file->getMimeType()
                 ]);
             }
-            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Thank you for your interest in PNL Holdings Limited.<br>Please Find the quotation attachment and reply your purchase order/feedback to this email. For any query you can call us directly at +8801844494444</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Thank you for your interest in PNL Holdings Limited.<br>Please Find the quotation attachment and reply your purchase order/feedback to this email.<br><b>Remarks:</b> '.$emailRemarks.' <br>For any query you can call at 16308</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
         });
 
         if (Mail::failures()) {

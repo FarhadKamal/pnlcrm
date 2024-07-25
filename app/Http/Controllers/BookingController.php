@@ -12,6 +12,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class BookingController extends Controller
@@ -41,6 +42,7 @@ class BookingController extends Controller
             $customerInfo->save();
             $leadInfo = Lead::where(['customer_id' => $customerInfo->id])->get();
             $leadInfo = Lead::find($leadInfo[0]->id);
+            $customerName = $leadInfo->clientInfo->customer_name;
 
             if ($leadInfo->payment_type == 'Credit') {
                 $leadInfo->current_subStage = 'CREDITSET';
@@ -49,14 +51,16 @@ class BookingController extends Controller
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
             WHERE permissions.permission_code="sapCreditSet"');
+                $domainName = URL::to('/');
+                $leadURL = $domainName . '/creditSetForm/' . $leadInfo->id;
                 if ($SAPCreditUsersEmail) {
                     foreach ($SAPCreditUsersEmail as $email) {
                         $assignEmail = $email->user_email;
                         $assignName = $email->user_name;
-                        Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                        Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
                             $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP Credit SET.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is waiting for new SAP Credit SET.<br><a href="' . $leadURL . '">CLICK HERE</a> for SAP credit set.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
                 }
@@ -99,6 +103,10 @@ class BookingController extends Controller
 
     public function creditSetForm($leadId)
     {
+        if (!Helper::permissionCheck(Auth()->user()->id, 'sapCreditSet')) {
+            $data['errors'] = ['You are not authorized'];
+            return back()->with('errors', $data['errors']);
+        }
         $data['leadId'] = $leadId;
         $data['leadInfo'] = Lead::find($leadId);
         $data['pumpInfo'] = PumpChoice::where(['lead_id' => $leadId])->get();

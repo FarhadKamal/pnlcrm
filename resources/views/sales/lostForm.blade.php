@@ -37,6 +37,7 @@
                         <option value="High Price">High Price</option>
                         <option value="Not Appealing">Not Appealing</option>
                         <option value="Not Interested">Not Interested</option>
+                        <option value="Wrong Entry">Wrong Entry</option>
                         <option value="Others">Others</option>
                     </select>
                 </div>

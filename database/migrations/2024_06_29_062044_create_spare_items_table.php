@@ -19,6 +19,7 @@ class CreateSpareItemsTable extends Migration
             $table->integer('new_code');
             $table->string('mat_name');
             $table->string('brand_name');
+            $table->string('country_name');
             $table->timestamps();
         });
     }

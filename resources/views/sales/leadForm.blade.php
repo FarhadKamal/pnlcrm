@@ -30,10 +30,10 @@
                     <option selected disabled value="">Select One</option>
                     @foreach ($companyList as $item)
                         @if (session('errorsData') && session('errorsData')['clientId'] == $item->id)
-                            <option value="{{ $item->id }}" selected>{{ $item->customer_name }}-{{ $item->id }}
+                            <option value="{{ $item->id }}" selected>{{ $item->customer_name }}-{{ $item->sap_id }}
                             </option>
                         @else
-                            <option value="{{ $item->id }}">{{ $item->customer_name }}-{{ $item->id }}</option>
+                            <option value="{{ $item->id }}">{{ $item->customer_name }}-{{ $item->sap_id }}</option>
                         @endif
                     @endforeach
                 </select>

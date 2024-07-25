@@ -19,6 +19,7 @@ class CreateItemsTable extends Migration
             $table->integer('new_code');
             $table->string('mat_name');
             $table->string('brand_name');
+            $table->string('country_name');
             $table->string('pump_type');
             $table->string('itm_group')->nullable();
             $table->string('phase')->nullable();

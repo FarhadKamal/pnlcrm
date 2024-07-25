@@ -143,12 +143,18 @@
                         <td class="text-center">{{ $item->log_stage }}</td>
                         <?php
                         if ($item->log_next == 'Quotation feedback') {
-                            $checkQuotationFile = DB::select("SELECT quotation_file FROM quotations WHERE quotations.lead_id = '$leadInfo->id' AND DATE(quotations.created_at) BETWEEN DATE('$item->created_at') AND DATE('$item->created_at')");
+                            $checkQuotationFile = DB::select("SELECT quotation_file,is_accept,quotation_po,accept_file FROM quotations WHERE quotations.lead_id = '$leadInfo->id' AND DATE(quotations.created_at) BETWEEN DATE('$item->created_at') AND DATE('$item->created_at')");
                             ?>
                         @if (isset($checkQuotationFile[0]->quotation_file))
                             <td class="text-center">{{ $item->log_task }} <a
                                     href="{{ asset('quotations') . '/' . $checkQuotationFile[0]->quotation_file }}"
-                                    target="_blank"><small class="badge badge-info">VIEW QUOTATION</small></a></td>
+                                    target="_blank"><small class="badge badge-info">VIEW QUOTATION</small></a>
+                                @if ($checkQuotationFile[0]->is_accept == 1 && isset($checkQuotationFile[0]->accept_file))
+                                <a
+                                href="{{ asset('leadQuotationAcceptAttachment') . '/' . $checkQuotationFile[0]->accept_file }}"
+                                target="_blank"><small class="badge badge-info">VIEW PO</small></a>
+                                @endif
+                                </td>
                         @else
                             <td class="text-center">{{ $item->log_task }} </td>
                         @endif

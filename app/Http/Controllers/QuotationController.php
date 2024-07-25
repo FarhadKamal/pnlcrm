@@ -129,19 +129,24 @@ class QuotationController extends Controller
             }
         }
 
+        $leadInfo = Lead::find($lead_id);
+        $customerName = $leadInfo->clientInfo->customer_name;
+
         if ($need_top_approval == 1) {
             $dealApproveUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
             WHERE permissions.permission_code="dealTopApprove"');
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/quotationCheck/' . $lead_id;
             if ($dealApproveUsersEmail) {
                 foreach ($dealApproveUsersEmail as $email) {
                     $assignEmail = $email->user_email;
                     $assignName = $email->user_name;
-                    Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
                         $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                        $message->setBody('<p>Dear Sir, A deal is waiting for top management approval. Please approve the deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        $message->setBody('<p>Dear Sir, The deal for the customer ' . $customerName . ' is waiting for Managing Director approval. Please approve the deal.<br><a href="' . $leadURL . '">CLICK HERE</a> for approve the lead.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
             }
@@ -152,7 +157,7 @@ class QuotationController extends Controller
                 Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
                     $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Waiting for top management approval.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Waiting for Managing Director approval.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
             }
         } else {
@@ -372,8 +377,8 @@ class QuotationController extends Controller
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
             WHERE permissions.permission_code="sapCreditSet"');
-            $domainName = URL::to('/');
-            $leadURL = $domainName . '/creditSetForm/' . $lead->id;
+                    $domainName = URL::to('/');
+                    $leadURL = $domainName . '/creditSetForm/' . $lead->id;
                     if ($SAPCreditUsersEmail) {
                         foreach ($SAPCreditUsersEmail as $email) {
                             $assignEmail = $email->user_email;
@@ -485,7 +490,7 @@ class QuotationController extends Controller
                     'mime' => $file->getMimeType()
                 ]);
             }
-            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Thank you for your interest in PNL Holdings Limited.<br>Please Find the quotation attachment and reply your purchase order/feedback to this email.<br><b>Remarks:</b> '.$emailRemarks.' <br>For any query you can call at 16308</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Thank you for your interest in PNL Holdings Limited.<br>Please Find the quotation attachment and reply your purchase order/feedback to this email.<br><b>Remarks:</b> ' . $emailRemarks . ' <br>For any query you can call at 16308</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
         });
 
         if (Mail::failures()) {

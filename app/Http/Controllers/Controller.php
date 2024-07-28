@@ -127,7 +127,7 @@ class Controller extends BaseController
 
         // Special Fetch For Management Approval 
         if (Helper::permissionCheck(Auth()->user()->id, 'dealTopApprove')) {
-            $data['quotationStage'] = Lead::orderBy('need_top_approval', 'ASC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->get();
+            $data['quotationStage'] = Lead::orderBy('need_top_approval', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->get();
             foreach ($data['quotationStage'] as $item) {
                 $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $item->id ORDER BY id DESC LIMIT 1");
                 if ($quotationRef) {

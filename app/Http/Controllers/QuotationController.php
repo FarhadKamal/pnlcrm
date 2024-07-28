@@ -25,6 +25,18 @@ class QuotationController extends Controller
 
     public function viewQuotation($leadId)
     {
+        $leadInfo = Lead::find($leadId);
+        if ($leadInfo->current_stage != 'QUOTATION') {
+            return back()->with('error', array('The lead is not valid for quotation stage'));
+        } else {
+            if ($leadInfo->current_subStage == 'APPROVE' && !Helper::permissionCheck(Auth()->user()->id, 'dealApprove')) {
+                return back()->with('error', array('You are not authorized'));
+            } elseif ($leadInfo->current_subStage == 'MANAGEMENT' && !Helper::permissionCheck(Auth()->user()->id, 'dealTopApprove')) {
+                return back()->with('error', array('You are not authorized'));
+            } elseif ($leadInfo->current_subStage == 'SUBMIT' && $leadInfo->clientInfo->assign_to != Auth()->user()->assign_to) {
+                return back()->with('error', array('You are not authorized'));
+            }
+        }
         $data['leadInfo'] = Lead::with('clientInfo:id,customer_name,contact_person,address,district')->find($leadId);
         $data['reqInfo'] = Requirements::where(['lead_id' => $leadId])->get();
         $data['pumpInfo'] = PumpChoice::where('lead_id', $leadId)->orderby('id', 'ASC')->get();

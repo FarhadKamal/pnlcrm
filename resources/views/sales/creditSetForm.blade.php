@@ -115,6 +115,7 @@
         </div>
         <div class="col-md-7 col-sm-7">
             <h6 class="text-center"><kbd>SAP Credit Information</kbd></h6>
+            <center><small class="text-danger">Please cross check with purchase order</small></center>
             <form action="{{ route('creditSetInsertion') }}" method="POST" id="sapCreationForm">
                 @csrf
                 <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">

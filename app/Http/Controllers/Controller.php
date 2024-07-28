@@ -129,13 +129,11 @@ class Controller extends BaseController
         if (Helper::permissionCheck(Auth()->user()->id, 'dealTopApprove')) {
             // $data['quotationStage'] = Lead::orderBy('need_top_approval', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'QUOTATION')->get();
             $data['quotationStage'] = Lead::where('current_stage', 'QUOTATION')
-                ->orderByRaw('CASE WHEN need_credit_approval = 2 THEN 0 ELSE 1 END ASC,
-  CASE WHEN need_top_approval = 0 THEN 2 ELSE 1 END ASC,
-  need_top_approval ASC')
+                ->orderByRaw('CASE WHEN need_top_approval = 0 THEN 2 ELSE need_top_approval END ASC')
                 ->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')
                 ->where('current_stage', 'QUOTATION')
                 ->get();
-
+           
             foreach ($data['quotationStage'] as $item) {
                 $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $item->id ORDER BY id DESC LIMIT 1");
                 if ($quotationRef) {

@@ -215,7 +215,7 @@
                                         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'dealTopApprove'))
                                             <a href="{{ route('quotationCheck', ['leadId' => $item->id]) }}">
                                                 <button type="button"
-                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Managmement</button>
+                                                    class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Managmement</button>
                                             </a>
                                         @else
                                             <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">

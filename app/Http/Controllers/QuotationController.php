@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Lead;

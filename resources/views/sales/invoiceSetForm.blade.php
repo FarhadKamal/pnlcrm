@@ -14,6 +14,10 @@
 </div>
 
 <div class="container-fluid mb-3 mt-2">
+    <div class="m-2 float-end">
+        <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
+                class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+    </div>
     <center>
         <h4 class="mt-3">Invoice Set Form</h4>
     </center>

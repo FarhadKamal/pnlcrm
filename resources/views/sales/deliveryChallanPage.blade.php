@@ -99,21 +99,28 @@
                 <?php $sl = 1;
                 $totalQuantity = 0;
                 ?>
-                @foreach ($pumpInfo as $item)
+                @foreach ($pumpInfo as $itemPump)
                     <?php
-                    $totalQuantity = $totalQuantity + $item->qty;
+                    $totalQuantity = $totalQuantity + $itemPump->qty;
+                    if ($itemPump->spare_parts == 0) {
+                        if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
+                            $country = $itemPump->productInfo->country_name;
+                            $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' pump</b> (' . $country . '). <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <br><b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head(M):</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head . '. <b>Suction Dia:</b> ' . $itemPump->productInfo->suction_dia . ' Inch. ' . '<b>Delivery Dia:</b> ' . $itemPump->productInfo->delivery_dia . ' Inch.';
+                        } else {
+                            $country = $itemPump->productInfo->country_name;
+                            $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->productInfo->mat_name;
+                        }
+                    } else {
+                        $country = $itemPump->spareInfo->country_name;
+                        $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->spareInfo->mat_name;
+                    }
                     ?>
                     <tr class="fs-07rem">
                         <td class="p-1 text-center" style="align-content: space-evenly; text-align:center">
                             {{ $sl }}</td>
-                        <td class="p-1" style="font-size: 12px; line-height:initial"><b>Brand:</b>
-                            {{ $item->productInfo->brand_name }} <br> <b>Type:</b>
-                            {{ $item->productInfo->itm_group }} <br> <b>Model:</b> {{ $item->productInfo->mat_name }}
-                            <br> <b>Specification:</b> HP: {{ $item->productInfo->hp }}, KW:
-                            {{ $item->productInfo->kw }}
-                        </td>
+                        <td class="p-1" style="font-size: 12px; line-height:initial">{!! $productDesc !!}</td>
                         <td class="p-1 text-center" style="align-content: space-evenly;text-align:center">
-                            {{ $item->qty }}</td>
+                            {{ $itemPump->qty }}</td>
                     </tr>
                     <?php $sl++; ?>
                 @endforeach

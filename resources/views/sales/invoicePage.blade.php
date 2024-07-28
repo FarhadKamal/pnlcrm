@@ -102,34 +102,45 @@
                 $totalPrice = 0;
                 $totalDiscount = 0;
                 $totalNetPrice = 0; ?>
-                @foreach ($pumpInfo as $item)
+                @foreach ($pumpInfo as $itemPump)
                     <?php
-                    $totalPrice = $item->qty * $item->unit_price;
-                    $totalDiscount = $totalDiscount + $item->discount_price;
-                    $totalNetPrice = $totalNetPrice + $item->net_price; ?>
+                    $totalPrice = $itemPump->qty * $itemPump->unit_price;
+                    $totalDiscount = $totalDiscount + $itemPump->discount_price;
+                    $totalNetPrice = $totalNetPrice + $itemPump->net_price;
+                    if ($itemPump->spare_parts == 0) {
+                        if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
+                            $country = $itemPump->productInfo->country_name;
+                            $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' pump</b> (' . $country . '). <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <br><b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head(M):</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head . '. <b>Suction Dia:</b> ' . $itemPump->productInfo->suction_dia . ' Inch. ' . '<b>Delivery Dia:</b> ' . $itemPump->productInfo->delivery_dia . ' Inch.';
+                        } else {
+                            $country = $itemPump->productInfo->country_name;
+                            $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->productInfo->mat_name;
+                        }
+                    } else {
+                        $country = $itemPump->spareInfo->country_name;
+                        $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->spareInfo->mat_name;
+                    }
+                    
+                    ?>
                     <tr class="fs-07rem">
                         <td class="p-1 text-center" style="align-content: space-evenly; text-align:center">
                             {{ $sl }}</td>
-                        <td class="p-1"><b>Brand:</b> {{ $item->productInfo->brand_name }} <br> <b>Type:</b>
-                            {{ $item->productInfo->itm_group }} <br> <b>Model:</b> {{ $item->productInfo->mat_name }}
-                            <br> <b>Specification:</b> HP: {{ $item->productInfo->hp }}, KW:
-                            {{ $item->productInfo->kw }}
-                        </td>
+                        <td class="p-1">{!! $productDesc !!}</td>
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">
-                            {{ number_format((float) $item->unit_price, 2, '.', ',') }}</td>
+                            {{ number_format((float) $itemPump->unit_price, 2, '.', ',') }}</td>
                         <td class="p-1 text-center" style="align-content: space-evenly;text-align:center">
-                            {{ $item->qty }}</td>
+                            {{ $itemPump->qty }}</td>
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">
-                            {{ number_format((float) $item->discount_price, 2, '.', ',') }}</td>
+                            {{ number_format((float) $itemPump->discount_price, 2, '.', ',') }}</td>
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">
-                            {{ number_format((float) $item->net_price, 2, '.', ',') }}</td>
+                            {{ number_format((float) $itemPump->net_price, 2, '.', ',') }}</td>
                     </tr>
                     <?php $sl++; ?>
                 @endforeach
                 <tr>
                     <td class="p-1 fw-bold text-center" colspan="5"><b>Total Net Pay</b></td>
                     <td class="p-1 text-end fw-bold" style="align-content: space-evenly;text-align:right">
-                        <b>{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</b></td>
+                        <b>{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</b>
+                    </td>
                 </tr>
                 <tr>
                     <?php

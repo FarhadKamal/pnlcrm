@@ -74,10 +74,47 @@
                     <p class="col-md-4 text-muted m-0">Email</p>
                     <small class="col-md-8">{{ $leadInfo->clientInfo->contact_email }}</small>
                 </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Quotation Ref</p>
+                    <?php
+                    $checkQuotationFile = DB::select("SELECT quotation_ref,quotation_file,accept_file,quotation_po FROM quotations WHERE quotations.lead_id = '$leadInfo->id' AND quotations.is_accept = 1 ORDER BY quotations.id DESC LIMIT 1");
+                    if (isset($checkQuotationFile[0]->quotation_file)) {
+                        ?>
+                    <small class="col-md-8"><a
+                            href="{{ asset('quotations') . '/' . $checkQuotationFile[0]->quotation_file }}"
+                            target="_blank"><small
+                                class="badge badge-info">{{ $checkQuotationFile[0]->quotation_ref }}</small></a></small>
+                    <?php 
+                    }else{
+                        ?>
+                    <small class="col-md-8">{{ $checkQuotationFile[0]->quotation_ref }}</small>
+                    <?php 
+                    }
+                    ?>
+
+                </div>
+                <div class="row border-bottom p-1">
+                    <p class="col-md-4 text-muted m-0">Purchase Order</p>
+                    <?php
+                    if (isset($checkQuotationFile[0]->accept_file)){
+                    ?>
+                    <small class="col-md-8"><a
+                            href="{{ asset('leadQuotationAcceptAttachment') . '/' . $checkQuotationFile[0]->accept_file }}"
+                            target="_blank"><small
+                                class="badge badge-info">{{ $checkQuotationFile[0]->quotation_po }}</small></a></small>
+                    <?php 
+                    }else{
+                    ?>
+                    <small class="col-md-8">{{ $checkQuotationFile[0]->quotation_po }}</small>
+                    <?php 
+                    }
+                    ?>
+                </div>
             </div>
         </div>
         <div class="col-md-7 col-sm-7">
             <h6 class="text-center"><kbd>SAP Invoice Information</kbd></h6>
+            <center><small class="text-danger">Please cross check with purchase order</small></center>
             <form action="{{ route('invoiceSetInsertion') }}" method="POST" id="invoiceSetInsertionForm">
                 @csrf
                 <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">

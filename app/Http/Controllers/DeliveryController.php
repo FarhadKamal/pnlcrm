@@ -44,7 +44,7 @@ class DeliveryController extends Controller
             $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
-            WHERE permissions.permission_code="sapInvoiceSet"');
+            WHERE permissions.permission_code="sapInvoiceSet" AND users.is_active = 1');
                 if ($SAPCreditUsersEmail) {
                     foreach ($SAPCreditUsersEmail as $email) {
                         $assignEmail = $email->user_email;

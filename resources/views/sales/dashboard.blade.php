@@ -132,6 +132,7 @@
                                     {{ $item['source']->source_name }}</small><br>
                                 <small class="card-text mb-1"><b>Created By:</b>
                                     {{ $item['createdBy']->user_name }}</small>
+                                    
                                 <div>
                                     @if (Auth()->user()->assign_to && $item->clientInfo->assign_to == Auth()->user()->assign_to)
                                         <a href="{{ route('dealPage', ['leadId' => $item->id]) }}">

@@ -78,7 +78,7 @@
                             </div>
                             <input type="text" name="quotationNotFeedbackModal_leadId"
                                 id="quotationNotFeedbackModal_leadId" hidden>
-                            <center><button class="btn btn-sm btn-darkblue">Not Accept</button></center>
+                            <center><button class="btn btn-sm btn-darkblue">Re-Deal Lead</button></center>
                         </form>
                     </div>
                 </div>

@@ -20,6 +20,7 @@ class CreateSpareItemsTable extends Migration
             $table->string('mat_name');
             $table->string('brand_name');
             $table->string('country_name');
+            $table->string('unit_name')->nullable();
             $table->timestamps();
         });
     }

@@ -349,6 +349,8 @@ class QuotationController extends Controller
             'quotationAcceptFeedback' => 'required',
             'quotationPO' => 'required',
             'quotationPODate' => 'required',
+            'quotationAIT' => 'numeric',
+            'quotationVAT' => 'numeric',
         ]);
 
         if ($validator->fails()) {
@@ -380,6 +382,14 @@ class QuotationController extends Controller
                     }
                 }
             } else {
+                $ait = $request->quotationAIT;
+                $vat = $request->quotationVAT;
+                if ($ait && $ait > 0) {
+                    $lead->aitAmt = $ait;
+                }
+                if ($vat && $vat > 0) {
+                    $lead->vatAmt = $vat;
+                }
                 if ($lead->payment_type == 'Cash') {
                     $lead->current_subStage = 'TRANSACTION';
                     $logNext = 'Cash Transaction';

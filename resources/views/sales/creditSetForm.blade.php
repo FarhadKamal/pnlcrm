@@ -114,19 +114,8 @@
             </div>
         </div>
         <div class="col-md-7 col-sm-7">
-            <h6 class="text-center"><kbd>SAP Credit Information</kbd></h6>
-            <center><small class="text-danger">Please cross check with purchase order</small></center>
-            <form action="{{ route('creditSetInsertion') }}" method="POST" id="sapCreationForm">
-                @csrf
-                <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
-                <label for="" class="fs-08rem">SAP Credit Limit</label>
-                <input type="number" class="form-control fs-08rem p-1" name="creditLimit" required>
-                <label for="" class="fs-08rem">SAP Credit Remarks</label><br>
-                <textarea name="creditLimitRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
-                <br>
-                <center><button class="btn btn-sm btn-darkblue">Submit Credit Form</button></center>
-            </form>
-            <br>
+
+            <h6 class="text-center"><kbd>Item & Transaction Summary</kbd></h6>
             <table class="table table-bordered fs-08rem">
                 <thead>
                     <tr>
@@ -175,6 +164,50 @@
                     </tr>
                 </tfoot>
             </table>
+            <table class="table table-bordered fs-08rem log-table text-center">
+                <thead>
+                    <tr>
+                        <th class="p-1">Net Price</th>
+                        <th class="p-1">Deposited</th>
+                        <th class="p-1">Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="p-1">{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</td>
+                        <?php $totalPaid = 0; ?>
+                        @foreach ($transactionInfo as $item)
+                            <?php
+                            if ($item->is_verified == 1) {
+                                $totalPaid = $totalPaid + $item->pay_amount;
+                            }
+                            ?>
+                        @endforeach
+                        <td class="p-1">{{ number_format((float) $totalPaid, 2, '.', ',') }}</td>
+                        <td class="p-1">{{ number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-md-4">Payment Type: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->payment_type }}</span></div>
+                <div class="col-md-4">AIT Amount: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->aitAmt }}</span></div>
+                <div class="col-md-4">VAT Amount: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->vatAmt }}</span></div>
+            </div>
+            <br>
+            <h6 class="text-center"><kbd>SAP Credit Information</kbd></h6>
+            <center><small class="text-danger">Please cross check with purchase order</small></center>
+            
+            <form action="{{ route('creditSetInsertion') }}" method="POST" id="sapCreationForm">
+                @csrf
+                <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+                <label for="" class="fs-08rem">SAP Credit Limit</label>
+                <input type="number" class="form-control fs-08rem p-1" name="creditLimit" required>
+                <label for="" class="fs-08rem">SAP Credit Remarks</label><br>
+                <textarea name="creditLimitRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
+                <br>
+                <center><button class="btn btn-sm btn-darkblue">Submit Credit Form</button></center>
+            </form>
+            
         </div>
     </div>
 </div>

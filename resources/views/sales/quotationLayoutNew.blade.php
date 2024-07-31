@@ -348,7 +348,7 @@
                                                     }
                                                 } else {
                                                     $country = $itemPump->spareInfo->country_name;
-                                                    $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->spareInfo->mat_name;
+                                                    $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b> ' . $itemPump->spareInfo->mat_name;
                                                 }
                                                 
                                                 $totalNetPay = $totalNetPay + $itemPump->net_price;

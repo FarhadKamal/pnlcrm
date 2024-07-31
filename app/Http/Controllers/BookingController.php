@@ -110,6 +110,7 @@ class BookingController extends Controller
         $data['leadId'] = $leadId;
         $data['leadInfo'] = Lead::find($leadId);
         $data['pumpInfo'] = PumpChoice::where(['lead_id' => $leadId])->get();
+        $data['transactionInfo'] = Transaction::where(['lead_id' => $leadId])->get();
         return view('sales.creditSetForm', $data);
     }
 
@@ -337,16 +338,39 @@ class BookingController extends Controller
             foreach ($transactionInfo as $transactions) {
                 $totalPaid = $totalPaid + $transactions->pay_amount;
             }
+
+            $leadInfo = Lead::find($leadId);
+            $customerName = $leadInfo->clientInfo->customer_name;
+            $leadInfo->accounts_clearance = 1;
             if ($totalNetPrice > $totalPaid) {
-                //Set Outstanding
-                $leadInfo = Lead::find($leadId);
-                $leadInfo->accounts_clearance = 1;
                 $leadInfo->is_outstanding = 1;
+            }
+            if ($leadInfo->aitAmt > 0 || $leadInfo->vatAmt > 0) {
+                $leadInfo->current_stage = 'BOOKING';
+                $leadInfo->current_subStage = 'CREDITSET';
+                $logNext = 'AIT/VAT Credit Set';
+                $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapCreditSet"');
+                $domainName = URL::to('/');
+                $leadURL = $domainName . '/creditSetForm/' . $leadInfo->id;
+                if ($SAPCreditUsersEmail) {
+                    foreach ($SAPCreditUsersEmail as $email) {
+                        $assignEmail = $email->user_email;
+                        $assignName = $email->user_name;
+                        Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
+                            $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
+                            $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is waiting for new SAP Credit SET.<br><a href="' . $leadURL . '">CLICK HERE</a> for SAP credit set.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        });
+                    }
+                }
+            } else {
                 $leadInfo->current_stage = 'DELIVERY';
                 if ($leadInfo->need_discount_approval != 0) {
                     $leadInfo->current_subStage = 'DISCOUNTSET';
                     $logNext = 'SAP Discount Set';
-
                     $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
@@ -362,20 +386,9 @@ class BookingController extends Controller
                             });
                         }
                     }
-                    $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
-                    foreach ($assignedUsersEmail as $email) {
-                        $assignEmail = $email->user_email;
-                        $assignName = $email->user_name;
-                        Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
-                            $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM ACCOUNTS CLEARED');
-                            $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', The lead cleared from accounts. Waiting for Discount Set</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
-                        });
-                    }
                 } else {
                     $leadInfo->current_subStage = 'INVOICE';
                     $logNext = 'SAP Invoice Generation';
-
                     $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
@@ -391,31 +404,23 @@ class BookingController extends Controller
                             });
                         }
                     }
-                    $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
-                    foreach ($assignedUsersEmail as $email) {
-                        $assignEmail = $email->user_email;
-                        $assignName = $email->user_name;
-                        Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
-                            $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM ACCOUNTS CLEARED');
-                            $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', The lead cleared from accounts. Waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
-                        });
-                    }
                 }
-                $leadInfo->save();
-            } else {
-                $leadInfo = Lead::find($leadId);
-                $leadInfo->accounts_clearance = 1;
-                $leadInfo->current_stage = 'DELIVERY';
-                if ($leadInfo->need_discount_approval != 0) {
-                    $leadInfo->current_subStage = 'DISCOUNTSET';
-                    $logNext = 'SAP Discount Set';
-                } else {
-                    $leadInfo->current_subStage = 'INVOICE';
-                    $logNext = 'SAP Invoice Generation';
-                }
-                $leadInfo->save();
             }
+            $leadInfo->save();
+
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/detailsLog/' . $leadInfo->id;
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM ACCOUNTS CLEARED');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', The lead ' . $customerName . ' is cleared from accounts. <br><a href="' . $leadURL . '">CLICK HERE</a> for details.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
+
             $log_data = array(
                 'lead_id' => $leadId,
                 'log_stage' => 'BOOKING',

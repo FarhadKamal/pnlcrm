@@ -189,6 +189,10 @@
                     </tr>
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col-md-6">AIT Amount: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->aitAmt }}</span></div>
+                <div class="col-md-6">VAT Amount: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->vatAmt }}</span></div>
+            </div>
         </div>
     </div>
 

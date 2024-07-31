@@ -111,13 +111,16 @@
                         if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
                             $country = $itemPump->productInfo->country_name;
                             $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' pump</b> (' . $country . '). <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <br><b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head(M):</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head . '. <b>Suction Dia:</b> ' . $itemPump->productInfo->suction_dia . ' Inch. ' . '<b>Delivery Dia:</b> ' . $itemPump->productInfo->delivery_dia . ' Inch.';
+                            $unitName = $itemPump->productInfo->unit_name;
                         } else {
                             $country = $itemPump->productInfo->country_name;
                             $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->productInfo->mat_name;
+                            $unitName = $itemPump->productInfo->unit_name;
                         }
                     } else {
                         $country = $itemPump->spareInfo->country_name;
-                        $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->spareInfo->mat_name;
+                        $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b> ' . $itemPump->spareInfo->mat_name;
+                        $unitName = $itemPump->spareInfo->unit_name;
                     }
                     
                     ?>
@@ -128,7 +131,7 @@
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">
                             {{ number_format((float) $itemPump->unit_price, 2, '.', ',') }}</td>
                         <td class="p-1 text-center" style="align-content: space-evenly;text-align:center">
-                            {{ $itemPump->qty }}</td>
+                            {{ $itemPump->qty }} {{ $unitName }}</td>
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">
                             {{ number_format((float) $itemPump->discount_price, 2, '.', ',') }}</td>
                         <td class="p-1 text-end" style="align-content: space-evenly;text-align:right">

@@ -3,7 +3,7 @@
         <div class="modal-content ">
             <div class="modal-header p-2">
                 {{-- <button class="btn btn-sm btn-darkblue fs-07rem p-1" onclick="printAck()">Print Acknowledgement</button> --}}
-
+                <div><h6>Payment Type: <span class="bg-darkblue p-1 rounded text-white" id="quotationPayType"></span></h6></div>
                 <div class="col d-flex justify-content-end" id="detailsBtn2">
 
                 </div>
@@ -42,8 +42,18 @@
                             <div class="mb-1">
                                 <label class="form-label m-0">Customer Feedback <small
                                         class="text-danger">*</small></label>
-                                <textarea name="quotationAcceptFeedback" id="quotationAcceptFeedback" class="form-control lh-sm fs-08rem" rows="5"
+                                <textarea name="quotationAcceptFeedback" id="quotationAcceptFeedback" class="form-control lh-sm fs-08rem" rows="2"
                                     required></textarea>
+                            </div>
+                            <div class="mb-1">
+                                <label class="form-label m-0">AIT <small class="text-danger">(Only for cash payment)</small></label>
+                                <input type="number" name="quotationAIT" min="0" value="0"
+                                    class="form-control lh-sm fs-08rem">
+                            </div>
+                            <div class="mb-1">
+                                <label class="form-label m-0">VAT <small class="text-danger">(Only for cash payment)</small></label>
+                                <input type="number" name="quotationVAT" min="0" value="0"
+                                    class="form-control lh-sm fs-08rem">
                             </div>
                             <input type="text" name="quotationFeedbackModal_leadId"
                                 id="quotationFeedbackModal_leadId" hidden>
@@ -160,7 +170,7 @@
         document.getElementById("quotationAckRef2").innerText = splitRef[1];
         document.getElementById("ackLeadName").innerText = data.lead_person;
         document.getElementById("ackLeadClient").innerText = data.client_info.customer_name;
-
+        document.getElementById("quotationPayType").innerText = data.payment_type;
         //Initial Form Fields End
 
         let leadId = data.id;

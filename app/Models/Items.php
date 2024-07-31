@@ -25,7 +25,8 @@ class Items extends Model
         'min_capacity',
         'max_capacity',
         'min_head',
-        'max_head'
+        'max_head',
+        'unit_name'
     ];
 
     public function TradDiscontInfo()

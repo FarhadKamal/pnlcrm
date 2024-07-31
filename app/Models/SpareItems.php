@@ -13,7 +13,8 @@ class SpareItems extends Model
         'new_code',
         'mat_name',
         'brand_name',
-        'country_name'
+        'country_name',
+        'unit_name'
 
     ];
 }

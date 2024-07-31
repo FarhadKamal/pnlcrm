@@ -31,6 +31,7 @@ class CreateItemsTable extends Migration
             $table->string('max_capacity');
             $table->double('min_head')->default(0);
             $table->double('max_head')->default(0);
+            $table->string('unit_name')->nullable();
             $table->timestamps();
         });
     }

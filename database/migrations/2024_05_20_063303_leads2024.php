@@ -40,6 +40,7 @@ class Leads2024 extends Migration
             $table->integer('is_outstanding')->default(0);
             $table->integer('sap_invoice')->default(0);
             $table->date('invoice_date')->nullable();
+            $table->integer('invoice_by')->nullable()->comment('User who generated invoice');
             $table->string('delivery_challan')->nullable();
             $table->text('delivery_address')->nullable();
             $table->string('delivery_person')->nullable();

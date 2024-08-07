@@ -136,6 +136,7 @@ class DeliveryController extends Controller
             $leadInfo->invoice_date = $today;
             $leadInfo->current_stage = 'DELIVERY';
             $leadInfo->current_subStage = 'READY';
+            $leadInfo->invoice_by = Auth()->user()->id;
             $leadInfo->save();
 
             $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');

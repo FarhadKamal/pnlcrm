@@ -1,6 +1,16 @@
 @include('layouts.navbar')
 <div class="mt-5">
 
+    {{-- @if ($leadInfo->is_won != 1)
+        @if ($leadInfo->is_lost != 1 && Auth()->user()->assign_to == $leadInfo->clientInfo->assign_to)
+            <div class="m-2 float-end">
+                <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
+                        class="btn btn-darkblue btm-sm fs-07rem p-1">Re-Deal Lead</button></a>
+            </div>
+        @endif
+    @endif --}}
+
+
     @if ($leadInfo->is_lost == 1)
         <div class="bg-danger mb-3">
             <h6 class="text-white text-center p-1">Lost Category: {{ $leadInfo->lost_reason }}</h6>
@@ -150,11 +160,10 @@
                                     href="{{ asset('quotations') . '/' . $checkQuotationFile[0]->quotation_file }}"
                                     target="_blank"><small class="badge badge-info">VIEW QUOTATION</small></a>
                                 @if ($checkQuotationFile[0]->is_accept == 1 && isset($checkQuotationFile[0]->accept_file))
-                                <a
-                                href="{{ asset('leadQuotationAcceptAttachment') . '/' . $checkQuotationFile[0]->accept_file }}"
-                                target="_blank"><small class="badge badge-info">VIEW PO</small></a>
+                                    <a href="{{ asset('leadQuotationAcceptAttachment') . '/' . $checkQuotationFile[0]->accept_file }}"
+                                        target="_blank"><small class="badge badge-info">VIEW PO</small></a>
                                 @endif
-                                </td>
+                            </td>
                         @else
                             <td class="text-center">{{ $item->log_task }} </td>
                         @endif

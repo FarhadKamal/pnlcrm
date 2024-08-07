@@ -34,6 +34,7 @@ class Lead extends Model
         'is_outstanding',
         'sap_invoice',
         'invoice_date',
+        'invoice_by',
         'delivery_challan',
         'delivery_address',
         'delivery_person',
@@ -58,5 +59,10 @@ class Lead extends Model
     public function selectedPump()
     {
         return $this->hasMany(PumpChoice::class, 'lead_id', 'id');
+    }
+
+    public function invoiceBy()
+    {
+        return $this->hasOne(User::class, 'id', 'invoice_by');
     }
 }

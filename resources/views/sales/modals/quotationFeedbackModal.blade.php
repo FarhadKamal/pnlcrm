@@ -46,12 +46,12 @@
                                     required></textarea>
                             </div>
                             <div class="mb-1">
-                                <label class="form-label m-0">AIT <small class="text-danger">(Only for cash payment)</small></label>
+                                <label class="form-label m-0">AIT <small class="text-danger">(Mention the amount)</small></label>
                                 <input type="number" name="quotationAIT" min="0" value="0"
                                     class="form-control lh-sm fs-08rem">
                             </div>
                             <div class="mb-1">
-                                <label class="form-label m-0">VAT <small class="text-danger">(Only for cash payment)</small></label>
+                                <label class="form-label m-0">VAT <small class="text-danger">(Mention the amount)</small></label>
                                 <input type="number" name="quotationVAT" min="0" value="0"
                                     class="form-control lh-sm fs-08rem">
                             </div>

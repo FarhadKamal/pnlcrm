@@ -93,28 +93,34 @@
                 </select> --}}
             </div>
             <div class="col-md-3"></div>
-            <div class="col-md-3">
+            <div class="col-md-3 d-none">
                 <label class="form-label">
                     TIN
                 </label>
-                <input type="text" class="form-control fs-08rem" name="clientTIN" id="clientTIN"
-                    @if (session('errorsData')) value="{{ session('errorsData')['clientTIN'] }}" @endif>
+                <input name="customerTIN" id="customerTIN" type="file"
+                    accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx" class="form-control lh-sm fs-08rem">
+                {{-- <input type="text" class="form-control fs-08rem" name="clientTIN" id="clientTIN"
+                    @if (session('errorsData')) value="{{ session('errorsData')['clientTIN'] }}" @endif> --}}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 d-none">
                 <label class="form-label">
                     BIN
                 </label>
-                <input type="text" class="form-control fs-08rem" name="clientBIN" id="clientBIN"
-                    @if (session('errorsData')) value="{{ session('errorsData')['clientBIN'] }}" @endif>
+                <input name="customerBIN" id="customerBIN" type="file"
+                    accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx" class="form-control lh-sm fs-08rem">
+                {{-- <input type="text" class="form-control fs-08rem" name="clientBIN" id="clientBIN"
+                    @if (session('errorsData')) value="{{ session('errorsData')['clientBIN'] }}" @endif> --}}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 d-none">
                 <label class="form-label">
                     Trade License
                 </label>
-                <input type="text" class="form-control fs-08rem" name="clientTL" id="clientTL"
-                    @if (session('errorsData')) value="{{ session('errorsData')['clientTL'] }}" @endif>
+                <input name="customerTL" id="customerTL" type="file"
+                    accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx" class="form-control lh-sm fs-08rem">
+                {{-- <input type="text" class="form-control fs-08rem" name="clientTL" id="clientTL"
+                    @if (session('errorsData')) value="{{ session('errorsData')['clientTL'] }}" @endif> --}}
             </div>
-            <div class="col-md-3"></div>
+            <div class="col-md-3 d-none"></div>
             <div class="col-md-3">
                 <label class="form-label">
                     Contact Person <span class="text-danger">*</span>
@@ -147,12 +153,12 @@
                     required>
                     <option selected disabled value="">Select One</option>
                     @foreach ($leadSource as $item)
-                    @if (session('errorsData') && session('errorsData')['leadSource'] == $item->id)
-                        <option value="{{ $item->id }}" selected>{{ $item->source_name }}</option>
-                    @else
-                        <option value="{{ $item->id }}">{{ $item->source_name }}</option>
-                    @endif
-                @endforeach
+                        @if (session('errorsData') && session('errorsData')['leadSource'] == $item->id)
+                            <option value="{{ $item->id }}" selected>{{ $item->source_name }}</option>
+                        @else
+                            <option value="{{ $item->id }}">{{ $item->source_name }}</option>
+                        @endif
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-9">

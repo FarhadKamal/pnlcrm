@@ -66,9 +66,9 @@ class LeadController extends Controller
             // $data['clientZone'] = $request->clientZone;
             $data['clientDistrict'] = $request->clientDistrict;
             $data['clientDivision'] = $request->clientDivision;
-            $data['clientTIN'] = $request->clientTIN;
-            $data['clientBIN'] = $request->clientBIN;
-            $data['clientTL'] = $request->clientTL;
+            // $data['clientTIN'] = $request->clientTIN;
+            // $data['clientBIN'] = $request->clientBIN;
+            // $data['clientTL'] = $request->clientTL;
             $data['contactPerson'] = $request->contactPerson;
             $data['contactMobile'] = $request->contactMobile;
             $data['contactEmail'] = $request->contactEmail;
@@ -82,6 +82,31 @@ class LeadController extends Controller
         $divName = LeadDivision::find($request->clientDivision);
         $divName = $divName->div_name;
 
+        // if ($request->file('customerTIN')) {
+        //     $customerTIN = $request->file('customerTIN');
+        //     $customerTINName = "TIN" . time() . "." . $customerTIN->getClientOriginalExtension();
+        //     $destinationPath = 'customerDocument/';
+        //     $customerTIN->move($destinationPath, $customerTINName);
+        // } else {
+        //     $customerTINName = '';
+        // }
+        // if ($request->file('customerBIN')) {
+        //     $customerBIN = $request->file('customerBIN');
+        //     $customerBINName = "TIN" . time() . "." . $customerBIN->getClientOriginalExtension();
+        //     $destinationPath = 'customerDocument/';
+        //     $customerBIN->move($destinationPath, $customerBINName);
+        // } else {
+        //     $customerBINName = '';
+        // }
+        // if ($request->file('customerTL')) {
+        //     $customerTL = $request->file('customerTL');
+        //     $customerTLName = "TL" . time() . "." . $customerTL->getClientOriginalExtension();
+        //     $destinationPath = 'customerDocument/';
+        //     $customerTL->move($destinationPath, $customerTLName);
+        // } else {
+        //     $customerTLName = '';
+        // }
+
         $insert_client_data = array(
             'customer_name' => $request->clientName,
             'group_name' => $request->groupName,
@@ -90,9 +115,9 @@ class LeadController extends Controller
             'zone' => 'N/A',
             'district' => $distName,
             'division' => $divName,
-            'tin' => $request->clientTIN,
-            'bin' => $request->clientBIN,
-            'trade_license' => $request->clientTL,
+            // 'tin' => $customerTINName,
+            // 'bin' => $customerBINName,
+            // 'trade_license' => $customerTLName,
             'contact_person' => $request->contactPerson,
             'contact_mobile' => $request->contactMobile,
             'contact_email' => $request->contactEmail,
@@ -101,7 +126,6 @@ class LeadController extends Controller
 
         $customerId = Customer::create($insert_client_data);
         $customerId = $customerId->id;
-
 
         $insert_lead_data = array(
             'lead_source' => $request->leadSource,
@@ -140,7 +164,7 @@ class LeadController extends Controller
 
             if (Helper::permissionCheck($item->id, 'salesPerson')) {
                 // $workLoad = DB::select('SELECT COUNT(leads.id) AS count, leads.current_stage FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE customers.assign_to LIKE "%' . $item->assign_to . '%"  AND leads.current_stage != "WON" AND leads.current_stage != "LOST" GROUP BY leads.current_stage');
-                $workLoad = DB::select('SELECT COUNT(leads.id) AS count, leads.current_stage FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE customers.assign_to =' . $item->assign_to . '  AND leads.current_stage != "WON" AND leads.current_stage != "LOST" GROUP BY leads.current_stage');
+                $workLoad = DB::select('SELECT COUNT(leads.id) AS count, leads.current_stage FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE customers.assign_to ="' . $item->assign_to . '"  AND leads.current_stage != "WON" AND leads.current_stage != "LOST" GROUP BY leads.current_stage');
                 $html .= '<tr>';
                 $html .= '<td class="p-1">' . $item->user_name . '</td>';
                 $html .= '<td class="p-1">' . $item['designation']->desg_name . '</td>';
@@ -187,7 +211,7 @@ class LeadController extends Controller
         $userTag = Auth()->user()->assign_to;
         // $data['companyList'] = Customer::where(['assign_to'=>$userTag])->get();
         // $data['companyList'] = Customer::where('assign_to', 'like', "%{$userTag}%")->get();
-        $data['companyList'] = Customer::where(['assign_to'=>$userTag])->get();
+        $data['companyList'] = Customer::where(['assign_to' => $userTag])->get();
         $data['sourceList'] = LeadSource::where(['is_active' => 1])->get();
         return view('sales.leadForm', $data);
     }

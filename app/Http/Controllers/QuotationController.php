@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Models\Customer;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Lead;
@@ -92,6 +93,16 @@ class QuotationController extends Controller
         $data['desgName'] = Designation::find(Auth()->user()->user_desg);
         $data['deptName'] = Department::find(Auth()->user()->user_dept);
         $data['subjectText'] = $subjectText;
+
+        if ($leadInfo->current_stage == 'QUOTATION' && $leadInfo->current_subStage == 'SUBMIT') {
+            $quotationInfo = Quotation::where(['lead_id' => $leadId])->get();
+            $rowCount = $quotationInfo->count();
+            if ($rowCount > 0) {
+                $data['reEmail'] = true;
+            } else {
+                $data['reEmail'] = false;
+            }
+        }
         return view('sales.quotation', $data);
     }
 
@@ -290,7 +301,12 @@ class QuotationController extends Controller
 
             $ccEmails = $request->input('ccEmails', []);
             $emailRemarks = $request->input('emailRemarks');
-            $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails, $emailRemarks);
+            $emailFlag = $request->input('emailFlag');
+            if ($emailFlag == 1) {
+                $checkMail = $this->html_email($acceptAttachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails, $emailRemarks);
+            } else {
+                $checkMail = true;
+            }
 
             $quotationAttachment = new \Symfony\Component\HttpFoundation\File\File($acceptAttachment);
             $newFileName = time() . "." . $quotationAttachment->getExtension();
@@ -340,6 +356,22 @@ class QuotationController extends Controller
         }
     }
 
+    public function quotationFeedbackForm($leadId)
+    {
+        $data['leadInfo'] = Lead::find($leadId);
+        if ($data['leadInfo']->current_stage != 'QUOTATION' && $data['leadInfo']->current_subStage != 'FEEDBACK') {
+            return back()->with('error', array('The lead is not valid for quotation stage'));
+        }
+
+        $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $leadId ORDER BY id DESC LIMIT 1");
+        if ($quotationRef) {
+            $data['quotationId'] = $quotationRef[0]->id;
+            $data['quotationRef'] = $quotationRef[0]->quotation_ref;
+        }
+
+        return view('sales.quotationFeedback', $data);
+    }
+
     public function acceptLeadQuotation(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -359,37 +391,41 @@ class QuotationController extends Controller
         } else {
             //Update Lead Table
             $lead = Lead::find($request->quotationFeedbackModal_leadId);
+            $ait = $request->quotationAIT;
+            $vat = $request->quotationVAT;
+            if ($ait && $ait > 0) {
+                $lead->aitAmt = $ait;
+            }
+            if ($vat && $vat > 0) {
+                $lead->vatAmt = $vat;
+            }
             $lead->current_stage = 'BOOKING';
+            $customerTableID = $lead->clientInfo->id;
             $customerName = $lead->clientInfo->customer_name;
             // Check Customer Has SAP ID 
             $sapId = $lead->clientInfo->sap_id;
             if (!$sapId) {
-                $lead->current_subStage = 'SAPIDSET';
-                $logNext = 'New SAP ID Set';
+                $lead->current_subStage = 'CHECKCUSDOC';
+                // $lead->current_subStage = 'SAPIDSET';
+                $logNext = 'Customer Doc Check';
+                $domainName = URL::to('/');
+                $leadURL = $domainName . '/customerDocCheck/' . $lead->id;
                 $SAPUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
-            WHERE permissions.permission_code="sapIDCreation"');
+            WHERE permissions.permission_code="customerDocCheck"');
                 if ($SAPUsersEmail) {
                     foreach ($SAPUsersEmail as $email) {
                         $assignEmail = $email->user_email;
                         $assignName = $email->user_name;
-                        Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                        Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
                             $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP ID SET');
                             $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for new SAP ID generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a new lead ' . $customerName . ' is waiting for document checking process.<br><a href="' . $leadURL . '">CLICK HERE</a> to complete document check process.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                         });
                     }
                 }
             } else {
-                $ait = $request->quotationAIT;
-                $vat = $request->quotationVAT;
-                if ($ait && $ait > 0) {
-                    $lead->aitAmt = $ait;
-                }
-                if ($vat && $vat > 0) {
-                    $lead->vatAmt = $vat;
-                }
                 if ($lead->payment_type == 'Cash') {
                     $lead->current_subStage = 'TRANSACTION';
                     $logNext = 'Cash Transaction';
@@ -417,10 +453,38 @@ class QuotationController extends Controller
             }
             $lead->save();
 
+            // Purchase Order 
             $acceptAttachment = $request->file('quotationAcceptFile');
             $newFileName = time() . "." . $acceptAttachment->getClientOriginalExtension();
             $destinationPath = 'leadQuotationAcceptAttachment/';
             $acceptAttachment->move($destinationPath, $newFileName);
+
+            $customerInfo = Customer::find($customerTableID);
+            // Customer TIN
+            if ($request->file('customerTIN')) {
+                $customerTIN = $request->file('customerTIN');
+                $customerTINName = "TIN" . time() . "." . $customerTIN->getClientOriginalExtension();
+                $destinationPath = 'customerDocument/';
+                $customerTIN->move($destinationPath, $customerTINName);
+                $customerInfo->tin = $customerTINName;
+            }
+            // Customer BIN
+            if ($request->file('customerBIN')) {
+                $customerBIN = $request->file('customerBIN');
+                $customerBINName = "BIN" . time() . "." . $customerBIN->getClientOriginalExtension();
+                $destinationPath = 'customerDocument/';
+                $customerBIN->move($destinationPath, $customerBINName);
+                $customerInfo->bin = $customerBINName;
+            }
+            // Customer TL
+            if ($request->file('customerTL')) {
+                $customerTL = $request->file('customerTL');
+                $customerTLName = "TL" . time() . "." . $customerTL->getClientOriginalExtension();
+                $destinationPath = 'customerDocument/';
+                $customerTL->move($destinationPath, $customerTLName);
+                $customerInfo->trade_license = $customerTLName;
+            }
+            $customerInfo->save();
 
             //Quotation Table Data Update
             $quotationId = $request->quotationFeedbackModal_QuotationId;

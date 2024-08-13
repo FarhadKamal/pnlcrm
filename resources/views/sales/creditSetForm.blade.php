@@ -52,15 +52,45 @@
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">Tin</p>
-                    <small class="col-md-8">{{ $leadInfo->clientInfo->tin }}</small>
+                    @if ($leadInfo->clientInfo->tin)
+                        <small class="col-md-8"> <a
+                                href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->tin }}"
+                                target="_blank"><button class="btn btn-info btn-sm p-1"><i
+                                        class="fas fa-eye"></i></button></a>
+                            <a href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->tin }}" target="_blank"
+                                download><button class="btn btn-primary btn-sm p-1"><i
+                                        class="fas fa-download"></i></button></a></small>
+                    @else
+                        <small class="col-md-8">N/A</small>
+                    @endif
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">BIN</p>
-                    <small class="col-md-8">{{ $leadInfo->clientInfo->bin }}</small>
+                    @if ($leadInfo->clientInfo->tin)
+                        <small class="col-md-8"> <a
+                                href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->bin }}"
+                                target="_blank"><button class="btn btn-info btn-sm p-1"><i
+                                        class="fas fa-eye"></i></button></a>
+                            <a href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->bin }}"
+                                target="_blank" download><button class="btn btn-primary btn-sm p-1"><i
+                                        class="fas fa-download"></i></button></a></small>
+                    @else
+                        <small class="col-md-8">N/A</small>
+                    @endif
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">Trade License</p>
-                    <small class="col-md-8">{{ $leadInfo->clientInfo->trade_license }}</small>
+                    @if ($leadInfo->clientInfo->tin)
+                        <small class="col-md-8"> <a
+                                href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->trade_license }}"
+                                target="_blank"><button class="btn btn-info btn-sm p-1"><i
+                                        class="fas fa-eye"></i></button></a>
+                            <a href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->trade_license }}"
+                                target="_blank" download><button class="btn btn-primary btn-sm p-1"><i
+                                        class="fas fa-download"></i></button></a></small>
+                    @else
+                        <small class="col-md-8">N/A</small>
+                    @endif
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">Contact Person</p>
@@ -189,14 +219,17 @@
                 </tbody>
             </table>
             <div class="row">
-                <div class="col-md-4">Payment Type: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->payment_type }}</span></div>
-                <div class="col-md-4">AIT Amount: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->aitAmt }}</span></div>
-                <div class="col-md-4">VAT Amount: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->vatAmt }}</span></div>
+                <div class="col-md-4">Payment Type: <span
+                        class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->payment_type }}</span></div>
+                <div class="col-md-4">AIT Amount: <span
+                        class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->aitAmt }}</span></div>
+                <div class="col-md-4">VAT Amount: <span
+                        class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->vatAmt }}</span></div>
             </div>
             <br>
             <h6 class="text-center"><kbd>SAP Credit Information</kbd></h6>
             <center><small class="text-danger">Please cross check with purchase order</small></center>
-            
+
             <form action="{{ route('creditSetInsertion') }}" method="POST" id="sapCreationForm">
                 @csrf
                 <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
@@ -207,7 +240,7 @@
                 <br>
                 <center><button class="btn btn-sm btn-darkblue">Submit Credit Form</button></center>
             </form>
-            
+
         </div>
     </div>
 </div>

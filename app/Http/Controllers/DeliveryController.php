@@ -227,6 +227,7 @@ class DeliveryController extends Controller
 
             $leadInfo = Lead::find($request->leadId);
             $leadInfo->current_stage = 'WON';
+            $leadInfo->is_won = 1;
             $leadInfo->current_subStage = '';
             $leadInfo->delivery_attachment = $newFileName;
             $leadInfo->save();

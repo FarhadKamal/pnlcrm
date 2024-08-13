@@ -14,6 +14,10 @@
 </div>
 
 <div class="container-fluid mb-3 mt-2">
+    <div class="m-2 float-end">
+        <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
+                class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+    </div>
     <center>
         <h4 class="mt-3">New Client/SAP ID Creation</h4>
     </center>
@@ -44,15 +48,45 @@
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">Tin</p>
-                    <small class="col-md-8">{{ $leadInfo->clientInfo->tin }}</small>
+                    @if ($leadInfo->clientInfo->tin)
+                        <small class="col-md-8"> <a
+                                href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->tin }}"
+                                target="_blank"><button class="btn btn-info btn-sm p-1"><i
+                                        class="fas fa-eye"></i></button></a>
+                            <a href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->tin }}" target="_blank"
+                                download><button class="btn btn-primary btn-sm p-1"><i
+                                        class="fas fa-download"></i></button></a></small>
+                    @else
+                        <small class="col-md-8">N/A</small>
+                    @endif
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">BIN</p>
-                    <small class="col-md-8">{{ $leadInfo->clientInfo->bin }}</small>
+                    @if ($leadInfo->clientInfo->tin)
+                        <small class="col-md-8"> <a
+                                href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->bin }}"
+                                target="_blank"><button class="btn btn-info btn-sm p-1"><i
+                                        class="fas fa-eye"></i></button></a>
+                            <a href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->bin }}" target="_blank"
+                                download><button class="btn btn-primary btn-sm p-1"><i
+                                        class="fas fa-download"></i></button></a></small>
+                    @else
+                        <small class="col-md-8">N/A</small>
+                    @endif
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">Trade License</p>
-                    <small class="col-md-8">{{ $leadInfo->clientInfo->trade_license }}</small>
+                    @if ($leadInfo->clientInfo->tin)
+                        <small class="col-md-8"> <a
+                                href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->trade_license }}"
+                                target="_blank"><button class="btn btn-info btn-sm p-1"><i
+                                        class="fas fa-eye"></i></button></a>
+                            <a href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->trade_license }}"
+                                target="_blank" download><button class="btn btn-primary btn-sm p-1"><i
+                                        class="fas fa-download"></i></button></a></small>
+                    @else
+                        <small class="col-md-8">N/A</small>
+                    @endif
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">Contact Person</p>

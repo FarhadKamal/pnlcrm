@@ -18,6 +18,107 @@ use Illuminate\Support\Facades\Validator;
 class BookingController extends Controller
 {
 
+    public function documentCheckForm($leadId)
+    {
+        $data['leadInfo'] = Lead::find($leadId);
+        return view('sales.documentCheckForm', $data);
+    }
+
+    public function documentCheckClear(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'customerId' => 'required|numeric',
+            'leadId' => 'required|numeric'
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            $leadInfo = Lead::find($request->leadId);
+            $leadInfo->current_stage = 'BOOKING';
+            $leadInfo->current_subStage = 'SAPIDSET';
+            $customerName = $leadInfo->clientInfo->customer_name;
+            $leadInfo->save();
+
+            $SAPUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapIDCreation"');
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/newSapForm/' . $request->leadId;
+            if ($SAPUsersEmail) {
+                foreach ($SAPUsersEmail as $email) {
+                    $assignEmail = $email->user_email;
+                    $assignName = $email->user_name;
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
+                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP ID SET');
+                        $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a new lead ' . $customerName . ' is waiting for new SAP ID generation.<br><a href="' . $leadURL . '">CLICK HERE</a> to complete SAP ID creation process.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    });
+                }
+            }
+
+            $remark = $request->docCheckRemark;
+            if ($remark) {
+                $remark = 'Remark: ' . $remark;
+            } else {
+                $remark = '';
+            }
+
+            $log_data = array(
+                'lead_id' => $request->leadId,
+                'log_stage' => 'BOOKING',
+                'log_task' => 'New customer document checked. ' . $remark,
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'New SAP ID Set'
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('dashboard');
+        }
+    }
+
+    public function documentCheckReturn(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required|numeric',
+            'docReturnRemark' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            $returnRemark = $request->docReturnRemark;
+            $leadInfo = Lead::find($request->leadId);
+            $leadInfo->current_stage = 'QUOTATION';
+            $leadInfo->current_subStage = 'FEEDBACK';
+            $customerName = $leadInfo->clientInfo->customer_name;
+            $leadInfo->save();
+
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $request->leadId . '');
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/quotationFeedback/' . $request->leadId;
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $returnRemark, $leadURL) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Return Customer Document Check');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is return to quotaion feedback stage from document check process.<br>Return Remarks: ' . $returnRemark . '.<br><a href="' . $leadURL . '">CLICK HERE</a> for resubmit.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
+
+            $log_data = array(
+                'lead_id' => $request->leadId,
+                'log_stage' => 'BOOKING',
+                'log_task' => 'New customer document checked Failed. Remark:' . $returnRemark,
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'Quotation Feedback'
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('dashboard');
+        }
+    }
+
     public function newSapForm($leadId)
     {
         $data['leadId'] = $leadId;

@@ -3,6 +3,7 @@
 /public/storage
 /public/quotations
 /public/leadQuotationAcceptAttachment
+/public/customerDocument
 /storage/*.key
 /vendor
 .env

@@ -50,8 +50,8 @@
                                     $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
                                     $brandName = $item->productInfo->brand_name;
                                     $matName = $item->productInfo->mat_name;
-                                }else{
-                                    $trade_discount = 'N/A'; 
+                                } else {
+                                    $trade_discount = 'N/A';
                                     $brandName = $item->spareInfo->brand_name;
                                     $matName = $item->spareInfo->mat_name;
                                 }
@@ -112,8 +112,8 @@
                                     $trade_discount = $item->productInfo->TradDiscontInfo->trade_discount;
                                     $brandName = $item->productInfo->brand_name;
                                     $matName = $item->productInfo->mat_name;
-                                }else{
-                                    $trade_discount = 'N/A'; 
+                                } else {
+                                    $trade_discount = 'N/A';
                                     $brandName = $item->spareInfo->brand_name;
                                     $matName = $item->spareInfo->mat_name;
                                 }
@@ -164,8 +164,27 @@
                 <input type="text" class="form-control fs-08rem" name="ccEmails" id="ccEmails">
             </div>
             <div class="container">
-                <label for="" class="fs-08rem">Remarks <small class="text-success">(show on mail body)</small></label>
-                <input type="text" class="form-control fs-08rem" name="emailRemarks" id="emailRemarks">
+                @if ($reEmail)
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="" class="fs-08rem">Remarks <small class="text-success">(show on mail
+                                    body)</small></label>
+                            <input type="text" class="form-control fs-08rem" name="emailRemarks"
+                                id="emailRemarks">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="" class="fs-08rem">Re Email To Customer</label>
+                            <select name="emailFlag" id="emailFlag" class="form-control" required>
+                                <option value="Yes" selected>Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                    </div>
+                @else
+                    <label for="" class="fs-08rem">Remarks <small class="text-success">(show on mail
+                            body)</small></label>
+                    <input type="text" class="form-control fs-08rem" name="emailRemarks" id="emailRemarks">
+                @endif
             </div>
             <center><button class="btn btn-sm btn-darkblue m-3" onclick="sentQuotation()">Submit to Client</button>
             </center>
@@ -253,6 +272,12 @@
                 let quotationRef = $('#quotationRef').val();
                 let otherAttachment = document.getElementsByClassName('attachmentFiles');
                 let emailRemarks = $('#emailRemarks').val();
+                let emailFlag = $('#emailFlag').val();
+                if (emailFlag && emailFlag == 'No') {
+                    emailFlag = 0;
+                } else {
+                    emailFlag = 1;
+                }
                 let ccEmails = '';
                 if ($('#ccEmails').val() != '') {
                     ccEmails = $('#ccEmails').val().split(',').map(email => email
@@ -272,6 +297,7 @@
                     });
                 }
                 formData.append('emailRemarks', emailRemarks);
+                formData.append('emailFlag', emailFlag);
                 // Append each file in the otherAttachment collection
                 for (let i = 0; i < otherAttachment.length; i++) {
                     let fileInput = otherAttachment[i];

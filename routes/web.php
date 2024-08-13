@@ -57,9 +57,13 @@ Route::post('preQuotationApprove', [QuotationController::class, 'preQuotationApp
 Route::post('topQuotationApprove', [QuotationController::class, 'topQuotationApprove'])->name('topQuotationApprove')->middleware('auth');
 Route::get('quotationReferenceCheck', [QuotationController::class, 'quotationReferenceCheck'])->name('quotationReferenceCheck')->middleware('auth');
 Route::post('submitQuotation', [QuotationController::class, 'submitQuotation'])->name('submitQuotation')->middleware('auth');
+Route::get('quotationFeedback/{leadId}', [QuotationController::class, 'quotationFeedbackForm'])->name('quotationFeedback')->middleware('auth');
 Route::post('quotationAccept', [QuotationController::class, 'acceptLeadQuotation'])->name('quotationAccept')->middleware('auth');
 Route::post('quotationNotAccept', [QuotationController::class, 'notAcceptLeadQuotation'])->name('quotationNotAccept')->middleware('auth');
 
+Route::get('customerDocCheck/{leadId}', [BookingController::class, 'documentCheckForm'])->name('customerDocCheck')->middleware('auth');
+Route::post('customerDocClear', [BookingController::class, 'documentCheckClear'])->name('customerDocClear')->middleware('auth');
+Route::post('customerDocReturn', [BookingController::class, 'documentCheckReturn'])->name('customerDocReturn')->middleware('auth');
 Route::get('newSapForm/{leadId}', [BookingController::class, 'newSapForm'])->name('newSapForm')->middleware('auth');
 Route::post('newSapInsertion', [BookingController::class, 'insertNewSapID'])->name('newSapInsertion')->middleware('auth');
 Route::get('creditSetForm/{leadId}', [BookingController::class, 'creditSetForm'])->name('creditSetForm')->middleware('auth');
@@ -87,7 +91,6 @@ Route::get('lost/{leadId}', [Controller::class, 'lostForm'])->name('lost')->midd
 Route::post('lostEntry', [Controller::class, 'storeLost'])->name('lostEntry')->middleware('auth');
 
 Route::get('detailsLog/{leadId}', [Controller::class, 'salesLog'])->name('detailsLog')->middleware('auth');
-
 
 Route::get('myProfile', [Controller::class, 'myProfilePage'])->name('myProfile')->middleware('auth');
 Route::get('myProfileEdit', [Controller::class, 'myProfileEdit'])->name('myProfileEdit')->middleware('auth');

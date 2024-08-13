@@ -1,16 +1,5 @@
 @include('layouts.navbar')
 <div class="mt-5">
-
-    {{-- @if ($leadInfo->is_won != 1)
-        @if ($leadInfo->is_lost != 1 && Auth()->user()->assign_to == $leadInfo->clientInfo->assign_to)
-            <div class="m-2 float-end">
-                <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
-                        class="btn btn-darkblue btm-sm fs-07rem p-1">Re-Deal Lead</button></a>
-            </div>
-        @endif
-    @endif --}}
-
-
     @if ($leadInfo->is_lost == 1)
         <div class="bg-danger mb-3">
             <h6 class="text-white text-center p-1">Lost Category: {{ $leadInfo->lost_reason }}</h6>

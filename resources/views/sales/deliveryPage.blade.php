@@ -233,6 +233,8 @@
                         <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1"
                             onclick="printDeliveryChallan()">Delivery Challan</button>
                     @endif
+                    <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1"
+                        onclick="printWarrantyInfo()">Warranty Info</button>
                 </div>
             </div>
 
@@ -257,6 +259,7 @@
 
 @include('sales.invoicePage')
 @include('sales.deliveryChallanPage')
+@include('sales.deliveryChallanPage2')
 
 <script>
     $('#invoiceSetInsertionForm').submit(function(e, params) {
@@ -308,6 +311,24 @@
         // Check if the window opened successfully
         if (printWindow) {
             var printContents = document.getElementById("deliveryChallanPrint").innerHTML;
+            printWindow.document.write('<html><body>');
+            printWindow.document.write(printContents);
+            printWindow.document.write('</body></html>');
+
+            // Make sure to close the print window after printing
+            printWindow.document.close();
+            printWindow.print();
+        } else {
+            alert('Please allow pop-ups for this site to print');
+        }
+    }
+
+    function printWarrantyInfo() {
+        var printWindow = window.open('', '_blank');
+
+        // Check if the window opened successfully
+        if (printWindow) {
+            var printContents = document.getElementById("warrantyInfoPrint").innerHTML;
             printWindow.document.write('<html><body>');
             printWindow.document.write(printContents);
             printWindow.document.write('</body></html>');

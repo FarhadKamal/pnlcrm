@@ -20,7 +20,8 @@
             top: 0;
             /* padding-top: 2rem; */
         }
-        .stageLabelMobileSelection{
+
+        .stageLabelMobileSelection {
             position: sticky;
             top: 5rem;
             left: 0;
@@ -132,7 +133,7 @@
                                     {{ $item['source']->source_name }}</small><br>
                                 <small class="card-text mb-1"><b>Created By:</b>
                                     {{ $item['createdBy']->user_name }}</small>
-                                    
+
                                 <div>
                                     @if (Auth()->user()->assign_to && $item->clientInfo->assign_to == Auth()->user()->assign_to)
                                         <a href="{{ route('dealPage', ['leadId' => $item->id]) }}">
@@ -241,12 +242,17 @@
                                     @if ($item->current_subStage == 'FEEDBACK')
                                         @if ($item->clientInfo->assign_to == Auth()->user()->assign_to)
                                             <?php $encoded = json_encode($item); ?>
-                                            <button type="button" data-mdb-toggle="modal"
+                                            {{-- <button type="button" data-mdb-toggle="modal"
                                                 data-mdb-target="#quotationFeedbackModal"
                                                 class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100"
                                                 onclick='quotationFeedbackShowModal(<?= $encoded ?>)'>Quotation
                                                 Feedback
-                                            </button>
+                                            </button> --}}
+                                            <a href="{{ route('quotationFeedback', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Quotation
+                                                    Feedback</button>
+                                            </a>
                                         @else
                                             <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
                                                 <button type="button"
@@ -275,6 +281,10 @@
                     @foreach ($bookingStage as $item)
                         <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
                             <div class="card-body">
+                                @if ($item->current_subStage == 'CHECKCUSDOC')
+                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for Document
+                                        Check</small>
+                                @endif
                                 @if ($item->current_subStage == 'SAPIDSET')
                                     <small class="badge badge-info blink p-1 m-0 ">Waiting for SAP ID creation</small>
                                 @endif
@@ -305,6 +315,19 @@
                                 <small class="card-text mb-1"><b>Created By:</b>
                                     {{ $item['createdBy']->user_name }}</small>
                                 <div>
+                                    @if ($item->current_subStage == 'CHECKCUSDOC')
+                                        @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'customerDocCheck'))
+                                            <a href="{{ route('customerDocCheck', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Document Check</button>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                            </a>
+                                        @endif
+                                    @endif
                                     @if ($item->current_subStage == 'SAPIDSET')
                                         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'sapIDCreation'))
                                             <a href="{{ route('newSapForm', ['leadId' => $item->id]) }}">

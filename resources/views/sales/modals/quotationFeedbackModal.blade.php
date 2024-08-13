@@ -1,9 +1,11 @@
 <div class=" modal fade" id="quotationFeedbackModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-top modal-lg">
+    <div class="modal-dialog modal-dialog-top modal-xl">
         <div class="modal-content ">
             <div class="modal-header p-2">
                 {{-- <button class="btn btn-sm btn-darkblue fs-07rem p-1" onclick="printAck()">Print Acknowledgement</button> --}}
-                <div><h6>Payment Type: <span class="bg-darkblue p-1 rounded text-white" id="quotationPayType"></span></h6></div>
+                <div>
+                    <h6>Payment Type: <span class="bg-darkblue p-1 rounded text-white" id="quotationPayType"></span></h6>
+                </div>
                 <div class="col d-flex justify-content-end" id="detailsBtn2">
 
                 </div>
@@ -21,40 +23,49 @@
                         <p class="text-danger">Quotation Ref: <span id="quotationAckRef2"></span></p>
                         <form action="{{ route('quotationAccept') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            <div class="mb-1">
-                                <label class="form-label m-0">Acceptence Attachment <small
-                                        class="text-danger">*</small></label>
-                                <input name="quotationAcceptFile" id="quotationAcceptFile" type="file"
-                                    accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx"
-                                    class="form-control lh-sm fs-08rem" required>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-1">
+                                        <label class="form-label m-0">Acceptence Attachment <small class="text-danger">*
+                                                (PO)</small></label>
+                                        <input name="quotationAcceptFile" id="quotationAcceptFile" type="file"
+                                            accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx"
+                                            class="form-control lh-sm fs-08rem" required>
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="form-label m-0">Purchase Order No <small
+                                                class="text-danger">*</small></label>
+                                        <input type="text" name="quotationPO" class="form-control lh-sm fs-08rem"
+                                            required>
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="form-label m-0">Purchase Order Date <small
+                                                class="text-danger">*</small></label>
+                                        <input type="text" name="quotationPODate"
+                                            class="form-control lh-sm flatpickr fs-08rem" required>
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="form-label m-0">Customer Feedback <small
+                                                class="text-danger">*</small></label>
+                                        <textarea name="quotationAcceptFeedback" id="quotationAcceptFeedback" class="form-control lh-sm fs-08rem" rows="2"
+                                            required></textarea>
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="form-label m-0">AIT <small class="text-danger">(Mention the
+                                                amount)</small></label>
+                                        <input type="number" name="quotationAIT" min="0" value="0"
+                                            class="form-control lh-sm fs-08rem">
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="form-label m-0">VAT <small class="text-danger">(Mention the
+                                                amount)</small></label>
+                                        <input type="number" name="quotationVAT" min="0" value="0"
+                                            class="form-control lh-sm fs-08rem">
+                                    </div>
+                                </div>
+                                
                             </div>
-                            <div class="mb-1">
-                                <label class="form-label m-0">Purchase Order No <small
-                                        class="text-danger">*</small></label>
-                                <input type="text" name="quotationPO" class="form-control lh-sm fs-08rem" required>
-                            </div>
-                            <div class="mb-1">
-                                <label class="form-label m-0">Purchase Order Date <small
-                                        class="text-danger">*</small></label>
-                                <input type="text" name="quotationPODate"
-                                    class="form-control lh-sm flatpickr fs-08rem" required>
-                            </div>
-                            <div class="mb-1">
-                                <label class="form-label m-0">Customer Feedback <small
-                                        class="text-danger">*</small></label>
-                                <textarea name="quotationAcceptFeedback" id="quotationAcceptFeedback" class="form-control lh-sm fs-08rem" rows="2"
-                                    required></textarea>
-                            </div>
-                            <div class="mb-1">
-                                <label class="form-label m-0">AIT <small class="text-danger">(Mention the amount)</small></label>
-                                <input type="number" name="quotationAIT" min="0" value="0"
-                                    class="form-control lh-sm fs-08rem">
-                            </div>
-                            <div class="mb-1">
-                                <label class="form-label m-0">VAT <small class="text-danger">(Mention the amount)</small></label>
-                                <input type="number" name="quotationVAT" min="0" value="0"
-                                    class="form-control lh-sm fs-08rem">
-                            </div>
+
                             <input type="text" name="quotationFeedbackModal_leadId"
                                 id="quotationFeedbackModal_leadId" hidden>
                             <input type="text" name="quotationFeedbackModal_QuotationId"

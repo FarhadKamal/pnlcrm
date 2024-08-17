@@ -27,6 +27,7 @@ class Lead extends Model
         'need_discount_approval',
         'need_top_approval',
         'payment_type',
+        'creditAmt',
         'aitAmt',
         'vatAmt',
         'delivery_from',

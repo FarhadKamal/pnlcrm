@@ -68,6 +68,8 @@ Route::get('newSapForm/{leadId}', [BookingController::class, 'newSapForm'])->nam
 Route::post('newSapInsertion', [BookingController::class, 'insertNewSapID'])->name('newSapInsertion')->middleware('auth');
 Route::get('creditSetForm/{leadId}', [BookingController::class, 'creditSetForm'])->name('creditSetForm')->middleware('auth');
 Route::post('creditSetInsertion', [BookingController::class, 'insertCredit'])->name('creditSetInsertion')->middleware('auth');
+Route::post('creditSetHold', [BookingController::class, 'holdCredit'])->name('creditSetHold')->middleware('auth');
+Route::post('reSubmitToCredit', [BookingController::class, 'reSubmitCredit'])->name('reSubmitToCredit')->middleware('auth');
 Route::get('transaction/{leadId}', [BookingController::class, 'transactionForm'])->name('transaction')->middleware('auth');
 Route::post('insertTransaction', [BookingController::class, 'storeTransaction'])->name('insertTransaction')->middleware('auth');
 Route::get('verifyTransaction/{leadId}', [BookingController::class, 'verifyTransaction'])->name('verifyTransaction')->middleware('auth');
@@ -91,6 +93,10 @@ Route::get('lost/{leadId}', [Controller::class, 'lostForm'])->name('lost')->midd
 Route::post('lostEntry', [Controller::class, 'storeLost'])->name('lostEntry')->middleware('auth');
 
 Route::get('detailsLog/{leadId}', [Controller::class, 'salesLog'])->name('detailsLog')->middleware('auth');
+Route::post('reDealStage', [LeadController::class, 'reDealing'])->name('reDealStage')->middleware('auth');
+
+Route::get('returnTransaction/{leadId}', [BookingController::class, 'returnTransactionForm'])->name('returnTransaction')->middleware('auth');
+Route::post('returnTheTransaction', [BookingController::class, 'returnTheTransactions'])->name('returnTheTransaction')->middleware('auth');
 
 Route::get('myProfile', [Controller::class, 'myProfilePage'])->name('myProfile')->middleware('auth');
 Route::get('myProfileEdit', [Controller::class, 'myProfileEdit'])->name('myProfileEdit')->middleware('auth');

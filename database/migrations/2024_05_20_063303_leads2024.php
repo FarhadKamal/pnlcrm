@@ -33,6 +33,7 @@ class Leads2024 extends Migration
             $table->integer('need_discount_approval')->default(0);
             $table->integer('need_top_approval')->default(0);
             $table->string('payment_type')->nullable();
+            $table->double('creditAmt')->default(0);
             $table->double('aitAmt')->default(0);
             $table->double('vatAmt')->default(0);
             $table->text('delivery_from')->nullable();

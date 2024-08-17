@@ -16,6 +16,10 @@ class Transaction extends Model
         'is_verified',
         'verified_by',
         'deposited_date',
-        'deposited_remarks'
+        'deposited_remarks',
+        'is_return',
+        'return_date',
+        'return_remarks',
+        'return_by',
     ];
 }

@@ -23,6 +23,10 @@ class CreateTransactionsTable extends Migration
             $table->integer('verified_by')->nullable();
             $table->date('deposited_date')->nullable();
             $table->string('deposited_remarks')->nullable();
+            $table->boolean('is_return')->default(0);
+            $table->date('return_date');
+            $table->string('return_remarks')->nullable();
+            $table->integer('return_by')->nullable();
             $table->timestamps();
         });
     }

@@ -291,9 +291,11 @@
                                 @if ($item->current_subStage == 'DISCOUNTSET')
                                     <small class="badge badge-info blink p-1 m-0 ">Waiting for discount set</small>
                                 @endif
-
                                 @if ($item->current_subStage == 'CREDITSET')
                                     <small class="badge badge-info blink p-1 m-0 ">Waiting for credit set</small>
+                                @endif
+                                @if ($item->current_subStage == 'CREDITHOLD')
+                                    <small class="badge badge-danger blink p-1 m-0 ">Credit Set Hold</small>
                                 @endif
                                 <div class="row">
                                     <div class="col-10">
@@ -319,7 +321,8 @@
                                         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'customerDocCheck'))
                                             <a href="{{ route('customerDocCheck', ['leadId' => $item->id]) }}">
                                                 <button type="button"
-                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Document Check</button>
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Document
+                                                    Check</button>
                                             </a>
                                         @else
                                             <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
@@ -393,6 +396,12 @@
                                         @endif
                                     @endif
 
+                                    @if ($item->current_subStage == 'CREDITHOLD')
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                            <button type="button"
+                                                class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -551,6 +560,9 @@
                     @foreach ($lostStage as $item)
                         <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
                             <div class="card-body">
+                                @if ($item->current_subStage == 'RETURNCASH')
+                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for Cash Return</small>
+                                @endif
                                 <div class="row">
                                     <div class="col-10">
                                         <h6 class="card-title fs-09rem">
@@ -571,11 +583,35 @@
                                 <small class="card-text mb-1"><b>Created By:</b>
                                     {{ $item['createdBy']->user_name }}</small>
                                 <div>
-                                    <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
-                                        <button type="button"
-                                            class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Lost
-                                            Log</button>
-                                    </a>
+                                    @if ($item->current_subStage == 'RETURNCASH')
+                                        @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction'))
+                                            <a href="{{ route('returnTransaction', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Return
+                                                    Transaction</button>
+                                            </a>
+                                        @else
+                                            @if ($item->clientInfo->assign_to == Auth()->user()->assign_to)
+                                                <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Lost
+                                                        Log</button>
+                                                </a>
+                                            @else
+                                                <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Lost
+                                                        Log</button>
+                                                </a>
+                                            @endif
+                                        @endif
+                                    @else
+                                        <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                            <button type="button"
+                                                class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Lost
+                                                Log</button>
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>

@@ -1,4 +1,24 @@
 @include('layouts.navbar')
+
+@if (session('errors'))
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (session('errors') as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+
+@if ($leadInfo->is_won != 1)
+    @if ($leadInfo->is_lost != 1 && $leadInfo->clientInfo->assign_to == Auth()->user()->assign_to)
+        <div class="m-2 float-end">
+            <a href="{{ route('lost', ['leadId' => $leadInfo->id]) }}"><button type='button'
+                    class='btn btn-sm btn-danger'>Lost</button></a>
+        </div>
+    @endif
+@endif
 <div class="mt-5">
     @if ($leadInfo->is_lost == 1)
         <div class="bg-danger mb-3">
@@ -113,6 +133,62 @@
                 </table>
             @else
                 <h6>No Item Selection Found</h6>
+            @endif
+
+            @if (
+                $leadInfo->current_stage == 'BOOKING' &&
+                    $leadInfo->current_subStage == 'CREDITHOLD' &&
+                    $leadInfo->clientInfo->assign_to == Auth()->user()->assign_to)
+                <div class="bg-offwhite  p-2">
+                    <h6><kbd class="bg-danger">CREDIT HOLD</kbd></h6>
+
+                    <h6 class="fs-08rem">{{ $salesLog[0]->log_task }}</h6>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <form action="{{ route('reSubmitToCredit') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label for="" class="fs-08rem">PO Attachment <small
+                                                class="text-danger">(Submit If
+                                                Required)</small></label>
+                                        <input name="poFileUpdate" id="poFileUpdate" type="file"
+                                            accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx"
+                                            class="form-control lh-sm fs-08rem">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-darkblue fs-07rem p-1 mt-4">Re Submit Credit Set</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            @endif
+
+            @if ($leadInfo->is_won != 1)
+                @if (
+                    $leadInfo->is_lost != 1 &&
+                        $leadInfo->clientInfo->assign_to == Auth()->user()->assign_to &&
+                        $leadInfo->current_stage != 'DELIVERY' &&
+                        $leadInfo->current_subStage != 'READY')
+                    <form action=" {{ route('reDealStage') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+                        <div class="row p-2 bg-offwhite mt-2">
+                            <div class="col-md-7">
+                                <label for="" class="fs-08rem">Re Deal Remarks</label>
+                                <textarea name="reDealRemark" class="form-control fs-08rem p-1" cols="30" rows="3" required></textarea>
+                            </div>
+                            <div class="col-md-4" style="align-content: space-evenly;">
+                                <button class="btn btn-darkblue fs-07rem p-1">Back to Re Deal Stage</button>
+                            </div>
+                        </div>
+                    </form>
+                @endif
             @endif
         </div>
     </div>

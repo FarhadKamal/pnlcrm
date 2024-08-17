@@ -12,12 +12,11 @@
         </script>
     @endif
 </div>
-
+<div class="m-2 float-end">
+    <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
+            class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
+</div>
 <div class="container-fluid mb-3 mt-2">
-    <div class="m-2 float-end">
-        <a href="{{ route('detailsLog', ['leadId' => $leadInfo->id]) }}" target="_blank"><button
-                class="btn btn-darkblue btm-sm fs-07rem p-1">Details Log</button></a>
-    </div>
     <center>
         <h4 class="mt-3">Credit Set Form</h4>
     </center>
@@ -240,7 +239,18 @@
                 <br>
                 <center><button class="btn btn-sm btn-darkblue">Submit Credit Form</button></center>
             </form>
+            <br>
 
+            <h6 class="text-center"><kbd>Hold SAP Credit Set Process</kbd></h6>
+            <form action="{{ route('creditSetHold') }}" method="POST" id="sapCreationHoldForm">
+                @csrf
+                <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+                <label for="" class="fs-08rem">Hold Reason</label><br>
+                <textarea name="creditHoldRemark" class="form-control fs-08rem p-1" rows="3" required></textarea>
+                <br>
+                <center><button class="btn btn-sm btn-danger">Hold Credit Set</button></center>
+            </form>
+            <br><br>
         </div>
     </div>
 </div>
@@ -267,6 +277,31 @@
                 form.delegateTarget.submit()
             } else {
                 Swal.fire('Something is wrong', '', 'info')
+            }
+        })
+    });
+
+    $('#sapCreationHoldForm').submit(function(e, params) {
+        var localParams = params || {};
+
+        if (!localParams.send) {
+            e.preventDefault();
+        }
+        var form = e;
+        Swal.fire({
+            title: 'Are you sure to hold credit set process?',
+            // text: "Once submitted, you will not be able to undo it!",
+            icon: "warning",
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm Hold',
+            // denyButtonText: `Don't save`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                form.delegateTarget.submit()
+            } else {
+                Swal.fire('Hold is not done', '', 'info')
             }
         })
     });

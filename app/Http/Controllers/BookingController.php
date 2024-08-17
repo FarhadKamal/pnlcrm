@@ -229,6 +229,7 @@ class BookingController extends Controller
             $leadInfo = Lead::find($request->leadId);
             $leadInfo->accounts_clearance = 1;
             $leadInfo->is_outstanding = 1;
+            $leadInfo->creditAmt = $request->creditLimit;
             $leadInfo->current_stage = 'DELIVERY';
             if ($leadInfo->need_discount_approval > 1) {
                 $leadInfo->current_subStage = 'DISCOUNTSET';
@@ -298,6 +299,100 @@ class BookingController extends Controller
             );
             SalesLog::create($log_data);
             return redirect()->route('home');
+        }
+    }
+
+    public function holdCredit(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required|numeric',
+            'creditHoldRemark' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            $leadInfo = Lead::find($request->leadId);
+            $leadInfo->current_subStage = 'CREDITHOLD';
+            $customerName = $leadInfo->clientInfo->customer_name;
+            $leadInfo->save();
+            $holdRemark = $request->creditHoldRemark;
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $request->leadId . '');
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/detailsLog/' . $request->leadId;
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $holdRemark, $leadURL) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Credit Set Hold');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is hold at credit set stage.<br>Hold Remarks: ' . $holdRemark . '.<br><a href="' . $leadURL . '">CLICK HERE</a> for correction and resubmit.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
+
+            $log_data = array(
+                'lead_id' => $request->leadId,
+                'log_stage' => 'BOOKING',
+                'log_task' => 'Credit Set Hold. Remarks: ' . $holdRemark,
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'Step By Salesperson'
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('dashboard');
+        }
+    }
+
+    public function reSubmitCredit(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            $leadInfo = Lead::find($request->leadId);
+            if ($request->file('poFileUpdate')) {
+                $quotationInfo = Quotation::orderBy('id', 'desc')->take(1)->where(['lead_id' => $request->leadId, 'is_accept' => 1])->get();
+                $poFileUpdate = $request->file('poFileUpdate');
+                $poFileUpdateName = time() . "." . $poFileUpdate->getClientOriginalExtension();
+                $destinationPath = 'leadQuotationAcceptAttachment/';
+                $poFileUpdate->move($destinationPath, $poFileUpdateName);
+                $quotationInfo->accept_file = $poFileUpdateName;
+            }
+            $leadInfo->current_subStage = 'CREDITSET';
+            $customerName = $leadInfo->clientInfo->customer_name;
+            $leadInfo->save();
+
+            $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapCreditSet"');
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/creditSetForm/' . $leadInfo->id;
+            if ($SAPCreditUsersEmail) {
+                foreach ($SAPCreditUsersEmail as $email) {
+                    $assignEmail = $email->user_email;
+                    $assignName = $email->user_name;
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
+                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP CREDIT SET');
+                        $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is resubmitted for SAP Credit SET.<br><a href="' . $leadURL . '">CLICK HERE</a> for SAP credit set.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    });
+                }
+            }
+
+            $log_data = array(
+                'lead_id' => $request->leadId,
+                'log_stage' => 'BOOKING',
+                'log_task' => 'Re submit to credit set.',
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'Credit Limit Set'
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('dashboard');
         }
     }
 
@@ -582,6 +677,72 @@ class BookingController extends Controller
             );
             SalesLog::create($log_data);
             return redirect()->route('home');
+        }
+    }
+
+    public function returnTransactionForm($leadId)
+    {
+        $data['leadId'] = $leadId;
+        $data['leadInfo'] = Lead::find($leadId);
+        $data['quotationInfo'] = Quotation::orderBy('id', 'desc')->take(1)->where(['lead_id' => $leadId, 'is_accept' => 1])->get();
+        $data['pumpInfo'] = PumpChoice::where(['lead_id' => $leadId])->get();
+        $data['transactionInfo'] = Transaction::where(['lead_id' => $leadId])->get();
+        return view('sales.returnTransactionForm', $data);
+    }
+
+    public function returnTheTransactions(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errors', $data['errors']);
+        } else {
+            $returnAmt = 0;
+            $leadId = $request->leadId;
+            $returnDate = date('Y-m-d', strtotime($request->returnDate));
+            $transactionInfo = Transaction::where(['lead_id' => $leadId])->get();
+            foreach ($transactionInfo as $item) {
+                if ($item->is_verified == 1) {
+                    // Only Return the verified/deposited transaction 
+                    $singleInfo = Transaction::find($item->id);
+                    $returnAmt = $returnAmt + $singleInfo->pay_amount;
+                    $singleInfo->is_return = 1;
+                    $singleInfo->return_date = $returnDate;
+                    $singleInfo->return_remarks = $request->returnRemarks;
+                    $singleInfo->return_by = Auth()->user()->id;
+                    $singleInfo->save();
+                }
+            }
+            $leadInfo = Lead::find($leadId);
+            $leadInfo->current_subStage = 'LOST';
+            $customerName = $leadInfo->clientInfo->customer_name;
+            $leadInfo->save();
+
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadId . '');
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/detailsLog/' . $leadId;
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $returnAmt, $leadURL) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Transaction Return');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the ' . $returnAmt . ' amount of transaction is return to the lost lead ' . $customerName . '.<br><a href="' . $leadURL . '">CLICK HERE</a> for details.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
+
+            $log_data = array(
+                'lead_id' => $leadId,
+                'log_stage' => 'LOST',
+                'log_task' => 'Transaction return to customer',
+                'log_by' => Auth()->user()->id,
+                'log_next' => ''
+            );
+            SalesLog::create($log_data);
+            return back()->with('success', 'Transaction Return');
         }
     }
 }

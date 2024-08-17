@@ -20,6 +20,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class LeadController extends Controller
@@ -142,6 +143,24 @@ class LeadController extends Controller
         $leadId = Lead::create($insert_lead_data);
         $leadId = $leadId->id;
 
+        $customerName = $request->clientName;
+        $createdByName = Auth()->user()->user_name;
+        $leadAssignUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="leadAssign" AND users.is_active = 1');
+        if ($leadAssignUsersEmail) {
+            foreach ($leadAssignUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $createdByName) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM New Customer Assign');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a new lead ' . $customerName . ' is created by ' . $createdByName . ' and waiting for assigining process. Please assign from lead stage.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
+        }
+
         $log_data = array(
             'lead_id' => $leadId,
             'log_stage' => 'Lead',
@@ -200,6 +219,15 @@ class LeadController extends Controller
             $customerInfo = Customer::find($customerId);
             $customerInfo->assign_to = $request->assign_to;
             $customerInfo->save();
+
+            $log_data = array(
+                'lead_id' => $request->leadModal_leadId,
+                'log_stage' => 'LEAD',
+                'log_task' => 'Lead Assigned',
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'Pump Selection'
+            );
+            SalesLog::create($log_data);
 
             return back()->with('success', 'Lead Assign Success');
         }
@@ -314,6 +342,39 @@ class LeadController extends Controller
             $leadInfo->lead_email = $request->lead_email;
             $leadInfo->save();
             return back()->with('success', 'Lead Email Updated');
+        }
+    }
+
+    public function reDealing(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required|numeric',
+            'reDealRemark' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with($data);
+        } else {
+            $leadId = $request->leadId;
+            $leadInfo = Lead::find($leadId);
+            $logStage = $leadInfo->current_stage;
+            $logSubStage = $leadInfo->current_subStage;
+            $leadInfo->current_stage = 'DEAL';
+            $leadInfo->current_subStage = 'FORM';
+            $leadInfo->save();
+
+
+
+
+            $log_data = array(
+                'lead_id' => $leadId,
+                'log_stage' => $logStage,
+                'log_task' => 'Back to deal stage. Remark: ' . $request->reDealRemark,
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'Pump Selection'
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('home');
         }
     }
 }

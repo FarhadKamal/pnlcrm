@@ -7,6 +7,7 @@ use App\Models\Lead;
 use App\Models\PumpChoice;
 use App\Models\Quotation;
 use App\Models\SalesLog;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -16,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class Controller extends BaseController
@@ -133,7 +136,7 @@ class Controller extends BaseController
                 ->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')
                 ->where('current_stage', 'QUOTATION')
                 ->get();
-           
+
             foreach ($data['quotationStage'] as $item) {
                 $quotationRef = DB::select("SELECT id, quotation_ref FROM quotations WHERE lead_id = $item->id ORDER BY id DESC LIMIT 1");
                 if ($quotationRef) {
@@ -203,20 +206,99 @@ class Controller extends BaseController
         } else {
             $leadInfo = Lead::find($request->lostLead);
             $leadOldStage = $leadInfo->current_stage;
+            $customerName = $leadInfo->clientInfo->customer_name;
+            // if ($leadInfo->current_stage == 'DELIVERY' && $leadInfo->current_subStage == 'READY') {
+            if ($leadInfo->sap_invoice > 0) {
+                $invoiceId = $leadInfo->sap_invoice;
+                $invoiceDate = $leadInfo->invoice_date;
+                $invoiceByName = $leadInfo->invoiceBy->user_name;
+                $domainName = URL::to('/');
+                $leadURL = $domainName . '/detailsLog/' . $leadInfo->id;
+                $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="sapInvoiceSet" AND users.is_active = 1');
+                if ($SAPCreditUsersEmail) {
+                    foreach ($SAPCreditUsersEmail as $email) {
+                        $assignEmail = $email->user_email;
+                        $assignName = $email->user_name;
+                        Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $invoiceId, $invoiceDate, $invoiceByName, $leadURL) {
+                            $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP INVOICE CANCEL');
+                            $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is lost. Please cancel the invoice no ' . $invoiceId . ' invoice date ' . $invoiceDate . ' genereted by ' . $invoiceByName . '.<br><a href="' . $leadURL . '">CLICK HERE</a> for details.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        });
+                    }
+                }
+            }
+
+            if ($leadInfo->payment_type == 'Cash') {
+                $transactionInfo = Transaction::where(['lead_id' => $request->lostLead, 'is_verified' => 1])->get();
+                if ($transactionInfo && count($transactionInfo) > 0) {
+                    $subStage = 'RETURNCASH';
+                    $domainName = URL::to('/');
+                    $leadURL = $domainName . '/returnTransaction/' . $leadInfo->id;
+                    $verifyTransactionUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+            INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+            INNER JOIN users ON users.id=user_permissions.user_id
+            WHERE permissions.permission_code="verifyTransaction" AND users.is_active = 1');
+                    if ($verifyTransactionUsersEmail) {
+                        foreach ($verifyTransactionUsersEmail as $email) {
+                            $assignEmail = $email->user_email;
+                            $assignName = $email->user_name;
+                            Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
+                                $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Return Transaction');
+                                $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is lost. Please return the transaction amount to the customer.<br><a href="' . $leadURL . '">CLICK HERE</a> for return transaction.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                            });
+                        }
+                    }
+                } else {
+                    $subStage = 'LOST';
+                }
+            } else {
+                // notify credit setter for lost 
+                $subStage = 'LOST';
+                if ($leadInfo->accounts_clearance = 1) {
+                    $creditLimit = $leadInfo->creditAmt;
+                    $domainName = URL::to('/');
+                    $leadURL = $domainName . '/detailsLog/' . $leadInfo->id;
+                    $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
+                    INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
+                    INNER JOIN users ON users.id=user_permissions.user_id
+                    WHERE permissions.permission_code="sapCreditSet" AND users.is_active = 1');
+                    if ($SAPCreditUsersEmail) {
+                        foreach ($SAPCreditUsersEmail as $email) {
+                            $assignEmail = $email->user_email;
+                            $assignName = $email->user_name;
+                            Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $creditLimit, $leadURL) {
+                                $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM CUSTOMER LOST');
+                                $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', the lead ' . $customerName . ' is lost. You Set ' . $creditLimit . ' amount of credit limit for that lead.<br><a href="' . $leadURL . '">CLICK HERE</a> for details.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                            });
+                        }
+                    }
+                }
+            }
 
             $leadInfo->current_stage = 'LOST';
-            $leadInfo->current_subStage = 'LOST';
+            $leadInfo->current_subStage = $subStage;
             $leadInfo->is_lost = 1;
             $leadInfo->lost_reason = $request->lostReason;
             $leadInfo->lost_description = $request->lostDescription;
             $leadInfo->save();
+
+            if ($subStage == 'RETURNCASH') {
+                $logNext = 'Return Transaction';
+            } else {
+                $logNext = '';
+            }
 
             $log_data = array(
                 'lead_id' => $leadInfo->id,
                 'log_stage' => $leadOldStage,
                 'log_task' => 'Lead is lost',
                 'log_by' => Auth()->user()->id,
-                'log_next' => 'LOST'
+                'log_next' => $logNext
             );
             SalesLog::create($log_data);
             return redirect()->route('home');

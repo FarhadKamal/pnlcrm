@@ -71,32 +71,32 @@
                     </div>
                 </div>
 
-                {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadAssign')) --}}
-                <div class="mt-3">
-                    <center>
-                        <h6>LEAD ASSIGN</h6>
-                    </center>
-                    <form action="{{ route('assignLead') }}" method="POST">
-                        @csrf
-                        <input type="text" name="leadModal_leadId" id="leadModal_leadId" hidden>
-                        <table class="table table-hover table-bordered fs-08rem p-0 m-0" id="workLoadTable">
-                            <thead>
-                                <tr>
-                                    <th class="p-1 text-center">User</th>
-                                    <th class="p-1 text-center">Designation</th>
-                                    <th class="p-1 text-center">Location</th>
-                                    <th class="p-1 text-center">Workload</th>
-                                    <th class="p-1 text-center">Action</th>
-                                </tr>
-                            </thead>
+                @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadAssign'))
+                    <div class="mt-3">
+                        <center>
+                            <h6>LEAD ASSIGN</h6>
+                        </center>
+                        <form action="{{ route('assignLead') }}" method="POST">
+                            @csrf
+                            <input type="text" name="leadModal_leadId" id="leadModal_leadId" hidden>
+                            <table class="table table-hover table-bordered fs-08rem p-0 m-0" id="workLoadTable">
+                                <thead>
+                                    <tr>
+                                        <th class="p-1 text-center">User</th>
+                                        <th class="p-1 text-center">Designation</th>
+                                        <th class="p-1 text-center">Location</th>
+                                        <th class="p-1 text-center">Workload</th>
+                                        <th class="p-1 text-center">Action</th>
+                                    </tr>
+                                </thead>
 
-                            <tbody id="workLoadTableTbody">
-                                
-                            </tbody>
-                        </table>
-                    </form>
-                </div>
-                {{-- @endif --}}
+                                <tbody id="workLoadTableTbody">
+
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -153,5 +153,5 @@
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
-        }
+    }
 </script>

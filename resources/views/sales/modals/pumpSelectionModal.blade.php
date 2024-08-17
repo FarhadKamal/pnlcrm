@@ -1,3 +1,13 @@
+<style>
+    .select2 {
+        width: -webkit-fill-available !important;
+
+    }
+
+    .select2-search__field {
+        font-size: 0.7rem !important;
+    }
+</style>
 <div class="modal fade" id="pumpSelectionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
     style="overflow: scroll">
     <div class="modal-dialog modal-xl">
@@ -27,7 +37,7 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label for="">Brand</label>
+                            <label for="">Brand</label><br>
                             <select name="filterBrand" id="filterBrand" class="form-select fs-07rem p-1">
                                 <option value="all">All Brand</option>
                                 <option value="Pedrollo">Pedrollo</option>
@@ -129,6 +139,35 @@
         allowClear: false
     });
 </script> --}}
+
+<script>
+    $(document).ready(function() {
+        $("#filterType").select2({
+            dropdownParent: $("#pumpSelectionModal"),
+            allowClear: false
+        });
+        $("#filterBrand").select2({
+            dropdownParent: $("#pumpSelectionModal"),
+            allowClear: false
+        });
+        $("#filterHP").select2({
+            dropdownParent: $("#pumpSelectionModal"),
+            allowClear: false
+        });
+        $("#filterModel").select2({
+            dropdownParent: $("#pumpSelectionModal"),
+            allowClear: false
+        });
+        $("#filterPhase").select2({
+            dropdownParent: $("#pumpSelectionModal"),
+            allowClear: false
+        });
+        $("#filterSpare").select2({
+            dropdownParent: $("#pumpSelectionModal"),
+            allowClear: false
+        });
+    });
+</script>
 
 <script>
     function changeFilterLabel() {

@@ -258,7 +258,7 @@ class Controller extends BaseController
             } else {
                 // notify credit setter for lost 
                 $subStage = 'LOST';
-                if ($leadInfo->accounts_clearance = 1) {
+                if ($leadInfo->accounts_clearance == 1) {
                     $creditLimit = $leadInfo->creditAmt;
                     $domainName = URL::to('/');
                     $leadURL = $domainName . '/detailsLog/' . $leadInfo->id;

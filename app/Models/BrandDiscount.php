@@ -10,7 +10,7 @@ class BrandDiscount extends Model
     use HasFactory;
     protected $fillable = [
         'brand_name',
-        'trade_discount'
-
+        'trade_discount',
+        'country_name'
     ];
 }

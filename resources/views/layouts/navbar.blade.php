@@ -31,10 +31,11 @@
 </head>
 
 <body>
-  
+
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar" style="background-color: #0B2E41;position: fixed;width: -webkit-fill-available;top: 0;">
+    <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar"
+        style="background-color: #0B2E41;position: fixed;width: -webkit-fill-available;top: 0;">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Navbar brand -->
@@ -90,6 +91,11 @@
                             <li>
                                 <a class="dropdown-item" href="{{ route('outstandings') }}">Outstanding List</a>
                             </li>
+                            @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'itemStore'))
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('productEntry') }}">Product Entry</a>
+                                </li>
+                            @endif
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -197,7 +203,7 @@
         </div>
         <!-- Container wrapper -->
     </nav>
-    
+
     <!-- Navbar -->
     <nav class="bg-info navClose pt-2" id="navbarButtonsSidebar">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-wrap flex-row justify-content-evenly text-white">
@@ -214,6 +220,11 @@
                     <li>
                         <a class="dropdown-item" href="{{ route('outstandings') }}">Outstanding List</a>
                     </li>
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'itemStore'))
+                        <li>
+                            <a class="dropdown-item" href="{{ route('productEntry') }}">Product Entry</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
             <li class="nav-item dropdown">

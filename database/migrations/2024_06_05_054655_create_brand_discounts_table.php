@@ -17,6 +17,7 @@ class CreateBrandDiscountsTable extends Migration
             $table->id();
             $table->string('brand_name');
             $table->double('trade_discount');
+            $table->string('country_name');
             $table->timestamps();
         });
     }

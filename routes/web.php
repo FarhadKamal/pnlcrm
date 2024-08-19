@@ -7,6 +7,7 @@ use App\Http\Controllers\DealController;
 use App\Http\Controllers\DeliveryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\QuotationController;
 use Faker\Guesser\Name;
 
@@ -101,6 +102,10 @@ Route::post('returnTheTransaction', [BookingController::class, 'returnTheTransac
 Route::get('myProfile', [Controller::class, 'myProfilePage'])->name('myProfile')->middleware('auth');
 Route::get('myProfileEdit', [Controller::class, 'myProfileEdit'])->name('myProfileEdit')->middleware('auth');
 Route::post('updateMyProfile', [Controller::class, 'updateMyProfile'])->name('updateMyProfile')->middleware('auth');
+
+
+Route::get('productEntry', [ProductController::class, 'productForm'])->name('productEntry')->middleware('auth');
+Route::post('insertProduct', [ProductController::class, 'storeProduct'])->name('insertProduct')->middleware('auth');
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

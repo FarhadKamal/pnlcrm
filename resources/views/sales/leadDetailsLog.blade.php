@@ -10,6 +10,32 @@
     </div>
 @endif
 
+@if ($leadInfo->is_won == 1)
+    <div class="m-2 float-end">
+        <button class="btn btn-sm btn-darkblue fs-07rem p-1" onclick="printInvoice()">Print Invoice</button>
+    </div>
+    @include('sales.invoicePage')
+    <script>
+        function printInvoice() {
+            var printWindow = window.open('', '_blank');
+
+            // Check if the window opened successfully
+            if (printWindow) {
+                var printContents = document.getElementById("invoicePrint").innerHTML;
+                printWindow.document.write('<html><body>');
+                printWindow.document.write(printContents);
+                printWindow.document.write('</body></html>');
+
+                // Make sure to close the print window after printing
+                printWindow.document.close();
+                printWindow.print();
+            } else {
+                alert('Please allow pop-ups for this site to print');
+            }
+        }
+    </script>
+@endif
+
 
 @if ($leadInfo->is_won != 1)
     @if ($leadInfo->is_lost != 1 && $leadInfo->clientInfo->assign_to == Auth()->user()->assign_to)

@@ -25,8 +25,8 @@
         @if ((string) strpos($leadInfo->clientInfo->assign_to, (string) Auth()->user()->assign_to) !== false)
             <div class="col-md-3">
                 <h6 class="text-center"><kbd>Insert Transaction Form</kbd></h6>
-                <form action="{{ route('insertTransaction') }}" method="POST" enctype="multipart/form-data"
-                    class="m-4">
+                <form action="{{ route('insertTransaction') }}" method="POST" enctype="multipart/form-data" class="m-4"
+                    id="outTransForm">
                     @csrf
                     <div class="mb-1">
                         <label class="form-label m-0">Deposit Date</label>
@@ -34,8 +34,9 @@
                             required>
                     </div>
                     <div class="mb-1">
-                        <label class="form-label m-0">Amount</label>
-                        <input name="transactionAmount" type="number" class="form-control lh-sm" required>
+                        <label class="form-label m-0">Deposit Amount</label>
+                        <input name="transactionAmount" id="transactionAmount" type="number" class="form-control lh-sm"
+                            required>
                     </div>
                     {{-- <div class="mb-1">
                         <label class="form-label m-0">Attachment</label>
@@ -289,5 +290,78 @@
                 Swal.fire('Clearance is not succeed', '', 'info')
             }
         })
+    });
+</script>
+
+
+<script>
+    $('#outTransForm').submit(function(e, params) {
+        var localParams = params || {};
+
+        if (!localParams.send) {
+            e.preventDefault();
+        }
+
+        let proceedFlag = 1;
+        // Validate Deposit Amount and Net Amount 
+        let transAmt = $('#transactionAmount').val();
+        let totalNetPrice = '<?php echo $totalNetPrice; ?>';
+        let totalPaid = '<?php echo $totalPaid; ?>';
+        let balance = totalNetPrice - totalPaid;
+
+        if (transAmt <= 0) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: "Invalid Deposite Amount",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            proceedFlag = 0;
+        }
+
+        if (transAmt > totalNetPrice) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: "Invalid Deposite Amount",
+                text: "Deposited amount is greater than net price",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            proceedFlag = 0;
+        }
+        if (transAmt > balance) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: "Invalid Deposite Amount",
+                text: "Deposited amount is greater than remaining balance amount",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            proceedFlag = 0;
+        }
+
+
+        if (proceedFlag == 1) {
+            var form = e;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Once stored, you will not be able to undo it!",
+                icon: "warning",
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Confirm Transaction',
+                // denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    form.delegateTarget.submit()
+                } else {
+                    Swal.fire('Transaction is not succeed', '', 'info')
+                }
+            })
+        }
     });
 </script>

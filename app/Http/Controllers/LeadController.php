@@ -361,10 +361,9 @@ class LeadController extends Controller
             $logSubStage = $leadInfo->current_subStage;
             $leadInfo->current_stage = 'DEAL';
             $leadInfo->current_subStage = 'FORM';
+            $leadInfo->accounts_clearance = 0;
+            $leadInfo->is_outstanding = 0;
             $leadInfo->save();
-
-
-
 
             $log_data = array(
                 'lead_id' => $leadId,

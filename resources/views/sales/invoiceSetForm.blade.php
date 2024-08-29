@@ -172,7 +172,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="5" class="p-1 text-center fw-bold">Total</th>
+                        <th colspan="6" class="p-1 text-center fw-bold">Total</th>
                         <th class="p-1 text-end fw-bold">{{ number_format((float) $totalDiscountAmt, 2, '.', ',') }}
                         </th>
                         <th class="p-1 text-end fw-bold">{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</th>
@@ -186,6 +186,9 @@
 <script>
     async function sapInvoiceCheck() {
         let inputSAP = $('#invoiceID').val();
+        let totalNetPrice = '<?php echo $totalNetPrice; ?>';
+        let pumpInfo = JSON.parse('<?php echo $pumpInfo; ?>');
+
         let filterData = {
             inputSAP: inputSAP,
         };
@@ -205,19 +208,99 @@
             }
 
             let json = await response.json();
+            let data = json.status;
 
-            if (json.status === 'gotSAP') {
-                return true;
+            // Duplicacy Check in the CRM Start
+            let isDuplicate = json.isDuplicate;
+            if (isDuplicate && isDuplicate.length > 0) {
+
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    text: "The invoice no " + inputSAP + " is already exist in the CRM",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                return false;
+            }
+            // Duplicacy Check in the CRM End
+
+            //Validate SAP Invoice
+            if (data && data.length > 0) {
+                let sapNetPrice = 0;
+
+                // Item Validation Start 
+                for (let i = 0; i < pumpInfo.length; i++) {
+                    let itemFlag = false;
+                    let itemErrorCode = '';
+                    data.forEach(element => {
+                        if ((pumpInfo[i].spare_parts == 0 && element.ItemCode == pumpInfo[i].product_info
+                                .new_code) || (pumpInfo[i].spare_parts == 1 && element.ItemCode ==
+                                pumpInfo[
+                                    i].spare_info.new_code)) {
+                            itemFlag = true;
+                        } else {
+                            if (pumpInfo[i].spare_parts == 0) {
+                                itemErrorCode = pumpInfo[i].product_info.new_code;
+                            } else {
+                                itemErrorCode = pumpInfo[i].spare_info.new_code;
+                            }
+                        }
+                    });
+
+                    if (itemFlag == false) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            text: "The item code " + itemErrorCode + " not present in the SAP invoice",
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        return false;
+                    }
+                }
+                // Item Validation END 
+
+                // Net Amount Validation Start
+                data.forEach(element => {
+                    sapNetPrice = sapNetPrice + element.GTotal;
+                });
+                if (totalNetPrice == sapNetPrice) {
+                    return true;
+                } else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        text: "CRM net amount not match with invoice net amount",
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    return false;
+                }
+                // Net Amount Validation End
             } else {
                 Swal.fire({
                     position: 'top-end',
                     icon: 'error',
                     title: "Invoice ID not found in SAP",
                     showConfirmButton: false,
-                    timer: 2000
+                    timer: 3000
                 });
                 return false;
             }
+
+            // if (json.status === 'gotSAP') {
+            //     return true;
+            // } else {
+            //     Swal.fire({
+            //         position: 'top-end',
+            //         icon: 'error',
+            //         title: "Invoice ID not found in SAP",
+            //         showConfirmButton: false,
+            //         timer: 2000
+            //     });
+            //     return false;
+            // }
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
             return false;
@@ -232,7 +315,7 @@
         }
 
         let checkSAPInvoice = await sapInvoiceCheck();
-        console.log(checkSAPInvoice);
+        // console.log(checkSAPInvoice);
 
         if (checkSAPInvoice) {
             Swal.fire({

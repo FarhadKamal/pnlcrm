@@ -45,27 +45,27 @@ class DeliveryController extends Controller
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
             WHERE permissions.permission_code="sapInvoiceSet" AND users.is_active = 1');
-                if ($SAPCreditUsersEmail) {
-                    foreach ($SAPCreditUsersEmail as $email) {
-                        $assignEmail = $email->user_email;
-                        $assignName = $email->user_name;
-                        Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
-                            $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP INVOICE GENERATION');
-                            $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                            $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
-                        });
-                    }
-                }
-                $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
-                foreach ($assignedUsersEmail as $email) {
+            if ($SAPCreditUsersEmail) {
+                foreach ($SAPCreditUsersEmail as $email) {
                     $assignEmail = $email->user_email;
                     $assignName = $email->user_name;
                     Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
-                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM DISCOUNT SET');
+                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM SAP INVOICE GENERATION');
                         $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', Discount Set for the lead. Waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a lead is waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
+            }
+            $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM DISCOUNT SET');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', Discount Set for the lead. Waiting for SAP Invoice Generation.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
 
             $log_data = array(
                 'lead_id' => $leadInfo->id,
@@ -101,22 +101,31 @@ class DeliveryController extends Controller
 
         $fyear = $y1 . "-" . $y2;
 
+        // Duplicacy Check in the CRM 
+        $duplicate = Lead::where(['sap_invoice' => $inputSAP])->get();
+
         // URL of the API endpoint
         // $url = 'http://103.4.66.107:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
-        $url = 'http://192.168.1.226:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
+        // $url = 'http://192.168.1.226:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
+        $url2 = 'http://192.168.1.226:8989/api/verify_invoice2.php?code=' . $inputSAP . '&year=' . $fyear;
+        $getInvoiceInfo = json_decode(file_get_contents($url2));
 
+        $response = [
+            'status' => $getInvoiceInfo,
+            'isDuplicate' => $duplicate
+        ];
         // Make the request and get the response
-        $rtnvalue = file_get_contents($url);
+        // $rtnvalue = file_get_contents($url);
 
-        if ($rtnvalue == 1) {
-            $response = [
-                'status' => 'gotSAP'
-            ];
-        } else {
-            $response = [
-                'status' => 'notSAP'
-            ];
-        }
+        // if ($rtnvalue == 1) {
+        //     $response = [
+        //         'status' => 'gotSAP'
+        //     ];
+        // } else {
+        //     $response = [
+        //         'status' => 'notSAP'
+        //     ];
+        // }
         return response()->json($response);
     }
 
@@ -140,15 +149,15 @@ class DeliveryController extends Controller
             $leadInfo->save();
 
             $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
-                foreach ($assignedUsersEmail as $email) {
-                    $assignEmail = $email->user_email;
-                    $assignName = $email->user_name;
-                    Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
-                        $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM INVOICE GENERATED');
-                        $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                        $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', Invoice generated for the lead. Waiting for your Delivery process.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
-                    });
-                }
+            foreach ($assignedUsersEmail as $email) {
+                $assignEmail = $email->user_email;
+                $assignName = $email->user_name;
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                    $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM INVOICE GENERATED');
+                    $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', Invoice generated for the lead. Waiting for your Delivery process.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                });
+            }
 
             $log_data = array(
                 'lead_id' => $leadInfo->id,
@@ -174,7 +183,7 @@ class DeliveryController extends Controller
     public function deliveryReferenceCheck()
     {
         $data['currentDate'] = date('Y-m-d');
-        $data['checkDeliverySerial'] = DB::select("SELECT COUNT(*) AS sl FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE leads.delivery_challan != '' AND customers.assign_to = '".Auth()->user()->assign_to."' AND Year(leads.updated_at) = " . date('Y') . " AND Month(leads.updated_at) = " . date('m') . " AND Day(leads.updated_at) = " . date('d') . "");
+        $data['checkDeliverySerial'] = DB::select("SELECT COUNT(*) AS sl FROM leads INNER JOIN customers ON customers.id = leads.customer_id WHERE leads.delivery_challan != '' AND customers.assign_to = '" . Auth()->user()->assign_to . "' AND Year(leads.updated_at) = " . date('Y') . " AND Month(leads.updated_at) = " . date('m') . " AND Day(leads.updated_at) = " . date('d') . "");
         return response()->json($data);
     }
 

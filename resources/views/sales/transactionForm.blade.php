@@ -198,7 +198,7 @@
                     <h5 class="badge badge-danger">Waiting For Accounts Clearance</h5>
                 </center>
             @else
-                <center><button class="btn btn-sm btn-darkblue">Proceed For Delivery</button></center>
+                {{-- <center><button class="btn btn-sm btn-darkblue">Proceed For Delivery</button></center> --}}
             @endif
         </form>
     </div>
@@ -231,7 +231,10 @@
         let transAmt = $('#transactionAmount').val();
         let totalNetPrice = '<?php echo $totalNetPrice; ?>';
         let totalPaid = '<?php echo $totalPaid; ?>';
-        let balance = totalNetPrice - totalPaid;
+        let balance = Number(totalNetPrice) - Number(totalPaid);
+        transAmt = Number(transAmt);
+        totalNetPrice = Number(totalNetPrice);
+        totalPaid = Number(totalPaid);
 
         if (transAmt <= 0) {
             Swal.fire({

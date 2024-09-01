@@ -198,9 +198,7 @@
             @if ($leadInfo->is_won != 1)
                 @if (
                     $leadInfo->is_lost != 1 &&
-                        $leadInfo->clientInfo->assign_to == Auth()->user()->assign_to &&
-                        $leadInfo->current_stage != 'DELIVERY' &&
-                        $leadInfo->current_subStage != 'READY')
+                        ($leadInfo->clientInfo->assign_to == Auth()->user()->assign_to) && $leadInfo->sap_invoice == 0)
                     <form action=" {{ route('reDealStage') }}" method="POST">
                         @csrf
                         <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">

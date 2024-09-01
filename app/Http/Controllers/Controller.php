@@ -384,4 +384,9 @@ class Controller extends BaseController
         User::where('id', $userId)->update($insert_data);
         return back()->with('success', 'User Information Updated');
     }
+
+    public function tutorialVisual()
+    {
+        return view('videoTutorial');
+    }
 }

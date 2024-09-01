@@ -198,19 +198,19 @@
             </center>
         @endif
     </div>
-
-    <div class="container">
-        <form action="{{ route('outstandingsClearance') }}" method="POST" id="OutstandingsClearanceForm">
-            @csrf
-            <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}">
-            <label for="" class="fs-08rem">Clearance Remarks</label>
-            <textarea name="clearRemark" id="clearRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
-            @if ($leadInfo->is_outstanding == 1 && App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'accountsClearance'))
+    @if ($leadInfo->is_outstanding == 1 && App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'accountsClearance'))
+        <div class="container">
+            <form action="{{ route('outstandingsClearance') }}" method="POST" id="OutstandingsClearanceForm">
+                @csrf
+                <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}">
+                <label for="" class="fs-08rem">Clearance Remarks</label>
+                <textarea name="clearRemark" id="clearRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
                 <br>
                 <center><button class="btn btn-sm btn-darkblue">Proceed Outstanding Clearance</button></center>
-            @endif
-        </form>
-    </div>
+            </form>
+        </div>
+    @endif
+
 
 
 </div>

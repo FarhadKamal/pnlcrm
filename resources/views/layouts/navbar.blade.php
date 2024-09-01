@@ -96,6 +96,7 @@
                                     <a class="dropdown-item" href="{{ route('productEntry') }}">Product Entry</a>
                                 </li>
                             @endif
+                            <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -225,6 +226,7 @@
                             <a class="dropdown-item" href="{{ route('productEntry') }}">Product Entry</a>
                         </li>
                     @endif
+                    <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                 </ul>
             </li>
             <li class="nav-item dropdown">

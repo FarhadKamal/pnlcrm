@@ -107,6 +107,8 @@ Route::post('updateMyProfile', [Controller::class, 'updateMyProfile'])->name('up
 Route::get('productEntry', [ProductController::class, 'productForm'])->name('productEntry')->middleware('auth');
 Route::post('insertProduct', [ProductController::class, 'storeProduct'])->name('insertProduct')->middleware('auth');
 
+Route::get('tutorialVideo', [Controller::class, 'tutorialVisual'])->name('tutorialVisual')->middleware('auth');
+
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');
 Route::post('users', [AdminController::class, 'storeUser'])->name('users')->middleware('auth');

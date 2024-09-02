@@ -183,6 +183,8 @@
                                             <?= $item->delivery_pipe_dia == '2.50' ? 'selected' : '' ?>>2.50</option>
                                         <option value="4.00"
                                             <?= $item->delivery_pipe_dia == '4.00' ? 'selected' : '' ?>>4.00</option>
+                                        <option value="6.00"
+                                            <?= $item->delivery_pipe_dia == '6.00' ? 'selected' : '' ?>>6.00</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
@@ -213,6 +215,10 @@
                                         <option value="Deep Tube Well"
                                             <?= $item->source_of_water == 'Deep Tube Well' ? 'selected' : '' ?>>Deep
                                             Tube Well</option>
+                                        <option value="ETP Plant"
+                                            <?= $item->source_of_water == 'ETP Plant' ? 'selected' : '' ?>>ETP Plant
+                                        </option>
+
                                     </select>
                                 </div>
                                 <div class="col-md-6">

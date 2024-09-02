@@ -258,6 +258,7 @@
                             }
                             let itemCode = element.new_code;
                             let html = '<tr>';
+                            html += '<td class="p-1 d-none">' + element.id + '</td>';
                             html += '<td class="p-1 text-center">' + element.new_code + '</td>';
                             html += '<td class="p-1">' + element.mat_name + '</td>';
                             html += '<td class="p-1">' + element.brand + '</td>';

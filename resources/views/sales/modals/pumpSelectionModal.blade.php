@@ -53,7 +53,7 @@
                             <select name="filterSpare" id="filterSpare" class="form-select fs-07rem p-1">
                                 <option value="all">All Spare Parts</option>
                                 @foreach ($allSpareParts as $item)
-                                    <option value="{{ $item->mat_name }}">{{ $item->mat_name }}</option>
+                                    <option value="{{ $item->mat_name }}">{{ $item->new_code }}-{{ $item->mat_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -73,7 +73,7 @@
                             <select name="filterModel" id="filterModel" class="form-select fs-07rem p-1">
                                 <option value="all">All Model</option>
                                 @foreach ($allPumpModel as $item)
-                                    <option value="{{ $item->mat_name }}">{{ $item->mat_name }}</option>
+                                    <option value="{{ $item->mat_name }}">{{ $item->new_code }}-{{ $item->mat_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -105,9 +105,10 @@
                     </div>
                     {{-- Search List  --}}
                     <div class="mt-2">
-                        <table class="table fs-07rem table-bordered">
+                        <table class="table fs-07rem table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th class="p-1 text-center">SAP Code</th>
                                     <th class="p-1 text-center">Product</th>
                                     <th class="p-1 text-center">Brand</th>
                                     <th class="p-1 text-center">HP</th>
@@ -257,19 +258,19 @@
                             }
                             let itemCode = element.new_code;
                             let html = '<tr>';
-                            html += '<td class="d-none">' + element.id + '</td>';
+                            html += '<td class="p-1 text-center">' + element.new_code + '</td>';
                             html += '<td class="p-1">' + element.mat_name + '</td>';
                             html += '<td class="p-1">' + element.brand + '</td>';
-                            html += '<td class="p-1">' + element.hp + '</td>';
-                            html += '<td class="p-1">' + element.head + '</td>';
-                            html += '<td class="p-1">' + element.price + '</td>';
+                            html += '<td class="p-1 text-center">' + element.hp + '</td>';
+                            html += '<td class="p-1 text-center">' + element.head + '</td>';
+                            html += '<td class="p-1 text-end">' + element.price + '</td>';
                             if (element.stock == null) {
                                 html += '<td class="p-1 text-end totalPrice">0</td>';
                             } else {
                                 let stockURL = '<?= url('') ?>/SAPstockDetails/' + itemCode;
 
                                 html +=
-                                    '<td class="p-1 text-end totalPrice"><a href="' + stockURL +
+                                    '<td class="p-1 text-center totalPrice"><a href="' + stockURL +
                                     '" target="_blank">' +
                                     element.stock + '</a></td>';
                             }

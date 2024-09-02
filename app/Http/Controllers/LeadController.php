@@ -321,8 +321,8 @@ class LeadController extends Controller
         $data['selectedPumpList'] = PumpChoice::with('productInfo:id,mat_name,brand_name,hp,min_head,max_head')->where('lead_id', $leadId)->orderBy('id', 'ASC')->get();
         $data['allPumpHP'] = Items::distinct()->orderBy('hp', 'ASC')->get('hp');
         $data['allPumpPhase'] = Items::distinct()->orderBy('phase', 'ASC')->get('phase');
-        $data['allPumpModel'] = Items::distinct()->orderBy('mat_name', 'ASC')->get('mat_name');
-        $data['allSpareParts'] = SpareItems::distinct()->orderBy('mat_name', 'ASC')->get('mat_name');
+        $data['allPumpModel'] = Items::distinct()->orderBy('mat_name', 'ASC')->get();
+        $data['allSpareParts'] = SpareItems::distinct()->orderBy('mat_name', 'ASC')->get();
         // $data['allPumpHead'] = Items::distinct()->orderBy('head', 'ASC')->get('head');
 
         return view('sales.dealForm', $data);

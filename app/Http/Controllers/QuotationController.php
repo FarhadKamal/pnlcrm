@@ -555,6 +555,36 @@ class QuotationController extends Controller
         }
     }
 
+    public function returnToQuotationStage(Request $request){
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required|numeric',
+            'returnRemark' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with($data);
+        } else {
+            $leadId = $request->leadId;
+            $leadInfo = Lead::find($leadId);
+            $logStage = $leadInfo->current_stage;
+            $logSubStage = $leadInfo->current_subStage;
+            $leadInfo->current_stage = 'QUOTATION';
+            $leadInfo->current_subStage = 'FEEDBACK';
+            $leadInfo->accounts_clearance = 0;
+            $leadInfo->is_outstanding = 0;
+            $leadInfo->save();
+
+            $log_data = array(
+                'lead_id' => $leadId,
+                'log_stage' => $logStage,
+                'log_task' => 'Back to quotation stage. Remark: ' . $request->returnRemark,
+                'log_by' => Auth()->user()->id,
+                'log_next' => 'Quotation feedback'
+            );
+            SalesLog::create($log_data);
+            return redirect()->route('home');
+        }
+    }
 
     public function html_email($attachment, $leadEmail, $leadName, $assignEmail, $assignName, $attachmentArr, $ccEmails, $emailRemarks)
     {

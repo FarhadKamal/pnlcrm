@@ -274,7 +274,8 @@
 
         <!----------------------------Booking Column---------------- -->
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'bookingStage') ||
-                App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'bookingStageAll'))
+                App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'bookingStageAll') ||
+                App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'bookingStageTask'))
             <div class="col-sm p-1 stageColumn" id="bookingColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 stageLabel">Booking</h6>
                 <div class="stageCardListDiv">

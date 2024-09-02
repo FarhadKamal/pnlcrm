@@ -342,7 +342,7 @@
                                                     <td class='d-none'><input name='product_netPrice[]'
                                                             value='{{ $seletedItem->net_price }}'></td>
                                                     @if ($seletedItem->spare_parts == 0)
-                                                        <td class='p-1'>{{ $seletedItem['productInfo']->mat_name }}
+                                                        <td class='p-1'>{{ $seletedItem->productInfo->mat_name }}
                                                         </td>
                                                     @else
                                                         <td class="p-1">{{ $seletedItem->spareInfo->mat_name }}
@@ -350,19 +350,19 @@
                                                     @endif
                                                     @if ($seletedItem->spare_parts == 0)
                                                         <td class='p-1'>
-                                                            {{ $seletedItem['productInfo']->brand_name }}
+                                                            {{ $seletedItem->productInfo->brand_name }}
                                                         </td>
                                                     @else
                                                         <td class="p-1">{{ $seletedItem->spareInfo->brand_name }}
                                                         </td>
                                                     @endif
                                                     @if ($seletedItem->spare_parts == 0)
-                                                        <td class='p-1'>{{ $seletedItem['productInfo']->hp }}</td>
+                                                        <td class='p-1'>{{ $seletedItem->productInfo->hp }}</td>
                                                     @else
                                                         <td class="p-1"></td>
                                                     @endif
                                                     @if ($seletedItem->spare_parts == 0)
-                                                        <td class='p-1'>{{ $seletedItem['productInfo']->head }}
+                                                        <td class='p-1'>{{ $seletedItem->productInfo->head }}
                                                         </td>
                                                     @else
                                                         <td class="p-1"></td>
@@ -621,34 +621,34 @@
     function updatePrice(e) {
         var row = e.parentElement.parentElement;
         row = row.querySelectorAll("td");
-        let productUP = row[5].innerText;
-        let productQty = row[7].querySelector('input');
+        let productUP = row[6].innerText;
+        let productQty = row[8].querySelector('input');
         productQty = productQty.value;
-        let productDiscountPercentage = row[8].querySelector('input');
+        let productDiscountPercentage = row[9].querySelector('input');
         productDiscountPercentage = productDiscountPercentage.value;
         let totalPrice = (Number(productUP) * Number(productQty));
         let discountAmount = totalPrice * (Number(productDiscountPercentage) / 100);
         let productTotalPrice = totalPrice - discountAmount;
-        row[9].innerText = productTotalPrice;
+        row[10].innerText = productTotalPrice;
     }
 
     function addCart(e) {
         var row = e.parentElement;
         row = row.querySelectorAll("td");
         let productId = row[0].innerText;
-        let productName = row[1].innerText;
-        let productBrand = row[2].innerText;
-        let productHP = row[3].innerText;
-        let productHead = row[4].innerText;
-        let productUP = row[5].innerText;
-        let productQty = row[7].querySelector('input');
+        let productName = row[2].innerText;
+        let productBrand = row[3].innerText;
+        let productHP = row[4].innerText;
+        let productHead = row[5].innerText;
+        let productUP = row[6].innerText;
+        let productQty = row[8].querySelector('input');
         productQty = productQty.value;
-        let productDiscountPercentage = row[8].querySelector('input');
+        let productDiscountPercentage = row[9].querySelector('input');
         productDiscountPercentage = productDiscountPercentage.value;
         let totalPrice = (Number(productUP) * Number(productQty));
         let discountAmount = totalPrice * (Number(productDiscountPercentage) / 100);
         let productTotalPrice = totalPrice - discountAmount;
-        let spare = row[11].innerText;
+        let spare = row[12].innerText;
         if (productQty < 1) {
             Swal.fire({
                 position: 'top-end',

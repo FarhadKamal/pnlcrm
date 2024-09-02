@@ -26,6 +26,21 @@
     <div class="bg-darkblue">
         <h5 class="text-center text-white fs-5 p-3 m-0">Payment Mood: {{ $leadInfo->payment_type }}</h5>
     </div>
+    @if (count($transactionInfo) < 1)
+        <form action=" {{ route('returnQuotationStage') }}" method="POST">
+            @csrf
+            <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+            <div class="row p-2 bg-offwhite mt-2">
+                <div class="col-md-7">
+                    <label for="" class="fs-08rem">Back Stage Remarks</label>
+                    <textarea name="returnRemark" class="form-control fs-08rem p-1" cols="30" rows="3" required></textarea>
+                </div>
+                <div class="col-md-4" style="align-content: space-evenly;">
+                    <button class="btn btn-darkblue fs-07rem p-1">Back to Quotation Stage</button>
+                </div>
+            </div>
+        </form>
+    @endif
     <hr>
     <div class="row">
         @if ($leadInfo->payment_type == 'Cash')

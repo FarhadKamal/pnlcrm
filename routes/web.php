@@ -62,6 +62,8 @@ Route::get('quotationFeedback/{leadId}', [QuotationController::class, 'quotation
 Route::post('quotationAccept', [QuotationController::class, 'acceptLeadQuotation'])->name('quotationAccept')->middleware('auth');
 Route::post('quotationNotAccept', [QuotationController::class, 'notAcceptLeadQuotation'])->name('quotationNotAccept')->middleware('auth');
 
+Route::post('returnQuotationStage', [QuotationController::class, 'returnToQuotationStage'])->name('returnQuotationStage')->middleware('auth');
+
 Route::get('customerDocCheck/{leadId}', [BookingController::class, 'documentCheckForm'])->name('customerDocCheck')->middleware('auth');
 Route::post('customerDocClear', [BookingController::class, 'documentCheckClear'])->name('customerDocClear')->middleware('auth');
 Route::post('customerDocReturn', [BookingController::class, 'documentCheckReturn'])->name('customerDocReturn')->middleware('auth');

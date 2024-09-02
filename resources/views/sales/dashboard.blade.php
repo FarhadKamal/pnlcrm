@@ -67,6 +67,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-10">
+                                        <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                                         <h6 class="card-title fs-09rem">
                                             {{ $item['clientInfo']->customer_name }}
                                         </h6>
@@ -116,6 +117,7 @@
 
                                 <div class="row">
                                     <div class="col-10">
+                                        <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                                         <h6 class="card-title fs-09rem">
                                             {{ $item['clientInfo']->customer_name }}
                                         </h6>
@@ -182,6 +184,7 @@
                                 @endif
                                 <div class="row">
                                     <div class="col-10">
+                                        <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                                         <h6 class="card-title fs-09rem">
                                             {{ $item['clientInfo']->customer_name }}
                                         </h6>
@@ -299,6 +302,7 @@
                                 @endif
                                 <div class="row">
                                     <div class="col-10">
+                                        <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                                         <h6 class="card-title fs-09rem">
                                             {{ $item['clientInfo']->customer_name }}
                                         </h6>
@@ -433,6 +437,7 @@
                                 @endif
                                 <div class="row">
                                     <div class="col-10">
+                                        <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                                         <h6 class="card-title fs-09rem">
                                             {{ $item['clientInfo']->customer_name }}
                                         </h6>
@@ -517,6 +522,7 @@
                                 @endif
                                 <div class="row">
                                     <div class="col-10">
+                                        <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                                         <h6 class="card-title fs-09rem">
                                             {{ $item['clientInfo']->customer_name }}
                                         </h6>
@@ -565,6 +571,7 @@
                                 @endif
                                 <div class="row">
                                     <div class="col-10">
+                                        <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                                         <h6 class="card-title fs-09rem">
                                             {{ $item['clientInfo']->customer_name }}
                                         </h6>

@@ -154,6 +154,28 @@ class Controller extends BaseController
             $data['bookingStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->whereHas('clientInfo', function ($query) {
                 $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'bookingStageTask')) {
+            $taskStage = [];
+            if (Helper::permissionCheck(Auth()->user()->id, 'sapIDCreation')) {
+                array_push($taskStage, "SAPIDSET");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'sapCreditSet')) {
+                array_push($taskStage, "SAPCREDITSET");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction')) {
+                array_push($taskStage, "TRANSACTION");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'accountsClearance')) {
+                array_push($taskStage, "TRANSACTION");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'customerDocCheck')) {
+                array_push($taskStage, "CHECKCUSDOC");
+            }
+            $data['bookingStage'] = Lead::where('current_stage', 'BOOKING')
+                ->whereIn('current_subStage', $taskStage)
+                ->orderBy('updated_at', 'DESC')
+                ->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')
+                ->get();
         }
 
 

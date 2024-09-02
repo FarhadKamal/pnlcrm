@@ -263,8 +263,10 @@
 
                 // Net Amount Validation Start
                 data.forEach(element => {
-                    sapNetPrice = sapNetPrice + element.GTotal;
+                    sapNetPrice = Number(sapNetPrice) + Number(element.GTotal);
                 });
+                totalNetPrice = Number(totalNetPrice).toFixed(2);
+                sapNetPrice = Number(sapNetPrice).toFixed(2);
                 if (totalNetPrice == sapNetPrice) {
                     return true;
                 } else {

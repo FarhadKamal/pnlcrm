@@ -162,6 +162,9 @@ class Controller extends BaseController
             if (Helper::permissionCheck(Auth()->user()->id, 'sapCreditSet')) {
                 array_push($taskStage, "SAPCREDITSET");
             }
+            if (Helper::permissionCheck(Auth()->user()->id, 'sapCreditSet')) {
+                array_push($taskStage, "CREDITHOLD");
+            }
             if (Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction')) {
                 array_push($taskStage, "TRANSACTION");
             }

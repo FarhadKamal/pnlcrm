@@ -470,6 +470,7 @@
                                     <option value="3.00">3.00</option>
                                     <option value="2.50">2.50</option>
                                     <option value="4.00">4.00</option>
+                                    <option value="6.00">6.00</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -490,6 +491,7 @@
                                     <option value="Wasa">Wasa</option>
                                     <option value="River">River</option>
                                     <option value="Deep Tube Well">Deep Tube Well</option>
+                                    <option value="ETP Plant">ETP Plant</option>
                                 </select>
                             </div>
                             <div class="col-md-6">

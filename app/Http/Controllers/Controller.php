@@ -160,7 +160,7 @@ class Controller extends BaseController
                 array_push($taskStage, "SAPIDSET");
             }
             if (Helper::permissionCheck(Auth()->user()->id, 'sapCreditSet')) {
-                array_push($taskStage, "SAPCREDITSET");
+                array_push($taskStage, "CREDITSET");
             }
             if (Helper::permissionCheck(Auth()->user()->id, 'sapCreditSet')) {
                 array_push($taskStage, "CREDITHOLD");

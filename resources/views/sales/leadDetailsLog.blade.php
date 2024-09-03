@@ -198,7 +198,8 @@
             @if ($leadInfo->is_won != 1)
                 @if (
                     $leadInfo->is_lost != 1 &&
-                        ($leadInfo->clientInfo->assign_to == Auth()->user()->assign_to) && $leadInfo->sap_invoice == 0)
+                        $leadInfo->clientInfo->assign_to == Auth()->user()->assign_to &&
+                        $leadInfo->sap_invoice == 0)
                     <form action=" {{ route('reDealStage') }}" method="POST">
                         @csrf
                         <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
@@ -241,8 +242,11 @@
                         <td class="text-center">{{ date('d-M-Y h:i a', strtotime($item->created_at)) }}</td>
                         <td class="text-center">{{ $item->log_stage }}</td>
                         <?php
+                        $baseDatetime = new DateTime($item->created_at);
+                        $startDatetime = $baseDatetime->modify('-1 minutes')->format('Y-m-d H:i:s');
+                        $endDatetime = $baseDatetime->modify('+2 minutes')->format('Y-m-d H:i:s');
                         if ($item->log_next == 'Quotation feedback') {
-                            $checkQuotationFile = DB::select("SELECT quotation_file,is_accept,quotation_po,accept_file FROM quotations WHERE quotations.lead_id = '$leadInfo->id' AND DATE(quotations.created_at) BETWEEN DATE('$item->created_at') AND DATE('$item->created_at')");
+                            $checkQuotationFile = DB::select("SELECT quotation_file,is_accept,quotation_po,accept_file FROM quotations WHERE quotations.lead_id = '$leadInfo->id' AND DATE_FORMAT(quotations.created_at, '%Y-%m-%d %H:%i:%s') BETWEEN ('$startDatetime') AND ('$endDatetime')");
                             ?>
                         @if (isset($checkQuotationFile[0]->quotation_file))
                             <td class="text-center">{{ $item->log_task }} <a

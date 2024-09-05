@@ -210,6 +210,8 @@ class BookingController extends Controller
         }
         $data['leadId'] = $leadId;
         $data['leadInfo'] = Lead::find($leadId);
+        $customerId = $data['leadInfo']->customer_id;
+        $data['customerStageInfo'] = Lead::orderBy('created_at', 'ASC')->where(['customer_id' => $customerId, 'is_won' => 0, 'is_lost' => 0])->get();
         $data['pumpInfo'] = PumpChoice::where(['lead_id' => $leadId])->get();
         $data['transactionInfo'] = Transaction::where(['lead_id' => $leadId])->get();
         return view('sales.creditSetForm', $data);

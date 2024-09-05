@@ -189,6 +189,9 @@
                                 <li>
                                     <a class="dropdown-item" href="{{ route('myProfile') }}">My profile</a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('newDash') }}">New Dash</a>
+                                </li>
                                 {{-- <li>
                                 <a class="dropdown-item" href="#">Settings</a>
                             </li> --}}

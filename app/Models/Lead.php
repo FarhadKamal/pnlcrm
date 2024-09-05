@@ -66,4 +66,9 @@ class Lead extends Model
     {
         return $this->hasOne(User::class, 'id', 'invoice_by');
     }
+
+    public function salesLog()
+    {
+        return $this->hasMany(SalesLog::class, 'lead_id', 'id');
+    }
 }

@@ -22,7 +22,7 @@
     </center>
     <hr>
     <div class="row container-fluid">
-        <div class="col-md-5 col-sm-5">
+        <div class="col-md-6 col-sm-6">
             <h6 class="text-center"><kbd>Lead Information</kbd></h6>
             <div class="container fs-09rem">
                 <div class="row border-bottom p-1">
@@ -149,24 +149,45 @@
                 <table class="table table-bordered fs-07rem">
                     <thead>
                         <tr>
-                            <th class="p-1 fw-bold text-center">Current Stage</th>
+                            <th></th>
+                            <th class="p-1 fw-bold text-center">Lead Creation</th>
+                            <th class="p-1 fw-bold text-center">Pending Task</th>
                             <th class="p-1 fw-bold text-center">Pay Type</th>
                             <th class="p-1 fw-bold text-center">Credit Set</th>
+                            <th class="p-1 fw-bold text-center">Invoice No</th>
+                            <th class="p-1 fw-bold text-center">Invoice Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($customerStageInfo as $item)
                             <tr>
-                                <td class="p-1">{{ $item->current_stage }} ({{ $item->current_subStage }})</td>
-                                <td class="p-1">{{ $item->payment_type }}</td>
+                                <td class="p-1"><kbd>Lead Id: {{ $item->id }}</kbd></td>
+                                <td class="p-1"> {{ date('d-M-Y', strtotime($item->created_at)) }}
+                                </td>
+                                <td class="p-1">{{ $item->salesLog[count($item->salesLog) - 1]->log_next }}</td>
+                                @if ($item->payment_type)
+                                    <td class="p-1">{{ $item->payment_type }}</td>
+                                @else
+                                    <td class="p-1">N/A</td>
+                                @endif
                                 <td class="p-1">{{ $item->creditAmt }}</td>
+                                @if ($item->sap_invoice)
+                                    <td class="p-1">{{ $item->sap_invoice }}</td>
+                                @else
+                                    <td class="p-1">Pending</td>
+                                @endif
+                                @if ($item->invoice_date)
+                                    <td class="p-1">{{ date('d-M-Y', strtotime($item->invoice_date)) }}</td>
+                                @else
+                                    <td class="p-1">Pending</td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="col-md-7 col-sm-7">
+        <div class="col-md-6 col-sm-6">
 
             <h6 class="text-center"><kbd>Item & Transaction Summary</kbd></h6>
             <table class="table table-bordered fs-08rem">

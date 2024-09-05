@@ -297,6 +297,10 @@ class Controller extends BaseController
             })->get();
         }
 
+        $data['encodedQuotationStage'] = json_encode($data['quotationStage']);
+        $data['encodedBookingStage'] = json_encode($data['bookingStage']);
+        $data['encodedDeliveryStage'] = json_encode($data['deliveryStage']);
+
         return view('sales.dashboard2', $data);
     }
 

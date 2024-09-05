@@ -741,7 +741,7 @@ if (isset($_COOKIE['MobileStage'])) {
 
 <script>
     function filterQuotation(filterSelection) {
-        let allLead = JSON.parse('<?php echo $quotationStage; ?>');
+        let allLead = <?php echo $encodedQuotationStage; ?>;
         let userInfo = JSON.parse('<?php echo Auth()->user(); ?>');
         allLead.forEach(element => {
             let leadDivId = 'quotation' + element.id;
@@ -771,7 +771,7 @@ if (isset($_COOKIE['MobileStage'])) {
     }
 
     function filterBooking(filterSelection) {
-        let allLead = JSON.parse('<?php echo $bookingStage; ?>');
+        let allLead = <?php echo $encodedBookingStage; ?>;
         let userInfo = JSON.parse('<?php echo Auth()->user(); ?>');
         allLead.forEach(element => {
             let leadDivId = 'booking' + element.id;
@@ -815,7 +815,7 @@ if (isset($_COOKIE['MobileStage'])) {
     }
 
     function filterDelivery(filterSelection) {
-        let allLead = JSON.parse('<?php echo $deliveryStage; ?>');
+        let allLead = <?php echo $encodedDeliveryStage; ?>;
         let userInfo = JSON.parse('<?php echo Auth()->user(); ?>');
         allLead.forEach(element => {
             let leadDivId = 'delivery' + element.id;

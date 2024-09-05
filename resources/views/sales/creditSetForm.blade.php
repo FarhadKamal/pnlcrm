@@ -141,6 +141,30 @@
                     ?>
                 </div>
             </div>
+
+            <div class="mt-3">
+                <center>
+                    <h6>Current Customer Position</h6>
+                </center>
+                <table class="table table-bordered fs-07rem">
+                    <thead>
+                        <tr>
+                            <th class="p-1 fw-bold text-center">Current Stage</th>
+                            <th class="p-1 fw-bold text-center">Pay Type</th>
+                            <th class="p-1 fw-bold text-center">Credit Set</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($customerStageInfo as $item)
+                            <tr>
+                                <td class="p-1">{{ $item->current_stage }} ({{ $item->current_subStage }})</td>
+                                <td class="p-1">{{ $item->payment_type }}</td>
+                                <td class="p-1">{{ $item->creditAmt }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="col-md-7 col-sm-7">
 

@@ -297,14 +297,20 @@ class Controller extends BaseController
             })->get();
         }
 
-        if ($data['quotationStage']) {
+        if (isset($data['quotationStage'])) {
             $data['encodedQuotationStage'] = json_encode($data['quotationStage']);
+        } else {
+            $data['encodedQuotationStage'] = '';
         }
-        if ($data['bookingStage']) {
+        if (isset($data['bookingStage'])) {
             $data['encodedBookingStage'] = json_encode($data['bookingStage']);
+        } else {
+            $data['encodedBookingStage'] = '';
         }
-        if ($data['deliveryStage']) {
+        if (isset($data['deliveryStage'])) {
             $data['encodedDeliveryStage'] = json_encode($data['deliveryStage']);
+        } else {
+            $data['encodedDeliveryStage'] = '';
         }
 
         return view('sales.dashboard2', $data);

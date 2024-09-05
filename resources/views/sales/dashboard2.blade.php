@@ -760,6 +760,20 @@ if (isset($_COOKIE['MobileStage'])) {
                         document.getElementById(leadDivId).style.display = 'none';
                     }
                 }
+                if (element.current_subStage == 'SUBMIT') {
+                    if (element.client_info.assign_to == userInfo.assign_to) {
+                        document.getElementById(leadDivId).style.display = 'block';
+                    } else {
+                        document.getElementById(leadDivId).style.display = 'none';
+                    }
+                }
+                if (element.current_subStage == 'FEEDBACK') {
+                    if (element.client_info.assign_to == userInfo.assign_to) {
+                        document.getElementById(leadDivId).style.display = 'block';
+                    } else {
+                        document.getElementById(leadDivId).style.display = 'none';
+                    }
+                }
                 // Final Check Owner
                 if (element.client_info.assign_to == userInfo.assign_to) {
                     document.getElementById(leadDivId).style.display = 'block';

@@ -32,7 +32,8 @@ Route::get('logout', [Controller::class, 'logoutMe'])->name('logout')->middlewar
 
 // Dashboard Route 
 Route::get('home', [Controller::class, 'salesStage'])->name('home')->middleware('auth');
-Route::get('dashboard', [Controller::class, 'salesStage'])->name('dashboard')->middleware('auth');
+// Route::get('dashboard', [Controller::class, 'salesStage'])->name('dashboard')->middleware('auth');
+Route::get('dashboard', [Controller::class, 'newDash'])->name('dashboard')->middleware('auth');
 Route::get('newDash', [Controller::class, 'newDash'])->name('newDash')->middleware('auth');
 Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('guest');
 Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('auth');

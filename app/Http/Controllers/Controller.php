@@ -268,6 +268,31 @@ class Controller extends BaseController
             $data['bookingStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->whereHas('clientInfo', function ($query) {
                 $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
+        }elseif (Helper::permissionCheck(Auth()->user()->id, 'bookingStageTask')) {
+            $taskStage = [];
+            if (Helper::permissionCheck(Auth()->user()->id, 'sapIDCreation')) {
+                array_push($taskStage, "SAPIDSET");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'sapCreditSet')) {
+                array_push($taskStage, "CREDITSET");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'sapCreditSet')) {
+                array_push($taskStage, "CREDITHOLD");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction')) {
+                array_push($taskStage, "TRANSACTION");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'accountsClearance')) {
+                array_push($taskStage, "TRANSACTION");
+            }
+            if (Helper::permissionCheck(Auth()->user()->id, 'customerDocCheck')) {
+                array_push($taskStage, "CHECKCUSDOC");
+            }
+            $data['bookingStage'] = Lead::where('current_stage', 'BOOKING')
+                ->whereIn('current_subStage', $taskStage)
+                ->orderBy('updated_at', 'DESC')
+                ->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')
+                ->get();
         }
 
         // Delivery Stage
@@ -300,17 +325,17 @@ class Controller extends BaseController
         if (isset($data['quotationStage'])) {
             $data['encodedQuotationStage'] = json_encode($data['quotationStage']);
         } else {
-            $data['encodedQuotationStage'] = '';
+            $data['encodedQuotationStage'] = json_encode(['']);
         }
         if (isset($data['bookingStage'])) {
             $data['encodedBookingStage'] = json_encode($data['bookingStage']);
         } else {
-            $data['encodedBookingStage'] = '';
+            $data['encodedBookingStage'] = json_encode(['']);
         }
         if (isset($data['deliveryStage'])) {
             $data['encodedDeliveryStage'] = json_encode($data['deliveryStage']);
         } else {
-            $data['encodedDeliveryStage'] = '';
+            $data['encodedDeliveryStage'] = json_encode(['']);
         }
 
         return view('sales.dashboard2', $data);

@@ -164,8 +164,8 @@
             <div class="col-sm p-1 stageColumn" id="quotationColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 stageLabel">Quotation</h6>
                 <select id="filterQuotation" onchange="filterTaskDash('quotation')" class="form-select p-1 fs-08rem">
-                    <option value="all">all</option>
-                    <option value="task">task</option>
+                    <option value="all">View All Lead</option>
+                    <option value="task">View Pending Task</option>
                 </select>
                 <div class="stageCardListDiv">
                     @if (count($quotationStage) <= 0)
@@ -284,8 +284,8 @@
             <div class="col-sm p-1 stageColumn" id="bookingColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 stageLabel">Booking</h6>
                 <select id="filterBook" onchange="filterTaskDash('booking')" class="form-select p-1 fs-08rem">
-                    <option value="all">all</option>
-                    <option value="task">task</option>
+                    <option value="all">View All Lead</option>
+                    <option value="task">View Pending Task</option>
                 </select>
                 <div class="stageCardListDiv">
                     @if (count($bookingStage) <= 0)
@@ -431,8 +431,8 @@
             <div class="col-sm p-1 stageColumn" id="deliveryColumn">
                 <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 stageLabel">Ready To Deliver</h6>
                 <select id="filterDelivery" onchange="filterTaskDash('delivery')" class="form-select p-1 fs-08rem">
-                    <option value="all">all</option>
-                    <option value="task">task</option>
+                    <option value="all">View All Lead</option>
+                    <option value="task">View Pending Task</option>
                 </select>
                 <div class="stageCardListDiv">
                     @if (count($deliveryStage) <= 0)

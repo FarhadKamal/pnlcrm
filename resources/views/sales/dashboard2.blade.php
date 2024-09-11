@@ -51,20 +51,39 @@
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadStage') ||
                 App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadStageAll'))
             <div class="col-sm p-1 stageColumn" id="leadColumn">
-                <h6 class=" rounded  p-1 bg-secondary text-white text-center mb-3 stageLabel">Lead
-                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm'))
+                <h6 class=" rounded  p-1 bg-secondary text-white text-center mb-3 stageLabel">New Customer
+                    {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'salesPerson'))
                         <a href="{{ route('newLeadForm') }}">
                             <badge class="badge badge-info p-1 rounded-pill  fs-07rem blink">+Add New</badge>
                         </a>
-                    @endif
+                    @endif --}}
                 </h6>
+                <select id="filterLead" onchange="filterTaskDash('lead')" class="form-select p-1 fs-08rem">
+                    <option value="all">View All Lead</option>
+                    <option value="task">View Pending Task</option>
+                </select>
                 <div class="stageCardListDiv">
                     @if (count($leadStage) <= 0)
                         <p class="text-danger">No Lead Found</p>
                     @endif
                     @foreach ($leadStage as $item)
-                        <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;">
+                        <div class="shadow p-1 mb-3 bg-white rounded fs-08rem" style="width: 7 rem;"
+                            id="lead{{ $item->id }}">
                             <div class="card-body">
+                                @if ($item->current_subStage == 'EDIT')
+                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for Update &
+                                        Re-Submission</small>
+                                @endif
+                                @if ($item->current_subStage == 'CHECKCUSDOC')
+                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for Document
+                                        Check</small>
+                                @endif
+                                @if ($item->current_subStage == 'ASSIGN')
+                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for Approval</small>
+                                @endif
+                                @if ($item->current_subStage == 'SAPIDSET')
+                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for SAP ID creation</small>
+                                @endif
                                 <div class="row">
                                     <div class="col-10">
                                         <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
@@ -85,11 +104,70 @@
                                     {{ $item['source']->source_name }}</small><br>
                                 <small class="card-text mb-1"><b>Created By:</b>
                                     {{ $item['createdBy']->user_name }}</small>
-                                <div>
+                                <div class="d-none">
                                     <?php $encoded = json_encode($item); ?>
                                     <button type="button" data-mdb-toggle="modal" data-mdb-target="#newLeadModal"
                                         class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100"
                                         onclick='dataShowModal(<?= $encoded ?>)'>{{ $leadButtonLabel }}</button>
+                                </div>
+                                <div>
+                                    @if ($item->current_subStage == 'EDIT')
+                                        @if ($item->clientInfo->assign_to == Auth()->user()->assign_to)
+                                            <a href="{{ route('customerInfo', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Update
+                                                    Customer</button>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                            </a>
+                                        @endif
+                                    @endif
+                                    @if ($item->current_subStage == 'CHECKCUSDOC')
+                                        @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'customerDocCheck'))
+                                            <a href="{{ route('customerDocCheck', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Document
+                                                    Check</button>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                            </a>
+                                        @endif
+                                    @endif
+                                    @if ($item->current_subStage == 'ASSIGN')
+                                        @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadAssign'))
+                                            <?php $encoded = json_encode($item); ?>
+                                            <button type="button" data-mdb-toggle="modal"
+                                                data-mdb-target="#newLeadModal"
+                                                class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100"
+                                                onclick='dataShowModal(<?= $encoded ?>)'>Approve Customer</button>
+                                        @else
+                                            <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                            </a>
+                                        @endif
+                                    @endif
+                                    @if ($item->current_subStage == 'SAPIDSET')
+                                        @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'sapIDCreation'))
+                                            <a href="{{ route('newSapForm', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">SAP
+                                                    ID
+                                                    SET</button>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Details</button>
+                                            </a>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -103,7 +181,13 @@
         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'dealStage') ||
                 App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'dealStageAll'))
             <div class="col-sm p-1 stageColumn" id="dealColumn">
-                <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 stageLabel">Deal</h6>
+                <h6 class="rounded  p-1 bg-secondary text-white text-center mb-3 stageLabel">Deal
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'salesPerson'))
+                        <a href="{{ route('newLeadForm') }}">
+                            <badge class="badge badge-info p-1 rounded-pill  fs-07rem blink">+Add New</badge>
+                        </a>
+                    @endif
+                </h6>
                 <div class="stageCardListDiv">
                     @if (count($dealStage) <= 0)
                         <p class="text-danger">No Deal Found</p>
@@ -179,7 +263,8 @@
                                     <small class="badge badge-info blink p-1 m-0 ">Waiting for Approval</small>
                                 @endif
                                 @if ($item->current_subStage == 'MANAGEMENT')
-                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for Managing Director</small>
+                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for Managing
+                                        Director</small>
                                 @endif
                                 @if ($item->current_subStage == 'SUBMIT')
                                     <small class="badge badge-info blink p-1 m-0 ">Waiting for Submit</small>
@@ -737,9 +822,47 @@ if (isset($_COOKIE['MobileStage'])) {
     }
 </script>
 
-
-
 <script>
+    function filterLead(filterSelection) {
+        let allLead = <?php echo $encodedLeadStage; ?>;
+        let userInfo = JSON.parse('<?php echo Auth()->user(); ?>');
+        allLead.forEach(element => {
+            let leadDivId = 'lead' + element.id;
+            if (filterSelection == 'task') {
+                if (element.current_subStage == 'EDIT') {
+                    if (element.client_info.assign_to == userInfo.assign_to) {
+                        document.getElementById(leadDivId).style.display = 'block';
+                    } else {
+                        document.getElementById(leadDivId).style.display = 'none';
+                    }
+                }
+                if (element.current_subStage == 'CHECKCUSDOC') {
+                    if (@json(App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'customerDocCheck'))) {
+                        document.getElementById(leadDivId).style.display = 'block';
+                    } else {
+                        document.getElementById(leadDivId).style.display = 'none';
+                    }
+                }
+                if (element.current_subStage == 'ASSIGN') {
+                    if (@json(App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadAssign'))) {
+                        document.getElementById(leadDivId).style.display = 'block';
+                    } else {
+                        document.getElementById(leadDivId).style.display = 'none';
+                    }
+                }
+                if (element.current_subStage == 'SAPIDSET') {
+                    if (@json(App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'sapIDCreation'))) {
+                        document.getElementById(leadDivId).style.display = 'block';
+                    } else {
+                        document.getElementById(leadDivId).style.display = 'none';
+                    }
+                }
+            } else {
+                document.getElementById(leadDivId).style.display = 'block';
+            }
+        });
+    }
+
     function filterQuotation(filterSelection) {
         let allLead = <?php echo $encodedQuotationStage; ?>;
         let userInfo = JSON.parse('<?php echo Auth()->user(); ?>');
@@ -867,6 +990,10 @@ if (isset($_COOKIE['MobileStage'])) {
 
     function filterTaskDash(stage) {
         let filterSelection;
+        if (stage == 'lead') {
+            filterSelection = $('#filterLead').val();
+            filterLead(filterSelection);
+        }
         if (stage == 'quotation') {
             filterSelection = $('#filterQuotation').val();
             filterQuotation(filterSelection);

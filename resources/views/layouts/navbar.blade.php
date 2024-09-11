@@ -45,17 +45,18 @@
             </a>
 
 
-
-            <div class="navbar-toggler">
-                <ul class="navbar-nav d-flex flex-row justify-content-evenly">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('customerForm') }}"><button
-                                class="btn btn-sm create-lead-btn fs-07rem p-1"><strong>Create New
-                                    Customer</strong></button></a>
-                    </li>
-                </ul>
-            </div>
-
+            @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm'))
+                <div class="navbar-toggler">
+                    <ul class="navbar-nav d-flex flex-row justify-content-evenly">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('customerForm') }}"><button
+                                    class="btn btn-sm create-lead-btn fs-07rem p-1"><strong>Create New
+                                        Customer</strong></button></a>
+                        </li>
+                    </ul>
+                </div>
+            @endif
+            
             <button class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle navigation"
                 onclick="sidebarToggole()">
                 <i class="fas fa-bars"></i>
@@ -163,13 +164,13 @@
                 ?>
                 <div class="d-flex align-items-center">
                     <ul class="navbar-nav">
-                        {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm')) --}}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('customerForm') }}"><button
-                                    class="btn btn-sm create-lead-btn"><strong>Create New
-                                        Customer</strong></button></a>
-                        </li>
-                        {{-- @endif --}}
+                        @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadForm'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('customerForm') }}"><button
+                                        class="btn btn-sm create-lead-btn"><strong>Create New
+                                            Customer</strong></button></a>
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <p class="bg-white ps-2 pe-2 pt-1 pb-1 rounded mt-2 me-2 fs-08rem"><small>LogIn as:
                                 </small><b>

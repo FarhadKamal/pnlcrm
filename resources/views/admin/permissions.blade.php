@@ -30,13 +30,13 @@
             </form>
         </div>
         <div class="col-md-9">
-            <table class="table">
+            <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <td>SL</td>
-                        <td>Permission Name</td>
-                        <td>Permission Code</td>
-                        <td>Description</td>
+                        <td class="p-1">SL</td>
+                        <td class="p-1">Permission Name</td>
+                        <td class="p-1">Permission Code</td>
+                        <td class="p-1">Description</td>
                         {{-- <td>Action</td> --}}
                     </tr>
                 </thead>
@@ -44,10 +44,10 @@
                     <?php $sl = 1; ?>
                     @foreach ($permissions as $item)
                         <tr>
-                            <td>{{ $sl }}</td>
-                            <td>{{ $item->permission_name }}</td>
-                            <td>{{ $item->permission_code }}</td>
-                            <td>{{ $item->permission_description }}</td>
+                            <td class="p-1">{{ $sl }}</td>
+                            <td class="p-1">{{ $item->permission_name }}</td>
+                            <td class="p-1">{{ $item->permission_code }}</td>
+                            <td class="p-1">{{ $item->permission_description }}</td>
                         </tr>
                         <?php $sl++; ?>
                     @endforeach

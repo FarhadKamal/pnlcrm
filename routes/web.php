@@ -31,13 +31,19 @@ Route::get('logout', [Controller::class, 'logoutMe'])->name('logout')->middlewar
 
 
 // Dashboard Route 
-Route::get('home', [Controller::class, 'salesStage'])->name('home')->middleware('auth');
+Route::get('home', [Controller::class, 'newDash'])->name('home')->middleware('auth');
 // Route::get('dashboard', [Controller::class, 'salesStage'])->name('dashboard')->middleware('auth');
 Route::get('dashboard', [Controller::class, 'newDash'])->name('dashboard')->middleware('auth');
 Route::get('newDash', [Controller::class, 'newDash'])->name('newDash')->middleware('auth');
 Route::get('/demo', [LeadController::class, 'demo'])->name('demo')->middleware('guest');
 Route::get('/customerForm', [LeadController::class, 'customerForm'])->name('customerForm')->middleware('auth');
 Route::post('/customerForm', [LeadController::class, 'storeCustomer'])->name('customerForm')->middleware('auth');
+Route::get('newSapForm/{leadId}', [LeadController::class, 'newSapForm'])->name('newSapForm')->middleware('auth');
+Route::post('newSapInsertion', [LeadController::class, 'insertNewSapID'])->name('newSapInsertion')->middleware('auth');
+Route::get('customerDocCheck/{leadId}', [LeadController::class, 'documentCheckForm'])->name('customerDocCheck')->middleware('auth');
+Route::post('customerDocClear', [LeadController::class, 'documentCheckClear'])->name('customerDocClear')->middleware('auth');
+Route::post('customerDocReturn', [LeadController::class, 'documentCheckReturn'])->name('customerDocReturn')->middleware('auth');
+Route::post('approveCustomer', [LeadController::class, 'approveCustomer'])->name('approveCustomer')->middleware('auth');
 Route::get('/workLoadCheck', [LeadController::class, 'workLoadCheck'])->name('workLoadCheck')->middleware('auth');
 Route::post('assignLead', [LeadController::class, 'assignLeadToSales'])->name('assignLead')->middleware('auth');
 
@@ -45,6 +51,9 @@ Route::get('newLeadForm', [LeadController::class, 'leadForm'])->name('newLeadFor
 Route::post('newLeadForm', [LeadController::class, 'storeLead'])->name('newLeadForm')->middleware('auth');
 Route::get('getSingleClientInfo/{clientId}', [LeadController::class, 'getSingleClientInfo'])->name('getSingleClientInfo')->middleware('auth');
 Route::get('updateLeadEmail', [LeadController::class, 'updateLeadEmail'])->name('updateLeadEmail')->middleware('auth');
+
+Route::get('customerInfo/{leadId}', [LeadController::class, 'customerInfoIndividual'])->name('customerInfo')->middleware('auth');
+Route::post('updateCustomerInfo', [LeadController::class, 'updateCustomerInfoIndividual'])->name('updateCustomerInfo')->middleware('auth');
 
 Route::get('dealPage/{leadId}', [LeadController::class, 'dealForm'])->name('dealPage')->middleware('auth');
 Route::post('requirement', [DealController::class, 'storeRequirement'])->name('requirement')->middleware('auth');
@@ -65,11 +74,11 @@ Route::post('quotationNotAccept', [QuotationController::class, 'notAcceptLeadQuo
 
 Route::post('returnQuotationStage', [QuotationController::class, 'returnToQuotationStage'])->name('returnQuotationStage')->middleware('auth');
 
-Route::get('customerDocCheck/{leadId}', [BookingController::class, 'documentCheckForm'])->name('customerDocCheck')->middleware('auth');
-Route::post('customerDocClear', [BookingController::class, 'documentCheckClear'])->name('customerDocClear')->middleware('auth');
-Route::post('customerDocReturn', [BookingController::class, 'documentCheckReturn'])->name('customerDocReturn')->middleware('auth');
-Route::get('newSapForm/{leadId}', [BookingController::class, 'newSapForm'])->name('newSapForm')->middleware('auth');
-Route::post('newSapInsertion', [BookingController::class, 'insertNewSapID'])->name('newSapInsertion')->middleware('auth');
+// Route::get('customerDocCheck/{leadId}', [BookingController::class, 'documentCheckForm'])->name('customerDocCheck')->middleware('auth');
+// Route::post('customerDocClear', [BookingController::class, 'documentCheckClear'])->name('customerDocClear')->middleware('auth');
+// Route::post('customerDocReturn', [BookingController::class, 'documentCheckReturn'])->name('customerDocReturn')->middleware('auth');
+// Route::get('newSapForm/{leadId}', [BookingController::class, 'newSapForm'])->name('newSapForm')->middleware('auth');
+// Route::post('newSapInsertion', [BookingController::class, 'insertNewSapID'])->name('newSapInsertion')->middleware('auth');
 Route::get('creditSetForm/{leadId}', [BookingController::class, 'creditSetForm'])->name('creditSetForm')->middleware('auth');
 Route::post('creditSetInsertion', [BookingController::class, 'insertCredit'])->name('creditSetInsertion')->middleware('auth');
 Route::post('creditSetHold', [BookingController::class, 'holdCredit'])->name('creditSetHold')->middleware('auth');
@@ -111,6 +120,7 @@ Route::get('productEntry', [ProductController::class, 'productForm'])->name('pro
 Route::post('insertProduct', [ProductController::class, 'storeProduct'])->name('insertProduct')->middleware('auth');
 
 Route::get('tutorialVideo', [Controller::class, 'tutorialVisual'])->name('tutorialVisual')->middleware('auth');
+
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

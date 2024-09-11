@@ -216,15 +216,15 @@ class Controller extends BaseController
     {
         //Lead Stage 
         if (Helper::permissionCheck(Auth()->user()->id, 'leadAssign')) {
-            $data['leadStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
+            $data['leadStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,division,contact_person,contact_mobile,address,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
             $data['assignList'] = User::with('designation:id,desg_name', 'location:id,loc_name')->get();
             $data['leadButtonLabel'] = 'Assign';
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'leadStageAll')) {
-            $data['leadStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
+            $data['leadStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,division,contact_person,contact_mobile,address,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LEAD')->get();
             $data['assignList'] = User::with('designation:id,desg_name', 'location:id,loc_name')->get();
             $data['leadButtonLabel'] = 'Details';
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'leadStage')) {
-            $data['leadStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile', 'source:id,source_name', 'createdBy:id,user_name')->where(['current_stage' => 'LEAD', 'created_by' => Auth()->user()->id])->get();
+            $data['leadStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,division,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where(['current_stage' => 'LEAD', 'created_by' => Auth()->user()->id])->get();
             $data['leadButtonLabel'] = 'Details';
         }
 
@@ -320,6 +320,12 @@ class Controller extends BaseController
             $data['lostStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'LOST')->whereHas('clientInfo', function ($query) {
                 $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
+        }
+
+        if(isset($data['leadStage'])){
+            $data['encodedLeadStage'] = json_encode($data['leadStage']); 
+        }else{
+            $data['encodedLeadStage'] = json_encode(['']);
         }
 
         if (isset($data['quotationStage'])) {

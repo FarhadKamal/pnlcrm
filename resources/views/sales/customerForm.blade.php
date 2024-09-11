@@ -19,7 +19,7 @@
         <h4 class="mt-3">New Client Insertion Form</h4>
     </center>
     <hr>
-    <form action="{{ route('customerForm') }}" method="POST">
+    <form action="{{ route('customerForm') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-3">
@@ -93,7 +93,7 @@
                 </select> --}}
             </div>
             <div class="col-md-3"></div>
-            <div class="col-md-3 d-none">
+            <div class="col-md-3">
                 <label class="form-label">
                     TIN
                 </label>
@@ -102,25 +102,27 @@
                 {{-- <input type="text" class="form-control fs-08rem" name="clientTIN" id="clientTIN"
                     @if (session('errorsData')) value="{{ session('errorsData')['clientTIN'] }}" @endif> --}}
             </div>
-            <div class="col-md-3 d-none">
+            <div class="col-md-3">
                 <label class="form-label">
-                    BIN
+                    BIN <span class="text-danger">*</span>
                 </label>
                 <input name="customerBIN" id="customerBIN" type="file"
-                    accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx" class="form-control lh-sm fs-08rem">
+                    accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx" class="form-control lh-sm fs-08rem"
+                    required>
                 {{-- <input type="text" class="form-control fs-08rem" name="clientBIN" id="clientBIN"
                     @if (session('errorsData')) value="{{ session('errorsData')['clientBIN'] }}" @endif> --}}
             </div>
-            <div class="col-md-3 d-none">
+            <div class="col-md-3">
                 <label class="form-label">
-                    Trade License
+                    Trade License <span class="text-danger">*</span>
                 </label>
                 <input name="customerTL" id="customerTL" type="file"
-                    accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx" class="form-control lh-sm fs-08rem">
+                    accept="image/png, image/jpeg, image/jpg, .pdf, .doc,.docx" class="form-control lh-sm fs-08rem"
+                    required>
                 {{-- <input type="text" class="form-control fs-08rem" name="clientTL" id="clientTL"
                     @if (session('errorsData')) value="{{ session('errorsData')['clientTL'] }}" @endif> --}}
             </div>
-            <div class="col-md-3 d-none"></div>
+            <div class="col-md-3"></div>
             <div class="col-md-3">
                 <label class="form-label">
                     Contact Person <span class="text-danger">*</span>
@@ -139,10 +141,11 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label">
-                    Contact Email
+                    Contact Email <span class="text-danger">*</span>
                 </label>
                 <input type="text" class="form-control fs-08rem" name="contactEmail" id="contactEmail"
-                    @if (session('errorsData')) value="{{ session('errorsData')['contactEmail'] }}" @endif>
+                    @if (session('errorsData')) value="{{ session('errorsData')['contactEmail'] }}" @endif
+                    required>
             </div>
             <div class="col-md-3"></div>
             <div class="col-md-3">

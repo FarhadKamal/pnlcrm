@@ -44,10 +44,10 @@
 
                     </div>
                     <div class="col-md-7">
-                        <div class="row border-bottom p-1">
+                        {{-- <div class="row border-bottom p-1">
                             <p class="col-4 col-md-4 text-muted m-0">Zone</p>
                             <small class="col-8 col-md-8" id="leadModalZone"></small>
-                        </div>
+                        </div> --}}
                         <div class="row border-bottom p-1">
                             <p class="col-4 col-md-4 text-muted m-0">District</p>
                             <small class="col-8 col-md-8" id="leadModalDistrict"></small>
@@ -72,7 +72,7 @@
                 </div>
 
                 @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'leadAssign'))
-                    <div class="mt-3">
+                    <div class="mt-3 d-none">
                         <center>
                             <h6>LEAD ASSIGN</h6>
                         </center>
@@ -97,6 +97,15 @@
                         </form>
                     </div>
                 @endif
+
+                <div class="mt-2">
+                    <form action="{{ route('approveCustomer') }}" method="POST">
+                        @csrf
+                        <input type="text" name="leadApproveModal_leadId" id="leadApproveModal_leadId" hidden>
+                        <center><button class="btn btn-sm btn-darkblue">Customer Approved</button></center>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>
@@ -104,16 +113,17 @@
 
 <script>
     function dataShowModal(data) {
-        console.log(data);
+        // console.log(data);
         $('#leadModal_leadId').val(data.id);
+        $('#leadApproveModal_leadId').val(data.id);
         $('#leadModalCompany').html(data.client_info['customer_name']);
         $('#leadModalGroup').html(data.client_info['group_name']);
-        // $('#leadModalAddress').html('Pahartoli');
+        $('#leadModalAddress').html(data.client_info['address']);
         $('#leadModalPerson').html(data.client_info['contact_person']);
         $('#leadModalPhone').html(data.client_info['contact_mobile']);
         // $('#leadModalZone').html('Pahartoli');
         $('#leadModalDistrict').html(data.client_info['district']);
-        // $('#leadModalDivision').html('Chattogram');
+        $('#leadModalDivision').html(data.client_info['division']);
         $('#leadModalSource').html(data.source['source_name']);
         $('#leadModalPR').html(data.product_requirement);
         $('#leadModalCreatedBy').html(data.created_by['user_name']);
@@ -125,9 +135,9 @@
         let editDiv = document.getElementById('leadEditLink');
         let domain = window.location.origin;
         const aTag = document.createElement("a");
-        aTag.href = domain + '/leadEdit/' + leadId;
+        aTag.href = domain + '/detailsLog/' + leadId;
         let btn = document.createElement('button');
-        btn.innerText = "Edit";
+        btn.innerText = "Details";
         btn.classList = "btn btn-sm btn-darkblue fs-06rem p-1";
         aTag.appendChild(btn);
         editDiv.appendChild(aTag);

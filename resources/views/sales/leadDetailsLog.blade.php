@@ -213,6 +213,27 @@
                             </div>
                         </div>
                     </form>
+
+                    {{-- <form action="">
+                        @csrf
+                        <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+                        <div style="background-color: #D8E3F4" class="row p-2 mt-2">
+                            <center>
+                                <kbd>Store Any Important Document For The Lead</kbd>
+                            </center>
+                            <div class="col-md-4">
+                                <label for="" class="fs-08rem">Upload Attachment</label>
+                                <input type="file" class="form-control fs-07rem p-1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="" class="fs-08rem">Attachment Name</label>
+                                <input type="text" class="form-control fs-07rem p-1">
+                            </div>
+                            <div class="col-md-4" style="align-content: space-evenly;">
+                                <button class="btn btn-darkblue fs-07rem p-1">Store File</button>
+                            </div>
+                        </div>
+                    </form> --}}
                 @endif
             @endif
         </div>

@@ -363,6 +363,7 @@ class BookingController extends Controller
                 $destinationPath = 'leadQuotationAcceptAttachment/';
                 $poFileUpdate->move($destinationPath, $poFileUpdateName);
                 $quotationInfo->accept_file = $poFileUpdateName;
+                $quotationInfo->save();
             }
             $leadInfo->current_subStage = 'CREDITSET';
             $customerName = $leadInfo->clientInfo->customer_name;

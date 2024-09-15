@@ -13,7 +13,7 @@
 <div class="container mt-2 mb-3">
     <h6 class="text-center">New Product Entry Form</h6>
     <div class="bg-offwhite p-2">
-        <form action="{{ route('insertProduct') }}" method="POST">
+        <form action="{{ route('insertProduct') }}" method="POST" id="productInsertionForm">
             @csrf
             <div class="row">
                 <div class="col-md-3">
@@ -81,29 +81,29 @@
                     <label class="form-label fs-08rem">
                         Pump KW <span class="text-danger">*</span>
                     </label>
-                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01" class="form-control fs-08rem" name="kw" id="kw"
-                        required>
+                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01"
+                        class="form-control fs-08rem" name="kw" id="kw" required>
                 </div>
                 <div class="col-md-3 itemTab">
                     <label class="form-label fs-08rem">
                         Pump HP <span class="text-danger">*</span>
                     </label>
-                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01" class="form-control fs-08rem" name="hp" id="hp"
-                        required>
+                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01"
+                        class="form-control fs-08rem" name="hp" id="hp" required>
                 </div>
                 <div class="col-md-3 itemTab">
                     <label class="form-label fs-08rem">
                         Pump Suction Dia <span class="text-danger">*</span>
                     </label>
-                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01" class="form-control fs-08rem" name="suctionDia" id="suctionDia"
-                        required>
+                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01"
+                        class="form-control fs-08rem" name="suctionDia" id="suctionDia" required>
                 </div>
                 <div class="col-md-3 itemTab">
                     <label class="form-label fs-08rem">
                         Pump Delivery Dia <span class="text-danger">*</span>
                     </label>
-                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01" class="form-control fs-08rem" name="deliveryDia"
-                        id="deliveryDia" required>
+                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01"
+                        class="form-control fs-08rem" name="deliveryDia" id="deliveryDia" required>
                 </div>
                 <div class="col-md-3 itemTab">
                     <label class="form-label fs-08rem">
@@ -197,4 +197,67 @@
             });
         }
     }
+
+    $('#productInsertionForm').submit(async function(e, params) {
+        var localParams = params || {};
+
+        if (!localParams.send) {
+            e.preventDefault();
+        }
+
+        let inputSAP = $('#prSAPID').val();
+        let inputType = $('#prType').val();
+        let filterData = {
+            inputSAP: inputSAP,
+            inputType: inputType
+        };
+        const csrfToken = '<?php echo csrf_token(); ?>';
+        try {
+            let response = await fetch('/checkSAPNewProduct', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify(filterData)
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            let json = await response.json();
+            let data = json.status;
+
+            // Duplicacy Check in the CRM Start
+            let isDuplicate = json.isDuplicate;
+            if (isDuplicate && isDuplicate.length > 0) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    text: "The product sap id " + inputSAP + " is already exist in the CRM",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                return false;
+            }
+            // Duplicacy Check in the CRM End
+
+            if (data) {
+                $('#productInsertionForm').off('submit').submit();
+            } else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: "Product SAP id not found in SAP",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                return false;
+            }
+
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            return false;
+        }
+    });
 </script>

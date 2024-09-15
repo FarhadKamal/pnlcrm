@@ -104,4 +104,27 @@ class ProductController extends Controller
             }
         }
     }
+
+    public function validateSAPNewProduct(Request $request)
+    {
+        $data = $request->json()->all();
+        $inputSAP = $data['inputSAP'];
+        $inputType = $data['inputType'];
+
+        // Duplicacy Check in the CRM 
+        if ($inputType == 'Spare Parts') {
+            $duplicate = SpareItems::where(['new_code' => $inputSAP])->get();
+        } else {
+            $duplicate = Items::where(['new_code' => $inputSAP])->get();
+        }
+        $url2 = 'http://192.168.1.226:8989/api/verify_product.php?item_code=' . $inputSAP;
+        $getProductInfo = json_decode(file_get_contents($url2));
+
+        $response = [
+            'status' => $getProductInfo,
+            'isDuplicate' => $duplicate
+        ];
+
+        return response()->json($response);
+    }
 }

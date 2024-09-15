@@ -117,6 +117,7 @@ Route::post('updateMyProfile', [Controller::class, 'updateMyProfile'])->name('up
 
 
 Route::get('productEntry', [ProductController::class, 'productForm'])->name('productEntry')->middleware('auth');
+Route::post('checkSAPNewProduct', [ProductController::class, 'validateSAPNewProduct'])->name('checkSAPNewProduct')->middleware('auth');
 Route::post('insertProduct', [ProductController::class, 'storeProduct'])->name('insertProduct')->middleware('auth');
 
 Route::get('tutorialVideo', [Controller::class, 'tutorialVisual'])->name('tutorialVisual')->middleware('auth');

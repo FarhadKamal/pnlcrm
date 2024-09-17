@@ -178,21 +178,23 @@ class QuotationController extends Controller
             foreach ($assignedUsersEmail as $email) {
                 $assignEmail = $email->user_email;
                 $assignName = $email->user_name;
-                Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
                     $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Waiting for Managing Director approval.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal for the customer ' . $customerName . ' is approved. Waiting for Managing Director approval.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
             }
         } else {
             $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+            $domainName = URL::to('/');
+            $leadURL = $domainName . '/quotationCheck/' . $lead_id;
             foreach ($assignedUsersEmail as $email) {
                 $assignEmail = $email->user_email;
                 $assignName = $email->user_name;
-                Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+                Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
                     $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
                     $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                    $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal for the customer ' . $customerName . ' is approved. <br> Please <a href="' . $leadURL . '">CLICK HERE</a> to submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                 });
             }
         }
@@ -236,16 +238,19 @@ class QuotationController extends Controller
         $leadInfo = Lead::find($lead_id);
         $leadInfo->need_top_approval = 2;
         $leadInfo->current_subStage = 'SUBMIT';
+        $customerName = $leadInfo->clientInfo->customer_name;
         $leadInfo->save();
 
         $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+        $domainName = URL::to('/');
+        $leadURL = $domainName . '/quotationCheck/' . $lead_id;
         foreach ($assignedUsersEmail as $email) {
             $assignEmail = $email->user_email;
             $assignName = $email->user_name;
-            Mail::send([], [], function ($message) use ($assignEmail, $assignName) {
+            Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
                 $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
                 $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal is approved by the top managment. Please submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal for the customer ' . $customerName . ' is approved by the top managment.<br> Please <a href="' . $leadURL . '">CLICK HERE</a> to submit the quotation to the customer.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
             });
         }
 
@@ -555,7 +560,8 @@ class QuotationController extends Controller
         }
     }
 
-    public function returnToQuotationStage(Request $request){
+    public function returnToQuotationStage(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'leadId' => 'required|numeric',
             'returnRemark' => 'required',

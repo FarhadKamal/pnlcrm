@@ -172,7 +172,7 @@
 
                     <div class="row">
                         <div class="col-md-8">
-                            <form action="{{ route('reSubmitToCredit') }}" method="POST">
+                            <form action="{{ route('reSubmitToCredit') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
                                 <div class="row">

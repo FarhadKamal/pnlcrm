@@ -35,7 +35,7 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar"
-        style="background-color: #0B2E41;position: fixed;width: -webkit-fill-available;top: 0;">
+        style="background-color: #0B2E41;position: fixed;width: -webkit-fill-available;top: 0;width: -moz-available;">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Navbar brand -->

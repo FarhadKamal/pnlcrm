@@ -368,12 +368,16 @@ class BookingController extends Controller
             $leadInfo = Lead::find($request->leadId);
             if ($request->file('poFileUpdate')) {
                 $quotationInfo = Quotation::orderBy('id', 'desc')->take(1)->where(['lead_id' => $request->leadId, 'is_accept' => 1])->get();
+                foreach($quotationInfo as $item){
+                    $quotationId = $item->id;
+                }
                 $poFileUpdate = $request->file('poFileUpdate');
                 $poFileUpdateName = time() . "." . $poFileUpdate->getClientOriginalExtension();
                 $destinationPath = 'leadQuotationAcceptAttachment/';
                 $poFileUpdate->move($destinationPath, $poFileUpdateName);
-                $quotationInfo->accept_file = $poFileUpdateName;
-                $quotationInfo->save();
+                $quotationInfoUpdate = Quotation::find($quotationId);
+                $quotationInfoUpdate->accept_file = $poFileUpdateName;
+                $quotationInfoUpdate->save();
             }
             $leadInfo->current_subStage = 'CREDITSET';
             $customerName = $leadInfo->clientInfo->customer_name;

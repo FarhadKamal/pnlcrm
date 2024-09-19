@@ -19,7 +19,7 @@
 
 @if (isset($reportData) && count($reportData) > 0)
     <div class="m-2">
-        <table class="table table-bordered fs-07rem">
+        <table class="table table-bordered fs-06rem">
             <thead>
                 <tr>
                     <td class="p-1 text-center">Invoice Number</td>
@@ -46,15 +46,15 @@
                 @foreach ($reportData as $item)
                     @php
                         $totalPrice = $item->unit_price * $item->qty;
-                        $totalTradeDiscount = $totalPrice * $totalPrice;
-                        $specialDiscount = $item->discount_price - $totalTradeDiscount;
-                        $specialDiscountPer = $item->discount_percentage - $item->trade_discount;
+                        $totalTradeDiscount = $totalPrice * ($item->trade_discount / 100);
+                        $specialDiscount = max($item->discount_price - $totalTradeDiscount, 0);
+                        $specialDiscountPer = max($item->discount_percentage - $item->trade_discount, 0);
                         if ($item->spare_parts == 0) {
                             $type = 'Spare Parts';
                         } else {
                             $type = 'Items';
                         }
-                        
+
                     @endphp
                     <tr>
                         <td class="p-1 text-center">{{ $item->sap_invoice }}</td>
@@ -68,12 +68,12 @@
                         <td class="p-1">{{ $item->mat_name }}</td>
                         <td class="p-1">{{ $item->unit_price }}</td>
                         <td class="p-1 text-center">{{ $item->qty }}</td>
-                        <td class="p-1 text-end">{{ $totalPrice }}</td>
-                        <td class="p-1 text-end">{{ $item->discount_price }}</td>
+                        <td class="p-1 text-end">{{ number_format((float) $totalPrice, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end">{{ number_format((float) $item->discount_price, 2, '.', ',') }}</td>
                         <td class="p-1 text-center">{{ $item->discount_percentage }}</td>
-                        <td class="p-1 text-end">{{ $totalTradeDiscount }}</td>
+                        <td class="p-1 text-end">{{ number_format((float) $totalTradeDiscount, 2, '.', ',') }}</td>
                         <td class="p-1 text-center">{{ $item->trade_discount }}</td>
-                        <td class="p-1 text-end">{{ $specialDiscount }}</td>
+                        <td class="p-1 text-end">{{ number_format((float) $specialDiscount, 2, '.', ',') }}</td>
                         <td class="p-1 text-center">{{ $specialDiscountPer }}</td>
                     </tr>
                 @endforeach

@@ -28,6 +28,9 @@
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.16/dist/sweetalert2.min.css" rel="stylesheet">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
 <body>
@@ -56,7 +59,7 @@
                     </ul>
                 </div>
             @endif
-            
+
             <button class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle navigation"
                 onclick="sidebarToggole()">
                 <i class="fas fa-bars"></i>
@@ -100,9 +103,9 @@
                             <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
-                            role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('reportList') }}" id="navbarDropdownMenuLink"
+                            role="button" aria-expanded="false">
                             Reports
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
@@ -233,9 +236,9 @@
                     <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                 </ul>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                    data-mdb-toggle="dropdown" aria-expanded="false">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('reportList') }}" id="navbarDropdownMenuLink" role="button"
+                    aria-expanded="false">
                     Reports
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">

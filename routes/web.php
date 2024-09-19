@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\QuotationController;
+use App\Http\Controllers\ReportController;
 use Faker\Guesser\Name;
 
 /*
@@ -122,6 +123,9 @@ Route::post('insertProduct', [ProductController::class, 'storeProduct'])->name('
 
 Route::get('tutorialVideo', [Controller::class, 'tutorialVisual'])->name('tutorialVisual')->middleware('auth');
 
+Route::get('reportList', [ReportController::class, 'reportListPage'])->name('reportList')->middleware('auth');
+Route::get('discountReport', [ReportController::class, 'discountReport'])->name('discountReport')->middleware('auth');
+Route::post('discountReport', [ReportController::class, 'discountReportPull'])->name('discountReport')->middleware('auth');
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

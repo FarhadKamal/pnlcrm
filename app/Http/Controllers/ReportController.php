@@ -42,13 +42,13 @@ class ReportController extends Controller
             if ($userId == 'all') {
                 $userCond = '';
             } else {
-                $userCond = 'AND users.id = ' . $userId . '';
+                $userCond = ' AND users.id = ' . $userId . '';
             }
 
             if ($request->brand == 'all') {
                 $brandCond = '';
             } else {
-                $brandCond = 'AND brand_discounts.brand_name = "' . $request->brand . '"';
+                $brandCond = ' AND brand_discounts.brand_name = "' . $request->brand . '"';
             }
 
 

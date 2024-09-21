@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BrandDiscount;
 use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,9 @@ class ReportController extends Controller
 
     public function discountReport()
     {
-        return view('reports.discountReport');
+        $data['salesPersons'] = User::get();
+        $data['brands'] = BrandDiscount::get();
+        return view('reports.discountReport', $data);
     }
 
     public function discountReportPull(Request $request)
@@ -35,6 +38,20 @@ class ReportController extends Controller
             $data['errors'] = $validator->errors()->all();
             return back()->with('errorsData', $data);
         } else {
+            $userId = $request->userId;
+            if ($userId == 'all') {
+                $userCond = '';
+            } else {
+                $userCond = 'AND users.id = ' . $userId . '';
+            }
+
+            if ($request->brand == 'all') {
+                $brandCond = '';
+            } else {
+                $brandCond = 'AND brand_discounts.brand_name = "' . $request->brand . '"';
+            }
+
+
             if (strpos($request->invoiceDateFilter, 'to') !== false) {
                 list($startDateStr, $endDateStr) = explode(" to ", $request->invoiceDateFilter);
                 $startDate = date('Y-m-d', strtotime($startDateStr));
@@ -43,6 +60,9 @@ class ReportController extends Controller
                 $startDate = date('Y-m-d', strtotime($request->invoiceDateFilter));
                 $endDate = date('Y-m-d', strtotime($request->invoiceDateFilter));
             }
+
+            $data['fromDate'] = $startDate;
+            $data['toDate'] = $endDate;
 
             $data['reportData'] = DB::select('SELECT 
                                     leads.sap_invoice, 
@@ -69,8 +89,11 @@ class ReportController extends Controller
                                     LEFT JOIN spare_items ON spare_items.id = pump_choices.product_id AND pump_choices.spare_parts = 1
                                     INNER JOIN brand_discounts ON brand_discounts.brand_name=COALESCE(items.brand_name, spare_items.brand_name)
                                     INNER JOIN users ON users.assign_to = customers.assign_to
-                                    WHERE leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ');
+                                    WHERE leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . '' . $brandCond . '
+                                    ORDER BY leads.sap_invoice ASC');
 
+            $data['salesPersons'] = User::get();
+            $data['brands'] = BrandDiscount::get();
             return view('reports.discountReport', $data);
         }
     }

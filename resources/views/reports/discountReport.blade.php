@@ -70,11 +70,11 @@
                         <td class="p-1 text-center">{{ $item->qty }}</td>
                         <td class="p-1 text-end">{{ number_format((float) $totalPrice, 2, '.', ',') }}</td>
                         <td class="p-1 text-end">{{ number_format((float) $item->discount_price, 2, '.', ',') }}</td>
-                        <td class="p-1 text-center">{{ $item->discount_percentage }}</td>
+                        <td class="p-1 text-center">{{ $item->discount_percentage }}%</td>
                         <td class="p-1 text-end">{{ number_format((float) $totalTradeDiscount, 2, '.', ',') }}</td>
-                        <td class="p-1 text-center">{{ $item->trade_discount }}</td>
+                        <td class="p-1 text-center">{{ $item->trade_discount }}%</td>
                         <td class="p-1 text-end">{{ number_format((float) $specialDiscount, 2, '.', ',') }}</td>
-                        <td class="p-1 text-center">{{ $specialDiscountPer }}</td>
+                        <td class="p-1 text-center">{{ $specialDiscountPer }}%</td>
                     </tr>
                 @endforeach
             </tbody>

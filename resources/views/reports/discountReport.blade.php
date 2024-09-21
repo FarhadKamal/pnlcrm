@@ -141,9 +141,9 @@
                             $specialDiscount = max($item->discount_price - $totalTradeDiscount, 0);
                             $specialDiscountPer = max($item->discount_percentage - $item->trade_discount, 0);
                             if ($item->spare_parts == 0) {
-                                $type = 'Spare Parts';
-                            } else {
                                 $type = 'Items';
+                            } else {
+                                $type = 'Spare Parts';
                             }
 
                         @endphp

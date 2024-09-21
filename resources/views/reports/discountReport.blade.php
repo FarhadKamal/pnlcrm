@@ -80,7 +80,8 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="" class="form-label fs-07rem">Invoice Date Range <span class="text-danger">*</span></label>
+                <label for="" class="form-label fs-07rem">Invoice Date Range <span
+                        class="text-danger">*</span></label>
                 <input type="text" name="invoiceDateFilter" class="flatpickr form-control  fs-07rem p-1" required>
             </div>
             <div class="col-md-3">
@@ -104,10 +105,10 @@
             <table class="table table-bordered fs-06rem table-hover">
                 <thead class="thead">
                     <tr>
-                        <td colspan="18" class="p-1 text-center">PNL Holdings Limited - Discount Report</td>
+                        <td colspan="19" class="p-1 text-center">PNL Holdings Limited - Discount Report</td>
                     </tr>
                     <tr>
-                        <td colspan="18" class="p-1 text-center">Invoice Date From:
+                        <td colspan="19" class="p-1 text-center">Invoice Date From:
                             {{ date('d-M-Y', strtotime($fromDate)) }}
                             To:
                             {{ date('d-M-Y', strtotime($toDate)) }}</td>
@@ -131,6 +132,7 @@
                         <td class="p-1 text-center">Trade Discount (%)</td>
                         <td class="p-1 text-center">Special Discount</td>
                         <td class="p-1 text-center">Special Discount (%)</td>
+                        <td class="p-1 text-center">Net Price</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -145,7 +147,7 @@
                             } else {
                                 $type = 'Spare Parts';
                             }
-
+                            $netPrice = $totalPrice - $item->discount_price;
                         @endphp
                         <tr>
                             <td class="p-1 text-center">{{ $item->sap_invoice }}</td>
@@ -167,6 +169,7 @@
                             <td class="p-1 text-center">{{ $item->trade_discount }}%</td>
                             <td class="p-1 text-end">{{ number_format((float) $specialDiscount, 2, '.', ',') }}</td>
                             <td class="p-1 text-center">{{ $specialDiscountPer }}%</td>
+                            <td class="p-1 text-end">{{ number_format((float) $netPrice, 2, '.', ',') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

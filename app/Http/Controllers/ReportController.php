@@ -170,13 +170,13 @@ class ReportController extends Controller
 
             // Now Divide the net due into different interval 
             foreach ($data['reportData'] as $item) {
-
-                $dueWithin30 = $this->dueIntervalCalculation($filterDate, 0, 30);
-                $dueWithin31_60 = $this->dueIntervalCalculation($filterDate, 30, 60);
-                $dueWithin61_90 = $this->dueIntervalCalculation($filterDate, 60, 90);
-                $dueWithin91_180 = $this->dueIntervalCalculation($filterDate, 90, 180);
-                $dueWithin180plus = $this->dueIntervalCalculation($filterDate, 180, 0);
-                $dueWithin365plus = $this->dueIntervalCalculation($filterDate, 365, 0);
+                $customerSAPID =  $item->sap_id;
+                $dueWithin30 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 0, 30);
+                $dueWithin31_60 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 30, 60);
+                $dueWithin61_90 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 60, 90);
+                $dueWithin91_180 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 90, 180);
+                $dueWithin180plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 180, 0);
+                $dueWithin365plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 365, 0);
 
 
                 // $dueWithin30 = $this->dueWithin30($filterDate);
@@ -539,7 +539,7 @@ class ReportController extends Controller
         return $data;
     }
 
-    public function dueIntervalCalculation($filterDate, $firstDate, $lastDate)
+    public function dueIntervalCalculation($customerSAPID, $filterDate, $firstDate, $lastDate)
     {
         if ($firstDate != 0 && $lastDate != 0) {
             $dateCond = 'DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL ' . $firstDate . ' DAY AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL ' . $lastDate . ' DAY';
@@ -599,6 +599,7 @@ class ReportController extends Controller
         WHERE 
             leads.is_outstanding = 1 
             AND ' . $dateCond . '
+            AND customers.sap_id = '.$customerSAPID.'
         GROUP BY 
             customers.id, users.user_name, users.assign_to
         ORDER BY 

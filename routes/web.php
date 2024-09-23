@@ -126,6 +126,8 @@ Route::get('tutorialVideo', [Controller::class, 'tutorialVisual'])->name('tutori
 Route::get('reportList', [ReportController::class, 'reportListPage'])->name('reportList')->middleware('auth');
 Route::get('discountReport', [ReportController::class, 'discountReport'])->name('discountReport')->middleware('auth');
 Route::post('discountReport', [ReportController::class, 'discountReportPull'])->name('discountReport')->middleware('auth');
+Route::get('outstandingReport', [ReportController::class, 'outstandingReport'])->name('outstandingReport')->middleware('auth');
+Route::post('outstandingReport', [ReportController::class, 'outstandingReportPull'])->name('outstandingReport')->middleware('auth');
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

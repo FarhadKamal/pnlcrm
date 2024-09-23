@@ -19,5 +19,13 @@
                 </a>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="container reportCard">
+                <a href="{{ route('outstandingReport') }}" target="_blank" class="text-dark">
+                    <h6>Outstanding Report</h6>
+                </a>
+            </div>
+        </div>
+        
     </div>
 </div>

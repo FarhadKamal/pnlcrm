@@ -97,4 +97,513 @@ class ReportController extends Controller
             return view('reports.discountReport', $data);
         }
     }
+
+    public function outstandingReport()
+    {
+        $data['salesPersons'] = User::get();
+        return view('reports.outstandingReport', $data);
+    }
+
+    public function outstandingReportPull(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'filterDate' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        } else {
+            $filterDate = date('Y-m-d', strtotime($request->filterDate));
+            $data['reportData'] = DB::select('SELECT 
+                            customers.sap_id, 
+                            customers.customer_name, 
+                            users.user_name,
+                            users.assign_to,
+                            COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+                            COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+                            COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+                            FROM 
+                                customers
+                            INNER JOIN 
+                                users ON users.assign_to = customers.assign_to
+                            INNER JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(pump_choices.net_price) AS total_net_price
+                                FROM 
+                                    leads
+                                INNER JOIN 
+                                    pump_choices ON pump_choices.lead_id = leads.id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS pump_totals ON pump_totals.customer_id = customers.id
+                            LEFT JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(transactions.pay_amount) AS total_verified_paid
+                                FROM 
+                                    transactions
+                                INNER JOIN 
+                                    leads ON leads.id = transactions.lead_id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
+                                    AND transactions.is_verified = 1
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS transactions ON transactions.customer_id = customers.id 
+                            LEFT JOIN 
+                                leads ON leads.customer_id = customers.id
+                            LEFT JOIN 
+                                pump_choices ON pump_choices.lead_id = leads.id 
+                            WHERE 
+                                leads.is_outstanding = 1 
+                                AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
+                            GROUP BY 
+                                customers.id, users.user_name, users.assign_to
+                            ORDER BY 
+                                users.assign_to ASC, totalNetPrice DESC');
+
+            // Now Divide the net due into different interval 
+            foreach ($data['reportData'] as $item) {
+
+                $dueWithin30 = $this->dueIntervalCalculation($filterDate, 0, 30);
+                $dueWithin31_60 = $this->dueIntervalCalculation($filterDate, 30, 60);
+                $dueWithin61_90 = $this->dueIntervalCalculation($filterDate, 60, 90);
+                $dueWithin91_180 = $this->dueIntervalCalculation($filterDate, 90, 180);
+                $dueWithin180plus = $this->dueIntervalCalculation($filterDate, 180, 0);
+                $dueWithin365plus = $this->dueIntervalCalculation($filterDate, 365, 0);
+
+
+                // $dueWithin30 = $this->dueWithin30($filterDate);
+                $item->dueWithin30 = $dueWithin30[0]->netDue ?? 0;
+                // $dueWithin31_60 = $this->dueWithin31_60($filterDate);
+                $item->dueWithin31_60 = $dueWithin31_60[0]->netDue ?? 0;
+                // $dueWithin61_90 = $this->dueWithin61_90($filterDate);
+                $item->dueWithin61_90 = $dueWithin61_90[0]->netDue ?? 0;
+                // $dueWithin91_180 = $this->dueWithin91_180($filterDate);
+                $item->dueWithin91_180 = $dueWithin91_180[0]->netDue ?? 0;
+                // $dueWithin180plus = $this->dueWithin180plus($filterDate);
+                $item->dueWithin180plus = $dueWithin180plus[0]->netDue ?? 0;
+                // $dueWithin365plus = $this->dueWithin365plus($filterDate);
+                $item->dueWithin365plus = $dueWithin365plus[0]->netDue ?? 0;
+            }
+
+            $data['salesPersons'] = User::get();
+            $data['filterDate'] = $filterDate;
+            return view('reports.outstandingReport', $data);
+        }
+    }
+
+    public function dueWithin30($filterDate)
+    {
+        $data = DB::select('SELECT 
+                            customers.sap_id, 
+                            COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+                            COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+                            COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+                            FROM 
+                                customers
+                            INNER JOIN 
+                                users ON users.assign_to = customers.assign_to
+                            INNER JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(pump_choices.net_price) AS total_net_price
+                                FROM 
+                                    leads
+                                INNER JOIN 
+                                    pump_choices ON pump_choices.lead_id = leads.id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 30 DAY
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS pump_totals ON pump_totals.customer_id = customers.id
+                            LEFT JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(transactions.pay_amount) AS total_verified_paid
+                                FROM 
+                                    transactions
+                                INNER JOIN 
+                                    leads ON leads.id = transactions.lead_id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 30 DAY
+                                    AND transactions.is_verified = 1
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS transactions ON transactions.customer_id = customers.id 
+                            LEFT JOIN 
+                                leads ON leads.customer_id = customers.id
+                            LEFT JOIN 
+                                pump_choices ON pump_choices.lead_id = leads.id 
+                            WHERE 
+                                leads.is_outstanding = 1 
+                                AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 30 DAY
+                            GROUP BY 
+                                customers.id, users.user_name, users.assign_to
+                            ORDER BY 
+                                users.assign_to ASC, totalNetPrice DESC');
+
+        return $data;
+    }
+    public function dueWithin31_60($filterDate)
+    {
+        $data = DB::select('SELECT 
+                            customers.sap_id, 
+                            COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+                            COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+                            COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+                            FROM 
+                                customers
+                            INNER JOIN 
+                                users ON users.assign_to = customers.assign_to
+                            INNER JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(pump_choices.net_price) AS total_net_price
+                                FROM 
+                                    leads
+                                INNER JOIN 
+                                    pump_choices ON pump_choices.lead_id = leads.id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 30 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 60 DAY 
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS pump_totals ON pump_totals.customer_id = customers.id
+                            LEFT JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(transactions.pay_amount) AS total_verified_paid
+                                FROM 
+                                    transactions
+                                INNER JOIN 
+                                    leads ON leads.id = transactions.lead_id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 30 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 60 DAY 
+                                    AND transactions.is_verified = 1
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS transactions ON transactions.customer_id = customers.id 
+                            LEFT JOIN 
+                                leads ON leads.customer_id = customers.id
+                            LEFT JOIN 
+                                pump_choices ON pump_choices.lead_id = leads.id 
+                            WHERE 
+                                leads.is_outstanding = 1 
+                                AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 30 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 60 DAY 
+                            GROUP BY 
+                                customers.id, users.user_name, users.assign_to
+                            ORDER BY 
+                                users.assign_to ASC, totalNetPrice DESC');
+
+        return $data;
+    }
+    public function dueWithin61_90($filterDate)
+    {
+        $data = DB::select('SELECT 
+                            customers.sap_id, 
+                            COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+                            COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+                            COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+                            FROM 
+                                customers
+                            INNER JOIN 
+                                users ON users.assign_to = customers.assign_to
+                            INNER JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(pump_choices.net_price) AS total_net_price
+                                FROM 
+                                    leads
+                                INNER JOIN 
+                                    pump_choices ON pump_choices.lead_id = leads.id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 60 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 90 DAY 
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS pump_totals ON pump_totals.customer_id = customers.id
+                            LEFT JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(transactions.pay_amount) AS total_verified_paid
+                                FROM 
+                                    transactions
+                                INNER JOIN 
+                                    leads ON leads.id = transactions.lead_id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 60 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 90 DAY 
+                                    AND transactions.is_verified = 1
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS transactions ON transactions.customer_id = customers.id 
+                            LEFT JOIN 
+                                leads ON leads.customer_id = customers.id
+                            LEFT JOIN 
+                                pump_choices ON pump_choices.lead_id = leads.id 
+                            WHERE 
+                                leads.is_outstanding = 1 
+                                AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 60 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 90 DAY 
+                            GROUP BY 
+                                customers.id, users.user_name, users.assign_to
+                            ORDER BY 
+                                users.assign_to ASC, totalNetPrice DESC');
+
+        return $data;
+    }
+    public function dueWithin91_180($filterDate)
+    {
+        $data = DB::select('SELECT 
+                            customers.sap_id, 
+                            COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+                            COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+                            COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+                            FROM 
+                                customers
+                            INNER JOIN 
+                                users ON users.assign_to = customers.assign_to
+                            INNER JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(pump_choices.net_price) AS total_net_price
+                                FROM 
+                                    leads
+                                INNER JOIN 
+                                    pump_choices ON pump_choices.lead_id = leads.id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 90 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 180 DAY 
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS pump_totals ON pump_totals.customer_id = customers.id
+                            LEFT JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(transactions.pay_amount) AS total_verified_paid
+                                FROM 
+                                    transactions
+                                INNER JOIN 
+                                    leads ON leads.id = transactions.lead_id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 90 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 180 DAY 
+                                    AND transactions.is_verified = 1
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS transactions ON transactions.customer_id = customers.id 
+                            LEFT JOIN 
+                                leads ON leads.customer_id = customers.id
+                            LEFT JOIN 
+                                pump_choices ON pump_choices.lead_id = leads.id 
+                            WHERE 
+                                leads.is_outstanding = 1 
+                                AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 90 DAY 
+                                    AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL 180 DAY 
+                            GROUP BY 
+                                customers.id, users.user_name, users.assign_to
+                            ORDER BY 
+                                users.assign_to ASC, totalNetPrice DESC');
+
+        return $data;
+    }
+    public function dueWithin180plus($filterDate)
+    {
+        $data = DB::select('SELECT 
+                            customers.sap_id, 
+                            COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+                            COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+                            COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+                            FROM 
+                                customers
+                            INNER JOIN 
+                                users ON users.assign_to = customers.assign_to
+                            INNER JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(pump_choices.net_price) AS total_net_price
+                                FROM 
+                                    leads
+                                INNER JOIN 
+                                    pump_choices ON pump_choices.lead_id = leads.id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 180 DAY 
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS pump_totals ON pump_totals.customer_id = customers.id
+                            LEFT JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(transactions.pay_amount) AS total_verified_paid
+                                FROM 
+                                    transactions
+                                INNER JOIN 
+                                    leads ON leads.id = transactions.lead_id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 180 DAY 
+                                    AND transactions.is_verified = 1
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS transactions ON transactions.customer_id = customers.id 
+                            LEFT JOIN 
+                                leads ON leads.customer_id = customers.id
+                            LEFT JOIN 
+                                pump_choices ON pump_choices.lead_id = leads.id 
+                            WHERE 
+                                leads.is_outstanding = 1 
+                                AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 180 DAY  
+                            GROUP BY 
+                                customers.id, users.user_name, users.assign_to
+                            ORDER BY 
+                                users.assign_to ASC, totalNetPrice DESC');
+
+        return $data;
+    }
+    public function dueWithin365plus($filterDate)
+    {
+        $data = DB::select('SELECT 
+                            customers.sap_id, 
+                            COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+                            COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+                            COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+                            FROM 
+                                customers
+                            INNER JOIN 
+                                users ON users.assign_to = customers.assign_to
+                            INNER JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(pump_choices.net_price) AS total_net_price
+                                FROM 
+                                    leads
+                                INNER JOIN 
+                                    pump_choices ON pump_choices.lead_id = leads.id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 365 DAY 
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS pump_totals ON pump_totals.customer_id = customers.id
+                            LEFT JOIN (
+                                SELECT 
+                                    leads.customer_id,
+                                    SUM(transactions.pay_amount) AS total_verified_paid
+                                FROM 
+                                    transactions
+                                INNER JOIN 
+                                    leads ON leads.id = transactions.lead_id
+                                WHERE 
+                                    leads.is_outstanding = 1 
+                                    AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 365 DAY 
+                                    AND transactions.is_verified = 1
+                                GROUP BY 
+                                    leads.customer_id
+                            ) AS transactions ON transactions.customer_id = customers.id 
+                            LEFT JOIN 
+                                leads ON leads.customer_id = customers.id
+                            LEFT JOIN 
+                                pump_choices ON pump_choices.lead_id = leads.id 
+                            WHERE 
+                                leads.is_outstanding = 1 
+                                AND DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL 365 DAY  
+                            GROUP BY 
+                                customers.id, users.user_name, users.assign_to
+                            ORDER BY 
+                                users.assign_to ASC, totalNetPrice DESC');
+
+        return $data;
+    }
+
+    public function dueIntervalCalculation($filterDate, $firstDate, $lastDate)
+    {
+        if ($firstDate != 0 && $lastDate != 0) {
+            $dateCond = 'DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL ' . $firstDate . ' DAY AND DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL ' . $lastDate . ' DAY';
+        }
+        if ($firstDate == 0 && $lastDate != 0) {
+            // Within lastday 
+            $dateCond = 'DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL ' . $lastDate . ' DAY';
+        }
+        if ($firstDate != 0 && $lastDate == 0) {
+            // Day PLus 
+            $dateCond = 'DATE(leads.invoice_date) < DATE("' . $filterDate . '") - INTERVAL ' . $firstDate . ' DAY';
+        }
+
+        $data = DB::select('SELECT 
+        customers.sap_id, 
+        COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+        COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+        COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+        FROM 
+            customers
+        INNER JOIN 
+            users ON users.assign_to = customers.assign_to
+        INNER JOIN (
+            SELECT 
+                leads.customer_id,
+                SUM(pump_choices.net_price) AS total_net_price
+            FROM 
+                leads
+            INNER JOIN 
+                pump_choices ON pump_choices.lead_id = leads.id
+            WHERE 
+                leads.is_outstanding = 1 
+                AND ' . $dateCond . '
+            GROUP BY 
+                leads.customer_id
+        ) AS pump_totals ON pump_totals.customer_id = customers.id
+        LEFT JOIN (
+            SELECT 
+                leads.customer_id,
+                SUM(transactions.pay_amount) AS total_verified_paid
+            FROM 
+                transactions
+            INNER JOIN 
+                leads ON leads.id = transactions.lead_id
+            WHERE 
+                leads.is_outstanding = 1 
+                AND ' . $dateCond . '
+                AND transactions.is_verified = 1
+            GROUP BY 
+                leads.customer_id
+        ) AS transactions ON transactions.customer_id = customers.id 
+        LEFT JOIN 
+            leads ON leads.customer_id = customers.id
+        LEFT JOIN 
+            pump_choices ON pump_choices.lead_id = leads.id 
+        WHERE 
+            leads.is_outstanding = 1 
+            AND ' . $dateCond . '
+        GROUP BY 
+            customers.id, users.user_name, users.assign_to
+        ORDER BY 
+            users.assign_to ASC, totalNetPrice DESC');
+
+        return $data;
+    }
 }

@@ -155,14 +155,6 @@
                                 $dueWithin91_180Total = $dueWithin91_180Total + $item->dueWithin91_180;
                                 $dueWithin180plusTotal = $dueWithin180plusTotal + $item->dueWithin180plus;
                                 $dueWithin365plusTotal = $dueWithin365plusTotal + $item->dueWithin365plus;
-                            } else {
-                                $totalNetDue = $item->netDue;
-                                $dueWithin30Total = $item->dueWithin30;
-                                $dueWithin31_60Total = $item->dueWithin31_60;
-                                $dueWithin61_90Total = $item->dueWithin61_90;
-                                $dueWithin91_180Total = $item->dueWithin91_180;
-                                $dueWithin180plusTotal = $item->dueWithin180plus;
-                                $dueWithin365plusTotal = $item->dueWithin365plus;
                             }
                         @endphp
                         <tr>
@@ -190,15 +182,29 @@
                                 ?>
                         <tr style="background-color: #F4DFDF">
                             <td class="p-1 text-center fw-bold" colspan="4">Total</td>
-                            <td class="p-1 text-end fw-bold">{{ number_format((float) $totalNetDue, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin30Total, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin31_60Total, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin61_90Total, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin91_180Total, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin180plusTotal, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin365plusTotal, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">{{ number_format((float) $totalNetDue, 2, '.', ',') }}
+                            </td>
+                            <td class="p-1 text-end fw-bold">
+                                {{ number_format((float) $dueWithin30Total, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">
+                                {{ number_format((float) $dueWithin31_60Total, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">
+                                {{ number_format((float) $dueWithin61_90Total, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">
+                                {{ number_format((float) $dueWithin91_180Total, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">
+                                {{ number_format((float) $dueWithin180plusTotal, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">
+                                {{ number_format((float) $dueWithin365plusTotal, 2, '.', ',') }}</td>
                         </tr>
                         <?php
+                                $totalNetDue =0;
+                                $dueWithin30Total =0;
+                                $dueWithin31_60Total = 0;
+                                $dueWithin61_90Total =0;
+                                $dueWithin91_180Total = 0;
+                                $dueWithin180plusTotal = 0;
+                                $dueWithin365plusTotal = 0;
                             }
                         ?>
                     @endforeach

@@ -735,6 +735,7 @@ class BookingController extends Controller
             }
             $leadInfo = Lead::find($leadId);
             $leadInfo->current_subStage = 'LOST';
+            $leadInfo->is_outstanding = 0;
             $customerName = $leadInfo->clientInfo->customer_name;
             $leadInfo->save();
 

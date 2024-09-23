@@ -59,7 +59,7 @@
     <form action="{{ route('outstandingReport') }}" method="POST">
         @csrf
         <div class="row">
-            {{-- <div class="col-md-3">
+            <div class="col-md-3">
                 <label for="" class="form-label fs-07rem">Select Salesperson</label>
                 <select name="userId" id="userId" class="form-select fs-07rem p-1">
                     <option value="all" selected>All Salesperson</option>
@@ -69,16 +69,16 @@
                         @endif
                     @endforeach
                 </select>
-            </div> --}}
-            {{-- <div class="col-md-3">
-                <label for="" class="form-label fs-07rem">Select Brand</label>
-                <select name="brand" id="brand" class="form-select fs-07rem p-1">
-                    <option value="all" selected>All Brands</option>
-                    @foreach ($brands as $item)
-                        <option value="{{ $item->brand_name }}">{{ $item->brand_name }}</option>
+            </div>
+            <div class="col-md-3">
+                <label for="" class="form-label fs-07rem">Select Customer</label>
+                <select name="customerId" id="customerId" class="form-select fs-07rem p-1">
+                    <option value="all" selected>All Customer</option>
+                    @foreach ($customerList as $item)
+                        <option value="{{ $item->id }}">{{ $item->customer_name }}</option>
                     @endforeach
                 </select>
-            </div> --}}
+            </div>
             <div class="col-md-3">
                 <label for="" class="form-label fs-07rem">As On Date<span class="text-danger">*</span></label>
                 <input type="text" name="filterDate" class="flatpickr form-control  fs-07rem p-1" required>
@@ -104,10 +104,10 @@
             <table class="table table-bordered fs-06rem table-hover">
                 <thead class="thead">
                     <tr>
-                        <td colspan="5" class="p-1 text-center">PNL Holdings Limited - Outstanding Report</td>
+                        <td colspan="11" class="p-1 text-center">PNL Holdings Limited - Outstanding Report</td>
                     </tr>
                     <tr>
-                        <td colspan="5" class="p-1 text-center">As On Date:
+                        <td colspan="11" class="p-1 text-center">As On Date:
                             {{ date('d-M-Y', strtotime($filterDate)) }}
                     </tr>
                     <tr class="fixed-header">
@@ -125,7 +125,46 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($reportData as $item)
+                    @php
+                        $totalNetDue = 0;
+                        $dueWithin30Total = 0;
+                        $dueWithin31_60Total = 0;
+                        $dueWithin61_90Total = 0;
+                        $dueWithin91_180Total = 0;
+                        $dueWithin180plusTotal = 0;
+                        $dueWithin365plusTotal = 0;
+                    @endphp
+                    @foreach ($reportData as $key => $item)
+                        @php
+                            if (
+                                isset($reportData[$key + 1]) &&
+                                $reportData[$key]->assign_to == $reportData[$key + 1]->assign_to
+                            ) {
+                                $totalNetDue = $totalNetDue + $item->netDue;
+                                $dueWithin30Total = $dueWithin30Total + $item->dueWithin30;
+                                $dueWithin31_60Total = $dueWithin31_60Total + $item->dueWithin31_60;
+                                $dueWithin61_90Total = $dueWithin61_90Total + $item->dueWithin61_90;
+                                $dueWithin91_180Total = $dueWithin91_180Total + $item->dueWithin91_180;
+                                $dueWithin180plusTotal = $dueWithin180plusTotal + $item->dueWithin180plus;
+                                $dueWithin365plusTotal = $dueWithin365plusTotal + $item->dueWithin365plus;
+                            } elseif (!isset($reportData[$key + 1])) {
+                                $totalNetDue = $totalNetDue + $item->netDue;
+                                $dueWithin30Total = $dueWithin30Total + $item->dueWithin30;
+                                $dueWithin31_60Total = $dueWithin31_60Total + $item->dueWithin31_60;
+                                $dueWithin61_90Total = $dueWithin61_90Total + $item->dueWithin61_90;
+                                $dueWithin91_180Total = $dueWithin91_180Total + $item->dueWithin91_180;
+                                $dueWithin180plusTotal = $dueWithin180plusTotal + $item->dueWithin180plus;
+                                $dueWithin365plusTotal = $dueWithin365plusTotal + $item->dueWithin365plus;
+                            } else {
+                                $totalNetDue = $item->netDue;
+                                $dueWithin30Total = $item->dueWithin30;
+                                $dueWithin31_60Total = $item->dueWithin31_60;
+                                $dueWithin61_90Total = $item->dueWithin61_90;
+                                $dueWithin91_180Total = $item->dueWithin91_180;
+                                $dueWithin180plusTotal = $item->dueWithin180plus;
+                                $dueWithin365plusTotal = $item->dueWithin365plus;
+                            }
+                        @endphp
                         <tr>
                             <td class="p-1 text-center">{{ $item->assign_to }}</td>
                             <td class="p-1">{{ $item->user_name }}</td>
@@ -143,8 +182,25 @@
                             </td>
                             <td class="p-1 text-end">{{ number_format((float) $item->dueWithin365plus, 2, '.', ',') }}
                             </td>
-
                         </tr>
+                        <?php 
+                            if (isset($reportData[$key + 1]) && $reportData[$key]->assign_to == $reportData[$key + 1]->assign_to){
+                                
+                            }else{
+                                ?>
+                        <tr style="background-color: #F4DFDF">
+                            <td class="p-1 text-center fw-bold" colspan="4">Total</td>
+                            <td class="p-1 text-end fw-bold">{{ number_format((float) $totalNetDue, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin30Total, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin31_60Total, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin61_90Total, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin91_180Total, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin180plusTotal, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end fw-bold">{{ number_format((float) $dueWithin365plusTotal, 2, '.', ',') }}</td>
+                        </tr>
+                        <?php
+                            }
+                        ?>
                     @endforeach
                 </tbody>
             </table>
@@ -154,6 +210,9 @@
 
 <script>
     $("#userId").select2({
+        allowClear: false
+    });
+    $("#customerId").select2({
         allowClear: false
     });
 

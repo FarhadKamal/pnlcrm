@@ -50,20 +50,36 @@
                     class="m-4" id="transactionStoreForm">
                     @csrf
                     <div class="mb-1">
-                        <label class="form-label m-0">Deposit Date</label>
-                        <input type="text" name="transactionDate" id="transactionDate" class="form-control fs-08rem"
-                            required>
+                        <label class="form-label m-0 fs-08rem">Deposit Date <span class="text-danger">*</span></label>
+                        <input type="text" name="transactionDate" id="transactionDate"
+                            class="form-control fs-08rem p-1" required>
                     </div>
                     <div class="mb-1">
-                        <label class="form-label m-0">Deposit Amount</label>
-                        <input name="transactionAmount" id="transactionAmount" type="number" class="form-control lh-sm"
-                            required>
+                        <label class="form-label m-0 fs-08rem">Deposit Amount (BDT) <span
+                                class="text-danger">*</span></label>
+                        <input name="transactionAmount" id="transactionAmount" type="number"
+                            class="form-control lh-sm fs-08rem p-1" required>
                     </div>
-                    {{-- <div class="mb-1">
-                        <label class="form-label m-0">Attachment</label>
+                    <div class="mb-1">
+                        <label class="form-label m-0 fs-08rem">Transaction Type <span
+                                class="text-danger">*</span></label>
+                        <select name="transactionType" id="transactionType" class="form-select fs-08rem p-1" required>
+                            <option value="" selected disabled>--Select One--</option>
+                            <option value="base">Base Amount (BDT)</option>
+                            <option value="tax">TAX Amount (BDT)</option>
+                            <option value="vat">VAT Amount (BDT)</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label m-0 fs-07rem">Attachment</label>
                         <input name="transactionFile" type="file" accept="image/png, image/jpeg, image/jpg, .pdf"
-                            class="form-control lh-sm" required>
-                    </div> --}}
+                            class="form-control lh-sm fs-08rem p-1">
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label m-0 fs-07rem">Remarks</label>
+                        <textarea name="transactionRemarks" id="transactionRemarks" cols="30" rows="3"
+                            class="form-control fs-08rem p-1"></textarea>
+                    </div>
                     <div>
                         <input name="transactionLead" value="{{ $leadId }}" hidden>
                         <input name="transactionQuotation" value="{{ $quotationInfo[0]->id }}" hidden>
@@ -173,6 +189,8 @@
                         <th class="p-1">SL.</th>
                         <th class="p-1">Deposit Date</th>
                         <th class="p-1">Taka</th>
+                        <th class="p-1">Type</th>
+                        <th class="p-1">Transaction Remarks</th>
                         <th class="p-1">Statement Date</th>
                         <th class="p-1">Statement Remarks</th>
                         <th class="p-1">Status</th>
@@ -181,10 +199,28 @@
                 <tbody>
                     <?php $sl = 1; ?>
                     @foreach ($transactionInfo as $item)
+                        @php
+                            $type = '';
+                            if ($item->transaction_type == 'base') {
+                                $type = 'Base Amount';
+                            }
+                            if ($item->transaction_type == 'tax') {
+                                $type = 'TAX Amount';
+                            }
+                            if ($item->transaction_type == 'vat') {
+                                $type = 'VAT Amount';
+                            }
+                            if ($item->transaction_file) {
+                                $type .= "<small><a href='" . asset('transactionAttachment/' . $item->transaction_file) . "' target='_blank'><small class='badge badge-info'>Attachment</small></a></small>";
+
+                            }
+                        @endphp
                         <tr>
                             <td class="p-1">{{ $sl }}</td>
                             <td class="p-1">{{ date('d-M-Y', strtotime($item->deposit_date)) }}</td>
                             <td class="p-1">{{ number_format((float) $item->pay_amount, 2, '.', ',') }}</td>
+                            <td class="p-1">{!! $type !!}</td>
+                            <td class="p-1">{{ $item->transaction_remarks }}</td>
                             @if ($item->deposited_date)
                                 <td class="p-1">{{ date('d-M-Y', strtotime($item->deposited_date)) }}</td>
                             @else
@@ -192,11 +228,15 @@
                             @endif
                             <td class="p-1">{{ $item->deposited_remarks }}</td>
                             @if ($item->is_verified == 0)
-                                <td class="p-1"><button class="btn btn-sm btn-danger badge">unverified</button></td>
+                                <td class="p-1"><button class="btn btn-sm btn-danger badge">unverified</button>
+                                </td>
                             @else
                                 <td class="p-1"><button class="btn btn-sm btn-success badge">verified</button></td>
                             @endif
                         </tr>
+                        @php
+                            $sl++;
+                        @endphp
                     @endforeach
                 </tbody>
             </table>

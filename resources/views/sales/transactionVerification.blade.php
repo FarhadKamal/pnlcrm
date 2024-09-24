@@ -190,8 +190,10 @@
                 </tbody>
             </table>
             <div class="row">
-                <div class="col-md-6">AIT Amount: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->aitAmt }}</span></div>
-                <div class="col-md-6">VAT Amount: <span class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->vatAmt }}</span></div>
+                <div class="col-md-6">AIT Amount: <span
+                        class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->aitAmt }}</span></div>
+                <div class="col-md-6">VAT Amount: <span
+                        class="text-white p-1 rounded fw-bold bg-darkblue">{{ $leadInfo->vatAmt }}</span></div>
             </div>
         </div>
     </div>
@@ -205,6 +207,8 @@
                         <th class="p-1">SL.</th>
                         <th class="p-1">Deposit Date</th>
                         <th class="p-1">Taka</th>
+                        <th class="p-1">Type</th>
+                        <th class="p-1">Transaction Remarks</th>
                         <th class="p-1">Statement Date</th>
                         <th class="p-1">Statement Remarks</th>
                         <th class="p-1">Status</th>
@@ -213,10 +217,28 @@
                 <tbody>
                     <?php $sl = 1; ?>
                     @foreach ($transactionInfo as $item)
+                        @php
+                            $type = '';
+                            if ($item->transaction_type == 'base') {
+                                $type = 'Base Amount';
+                            }
+                            if ($item->transaction_type == 'tax') {
+                                $type = 'TAX Amount';
+                            }
+                            if ($item->transaction_type == 'vat') {
+                                $type = 'VAT Amount';
+                            }
+                            if ($item->transaction_file) {
+                                $type .= "<small><a href='" . asset('transactionAttachment/' . $item->transaction_file) . "' target='_blank'><small class='badge badge-info'>Attachment</small></a></small>";
+
+                            }
+                        @endphp
                         <tr>
                             <td class="p-1">{{ $sl }}</td>
                             <td class="p-1">{{ date('d-M-Y', strtotime($item->deposit_date)) }}</td>
                             <td class="p-1">{{ number_format((float) $item->pay_amount, 2, '.', ',') }}</td>
+                            <td class="p-1">{!! $type !!}</td>
+                            <td class="p-1">{{ $item->transaction_remarks }}</td>
                             @if ($item->is_verified == 0)
                                 <form action="{{ route('verifiedTransaction') }}" method="POST"
                                     id="verifyTransactionForm">
@@ -239,6 +261,9 @@
                                 <td><button class="btn btn-sm btn-success badge">verified</button></td>
                             @endif
                         </tr>
+                        @php
+                            $sl++;
+                        @endphp
                     @endforeach
                 </tbody>
             </table>

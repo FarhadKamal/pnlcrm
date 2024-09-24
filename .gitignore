@@ -4,6 +4,7 @@
 /public/quotations
 /public/leadQuotationAcceptAttachment
 /public/customerDocument
+/public/transactionAttachment
 /storage/*.key
 /vendor
 .env

@@ -19,6 +19,9 @@ class CreateTransactionsTable extends Migration
             $table->integer('quotation_id');
             $table->date('deposit_date');
             $table->integer('pay_amount');
+            $table->string('transaction_type');
+            $table->string('transaction_file');
+            $table->string('transaction_remarks')->nullable();
             $table->boolean('is_verified')->default(0);
             $table->integer('verified_by')->nullable();
             $table->date('deposited_date')->nullable();

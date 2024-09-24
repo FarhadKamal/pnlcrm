@@ -368,7 +368,7 @@ class BookingController extends Controller
             $leadInfo = Lead::find($request->leadId);
             if ($request->file('poFileUpdate')) {
                 $quotationInfo = Quotation::orderBy('id', 'desc')->take(1)->where(['lead_id' => $request->leadId, 'is_accept' => 1])->get();
-                foreach($quotationInfo as $item){
+                foreach ($quotationInfo as $item) {
                     $quotationId = $item->id;
                 }
                 $poFileUpdate = $request->file('poFileUpdate');
@@ -430,17 +430,30 @@ class BookingController extends Controller
             'transactionAmount' => 'required|numeric',
             'transactionLead' => 'required|numeric',
             'transactionQuotation' => 'required|numeric',
+            'transactionType' => 'required',
         ]);
         $transactionDate = date('Y-m-d', strtotime($request->transactionDate));
         if ($validator->fails()) {
             $data['errors'] = $validator->errors()->all();
             return back()->with('errors', $data['errors']);
         } else {
+            if ($request->file('transactionFile')) {
+                $transactionFileUpdate = $request->file('transactionFile');
+                $transactionFileUpdateName = time() . "." . $transactionFileUpdate->getClientOriginalExtension();
+                $destinationPath = 'transactionAttachment/';
+                $transactionFileUpdate->move($destinationPath, $transactionFileUpdateName);
+            }else{
+                $transactionFileUpdateName = '';
+            }
+
             $insert_data = array(
                 'lead_id' => $request->transactionLead,
                 'quotation_id' => $request->transactionQuotation,
                 'deposit_date' => $transactionDate,
-                'pay_amount' => $request->transactionAmount
+                'pay_amount' => $request->transactionAmount,
+                'transaction_type' => $request->transactionType,
+                'transaction_file' => $transactionFileUpdateName,
+                'transaction_remarks' => $request->transactionRemarks
             );
 
             Transaction::create($insert_data);

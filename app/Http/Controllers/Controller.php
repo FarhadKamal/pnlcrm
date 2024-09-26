@@ -268,7 +268,7 @@ class Controller extends BaseController
             $data['bookingStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'BOOKING')->whereHas('clientInfo', function ($query) {
                 $query->where(['assign_to' => Auth()->user()->assign_to]);
             })->get();
-        }elseif (Helper::permissionCheck(Auth()->user()->id, 'bookingStageTask')) {
+        } elseif (Helper::permissionCheck(Auth()->user()->id, 'bookingStageTask')) {
             $taskStage = [];
             if (Helper::permissionCheck(Auth()->user()->id, 'sapIDCreation')) {
                 array_push($taskStage, "SAPIDSET");
@@ -322,9 +322,9 @@ class Controller extends BaseController
             })->get();
         }
 
-        if(isset($data['leadStage'])){
-            $data['encodedLeadStage'] = json_encode($data['leadStage']); 
-        }else{
+        if (isset($data['leadStage'])) {
+            $data['encodedLeadStage'] = json_encode($data['leadStage']);
+        } else {
             $data['encodedLeadStage'] = json_encode(['']);
         }
 
@@ -548,5 +548,26 @@ class Controller extends BaseController
     public function tutorialVisual()
     {
         return view('videoTutorial');
+    }
+
+    public function targetForm()
+    {
+        $data['currentYear'] = date('Y');
+        $data['previousYear'] = $data['currentYear'] - 1;
+        $data['futureYear'] = $data['currentYear'] + 1;
+        $data['salesPersons'] = User::get();
+        return view('sales.targetForm', $data);
+    }
+
+    public function targetStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required',
+            'financialYear' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return back()->with('error', $validator->errors()->all());
+        } else {
+        }
     }
 }

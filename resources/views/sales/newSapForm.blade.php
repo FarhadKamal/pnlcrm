@@ -62,7 +62,7 @@
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">BIN</p>
-                    @if ($leadInfo->clientInfo->tin)
+                    @if ($leadInfo->clientInfo->bin)
                         <small class="col-md-8"> <a
                                 href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->bin }}"
                                 target="_blank"><button class="btn btn-info btn-sm p-1"><i
@@ -76,7 +76,7 @@
                 </div>
                 <div class="row border-bottom p-1">
                     <p class="col-md-4 text-muted m-0">Trade License</p>
-                    @if ($leadInfo->clientInfo->tin)
+                    @if ($leadInfo->clientInfo->trade_license)
                         <small class="col-md-8"> <a
                                 href="{{ asset('customerDocument') . '/' . $leadInfo->clientInfo->trade_license }}"
                                 target="_blank"><button class="btn btn-info btn-sm p-1"><i

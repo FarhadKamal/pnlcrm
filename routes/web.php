@@ -121,6 +121,9 @@ Route::get('productEntry', [ProductController::class, 'productForm'])->name('pro
 Route::post('checkSAPNewProduct', [ProductController::class, 'validateSAPNewProduct'])->name('checkSAPNewProduct')->middleware('auth');
 Route::post('insertProduct', [ProductController::class, 'storeProduct'])->name('insertProduct')->middleware('auth');
 
+Route::get('targetEntry', [Controller::class, 'targetForm'])->name('targetEntry')->middleware('auth');
+Route::post('targetEntry', [Controller::class, 'targetStore'])->name('targetEntry')->middleware('auth');
+
 Route::get('tutorialVideo', [Controller::class, 'tutorialVisual'])->name('tutorialVisual')->middleware('auth');
 
 Route::get('reportList', [ReportController::class, 'reportListPage'])->name('reportList')->middleware('auth');

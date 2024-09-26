@@ -100,6 +100,11 @@
                                     <a class="dropdown-item" href="{{ route('productEntry') }}">Product Entry</a>
                                 </li>
                             @endif
+                            {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'targetStore')) --}}
+                                <li>
+                                    {{-- <a class="dropdown-item" href="{{ route('targetEntry') }}">Target Entry</a> --}}
+                                </li>
+                            {{-- @endif --}}
                             <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                         </ul>
                     </li>
@@ -233,6 +238,11 @@
                             <a class="dropdown-item" href="{{ route('productEntry') }}">Product Entry</a>
                         </li>
                     @endif
+                    {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'targetStore')) --}}
+                    <li>
+                        {{-- <a class="dropdown-item" href="{{ route('targetEntry') }}">Target Entry</a> --}}
+                    </li>
+                {{-- @endif --}}
                     <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                 </ul>
             </li>

@@ -17,6 +17,7 @@ class CreateSalesTargetsTable extends Migration
         Schema::create('sales_targets', function (Blueprint $table) {
             $table->id();
             $table->integer('financial_year');
+            $table->integer('user_id');
             $table->string('bd_code');
             $table->string('brand_name');
             $table->integer('july')->default(0);

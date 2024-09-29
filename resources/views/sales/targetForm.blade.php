@@ -34,10 +34,10 @@
 @endif
 
 
-<div class="container mt-2 mb-3">
+<div class="container-fluid mt-2 mb-3">
     <h6 class="text-center">New Target Entry Form</h6>
-    <div class="bg-offwhite p-2">
-        <form action="{{ route('insertProduct') }}" method="POST" id="productInsertionForm">
+    <div class="p-2">
+        <form action="{{ route('targetEntry') }}" method="POST" id="taregtInsertionForm">
             @csrf
             <div class="row">
                 <div class="col-md-3">
@@ -66,36 +66,16 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fs-08rem">
-                        Total Target (BDT) <span class="text-danger">*</span>
+                        Total Annual Target (BDT) <span class="text-danger">*</span>
                     </label>
                     <input type="number" class="form-control fs-08rem p-1" min="1" name="totalTarget"
-                        id="totalTarget" onkeyup="calculateAll()">
+                        id="totalTarget" onkeyup="calculateAll()" required>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label fs-08rem">
+                    <label class="form-label bg-offwhite fs-08rem p-2 mt-1 rounded w-100">
                         Quarter Target (%) <span class="text-danger">*</span>
-                        <br>
                         <small class="text-danger">Insert % In Each Quarter</small>
                     </label>
-                    <div class="row d-none">
-                        <div class="col-md-3 fs-07rem">
-                            <input class="form-check-input m-0" type="checkbox" value="q1" id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault">Q1</label>
-                        </div>
-                        <div class="col-md-3 fs-07rem">
-                            <input class="form-check-input m-0" type="checkbox" value="q2" id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault">Q2</label>
-                        </div>
-                        <div class="col-md-3 fs-07rem">
-                            <input class="form-check-input m-0" type="checkbox" value="q3" id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault">Q3</label>
-                        </div>
-                        <div class="col-md-3 fs-07rem">
-                            <input class="form-check-input m-0" type="checkbox" value="q4" id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault">Q4</label>
-                        </div>
-
-                    </div>
                     <table class="table table-bordered p-1 fs-08rem">
                         <tr>
                             <td class="p-1 text-center" width="10%">Q1</td>
@@ -143,12 +123,70 @@
                     </table>
                 </div>
                 <div class="col-md-8">
-                    <label class="form-label fs-08rem">
+                    <label class="form-label fs-08rem bg-offwhite p-2 mt-1 rounded w-100">
+                        Brand Target <span class="text-danger">(Assume each quarter as 100% than divide into the below
+                            table)</span>
+                    </label>
+                    <div class="row">
+                        <table class="table table-bordered fs-07rem">
+                            <thead>
+                                <tr>
+                                    <td class="p-1">Brand</td>
+                                    <td class="p-1">Q1</td>
+                                    <td class="p-1">Q2</td>
+                                    <td class="p-1">Q3</td>
+                                    <td class="p-1">Q4</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($brands as $item)
+                                    <tr>
+                                        <td class="p-1">{{ $item->brand_name }}</td>
+                                        <td class="p-1"><input type="number"
+                                                class="form-control fs-08rem p-1 text-end w-30 d-inline"
+                                                name="{{ $item->brand_name }}PerQ1"
+                                                id="{{ $item->brand_name }}PerQ1" min="1" max="100"
+                                                onkeyup="calculateBrand()" placeholder="%">
+                                            <span class="fw-bold" id="{{ $item->brand_name }}Q1">0.00</span>
+                                        </td>
+                                        <td class="p-1"><input type="number"
+                                                class="form-control fs-08rem p-1 text-end w-30 d-inline"
+                                                name="{{ $item->brand_name }}PerQ2"
+                                                id="{{ $item->brand_name }}PerQ2" min="1" max="100"
+                                                onkeyup="calculateBrand()" placeholder="%">
+                                            <span class="fw-bold" id="{{ $item->brand_name }}Q2">0.00</span>
+                                        </td>
+                                        <td class="p-1"><input type="number"
+                                                class="form-control fs-08rem p-1 text-end w-30 d-inline"
+                                                name="{{ $item->brand_name }}PerQ3"
+                                                id="{{ $item->brand_name }}PerQ3" min="1" max="100"
+                                                onkeyup="calculateBrand()" placeholder="%">
+                                            <span class="fw-bold" id="{{ $item->brand_name }}Q3">0.00</span>
+                                        </td>
+                                        <td class="p-1"><input type="number"
+                                                class="form-control fs-08rem p-1 text-end w-30 d-inline"
+                                                name="{{ $item->brand_name }}PerQ4"
+                                                id="{{ $item->brand_name }}PerQ4" min="1" max="100"
+                                                onkeyup="calculateBrand()" placeholder="%">
+                                            <span class="fw-bold" id="{{ $item->brand_name }}Q4">0.00</span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fs-08rem bg-offwhite p-2 mt-1 rounded w-100">
                         Maonthly Target (%) <span class="text-danger">*</span>
                     </label>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3 col-12">
                             <table class="table table-bordered p-1 fs-08rem">
+                                <tr>
+                                    <td colspan="3" class="p-1">Quarter One <span id="monthQ1Label"></span>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td class="p-1 text-center" width="20%">July</td>
                                     <td class="p-1" width="20%"><input type="number"
@@ -175,6 +213,15 @@
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="sepAmount">0.00</span></td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="col-md-3 col-12">
+                            <table class="table table-bordered p-1 fs-08rem">
+                                <tr>
+                                    <td colspan="3" class="p-1">Quarter Two <span id="monthQ2Label"></span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="p-1 text-center" width="20%">October</td>
@@ -203,10 +250,15 @@
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="decAmount">0.00</span></td>
                                 </tr>
+
                             </table>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3 col-12">
                             <table class="table table-bordered p-1 fs-08rem">
+                                <tr>
+                                    <td colspan="3" class="p-1">Quarter Three <span id="monthQ3Label"></span>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td class="p-1 text-center" width="20%">January</td>
                                     <td class="p-1" width="20%"><input type="number"
@@ -233,6 +285,14 @@
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="marAmount">0.00</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-3 col-12">
+                            <table class="table table-bordered p-1 fs-08rem">
+                                <tr>
+                                    <td colspan="3" class="p-1">Quarter Four <span id="monthQ4Label"></span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="p-1 text-center" width="20%">April</td>
@@ -301,6 +361,7 @@
             let upperTwoMonth = Math.floor(q1EachMonthPer) * 2;
             $('#sepPer').val((q1Per - Number(upperTwoMonth)));
         }
+        document.getElementById('monthQ1Label').innerText = q1Per + '% BDT: ' + q1Amount.toFixed(3);
         calculateMonth();
 
         // Quarter Two Calulcation 
@@ -316,6 +377,7 @@
             let upperTwoMonth = Math.floor(q2EachMonthPer) * 2;
             $('#decPer').val((q2Per - Number(upperTwoMonth)));
         }
+        document.getElementById('monthQ2Label').innerText = q2Per + '% BDT: ' + q2Amount.toFixed(3);
         calculateMonth();
 
         // Quarter Three Calulcation  
@@ -331,6 +393,7 @@
             let upperTwoMonth = Math.floor(q3EachMonthPer) * 2;
             $('#marPer').val((q3Per - Number(upperTwoMonth)));
         }
+        document.getElementById('monthQ3Label').innerText = q3Per + '% BDT: ' + q3Amount.toFixed(3);
         calculateMonth();
 
         // Quarter Four Calulcation 
@@ -346,6 +409,7 @@
             let upperTwoMonth = Math.floor(q4EachMonthPer) * 2;
             $('#junPer').val((q4Per - Number(upperTwoMonth)));
         }
+        document.getElementById('monthQ4Label').innerText = q4Per + '% BDT: ' + q4Amount.toFixed(3);
         calculateMonth();
 
         let totalQuarterPer = q1Per + q2Per + q3Per + q4Per;
@@ -426,18 +490,34 @@
             showError = true;
             errQ = 'Total percentage of quarter one is exceed ' + q1Per + '%';
         }
+        if (totalQuarterOnePer < q1Per) {
+            showError = true;
+            errQ = 'Total percentage of quarter one is below  ' + q1Per + '%';
+        }
         if (totalQuarterTwoPer > q2Per) {
             showError = true;
             errQ = 'Total percentage of quarter two is exceed ' + q2Per + '%';
+        }
+        if (totalQuarterTwoPer < q2Per) {
+            showError = true;
+            errQ = 'Total percentage of quarter two is below ' + q2Per + '%';
         }
 
         if (totalQuarterThreePer > q3Per) {
             showError = true;
             errQ = 'Total percentage of quarter three is exceed ' + q3Per + '%';
         }
+        if (totalQuarterThreePer < q3Per) {
+            showError = true;
+            errQ = 'Total percentage of quarter three is below ' + q3Per + '%';
+        }
         if (totalQuarterFourPer > q4Per) {
             showError = true;
             errQ = 'Total percentage of quarter four is exceed ' + q4Per + '%';
+        }
+        if (totalQuarterFourPer < q4Per) {
+            showError = true;
+            errQ = 'Total percentage of quarter four is below ' + q4Per + '%';
         }
 
         if (showError) {
@@ -448,4 +528,66 @@
             document.getElementById('insertBTN').disabled = false;
         }
     }
+
+    function calculateBrand() {
+        let totalTarget = Number($('#totalTarget').val());
+        let allBrands = JSON.parse('<?php echo $brands; ?>');
+
+        let q1Per = Number($('#q1Per').val());
+        let q1Amount = Number(totalTarget) * (Number(q1Per) / 100);
+
+        let q2Per = Number($('#q2Per').val());
+        let q2Amount = Number(totalTarget) * (Number(q2Per) / 100);
+
+        let q3Per = Number($('#q3Per').val());
+        let q3Amount = Number(totalTarget) * (Number(q3Per) / 100);
+
+        let q4Per = Number($('#q4Per').val());
+        let q4Amount = Number(totalTarget) * (Number(q4Per) / 100);
+
+        allBrands.forEach(element => {
+            let brandName = element.brand_name;
+            let BPerQ1 = Number($('#' + brandName + 'PerQ1').val());
+            let BPerQ2 = Number($('#' + brandName + 'PerQ2').val());
+            let BPerQ3 = Number($('#' + brandName + 'PerQ3').val());
+            let BPerQ4 = Number($('#' + brandName + 'PerQ4').val());
+
+            let BAmountQ1 = q1Amount * (BPerQ1 / 100);
+            let BAmountQ2 = q2Amount * (BPerQ2 / 100);
+            let BAmountQ3 = q3Amount * (BPerQ3 / 100);
+            let BAmountQ4 = q4Amount * (BPerQ4 / 100);
+
+            document.getElementById(brandName + 'Q1').innerText = BAmountQ1.toFixed(3);
+            document.getElementById(brandName + 'Q2').innerText = BAmountQ2.toFixed(3);
+            document.getElementById(brandName + 'Q3').innerText = BAmountQ3.toFixed(3);
+            document.getElementById(brandName + 'Q4').innerText = BAmountQ4.toFixed(3);
+
+        });
+
+    }
+
+    $('#taregtInsertionForm').submit(function(e, params) {
+        var localParams = params || {};
+
+        if (!localParams.send) {
+            e.preventDefault();
+        }
+        var form = e;
+        Swal.fire({
+            title: 'Are you sure?',
+            // text: "Once verified, you will not be able to undo it!",
+            icon: "warning",
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm Target',
+            // denyButtonText: `Don't save`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                form.delegateTarget.submit()
+            } else {
+                Swal.fire('Target is not inserted', '', 'info')
+            }
+        })
+    });
 </script>

@@ -11,6 +11,7 @@ class BrandDiscount extends Model
     protected $fillable = [
         'brand_name',
         'trade_discount',
-        'country_name'
+        'country_name',
+        'is_active'
     ];
 }

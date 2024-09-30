@@ -133,6 +133,13 @@
                         $dueWithin91_180Total = 0;
                         $dueWithin180plusTotal = 0;
                         $dueWithin365plusTotal = 0;
+                        $grandTotalNetDue = 0;
+                        $grandTotaldueWithin30 = 0;
+                        $grandTotaldueWithin31_60 = 0;
+                        $grandTotaldueWithin61_90 = 0;
+                        $grandTotaldueWithin91_180 = 0;
+                        $grandTotal180plus = 0;
+                        $grandTotal365plus = 0;
                     @endphp
                     @foreach ($reportData as $key => $item)
                         @php
@@ -156,6 +163,13 @@
                                 $dueWithin180plusTotal = $dueWithin180plusTotal + $item->dueWithin180plus;
                                 $dueWithin365plusTotal = $dueWithin365plusTotal + $item->dueWithin365plus;
                             }
+                            $grandTotalNetDue = $grandTotalNetDue + $item->netDue;
+                            $grandTotaldueWithin30 = $grandTotaldueWithin30 + $item->dueWithin30;
+                            $grandTotaldueWithin31_60 = $grandTotaldueWithin31_60 + $item->dueWithin31_60;
+                            $grandTotaldueWithin61_90 = $grandTotaldueWithin61_90 + $item->dueWithin61_90;
+                            $grandTotaldueWithin91_180 = $grandTotaldueWithin91_180 + $item->dueWithin91_180;
+                            $grandTotal180plus = $grandTotal180plus + $item->dueWithin180plus;
+                            $grandTotal365plus = $grandTotal365plus + $item->dueWithin365plus;
                         @endphp
                         <tr>
                             <td class="p-1 text-center">{{ $item->assign_to }}</td>
@@ -209,6 +223,25 @@
                         ?>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr style="background-color: #c49e77">
+                        <td class="p-1 text-center fw-bold" colspan="4">Grand Total</td>
+                        <td class="p-1 text-end fw-bold">{{ number_format((float) $grandTotalNetDue, 2, '.', ',') }}
+                        </td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotaldueWithin30, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotaldueWithin31_60, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotaldueWithin61_90, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotaldueWithin91_180, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotal180plus, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotal365plus, 2, '.', ',') }}</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>

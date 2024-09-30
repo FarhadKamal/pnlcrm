@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Models\BrandDiscount;
 use App\Models\Lead;
 use App\Models\PumpChoice;
 use App\Models\Quotation;
 use App\Models\SalesLog;
+use App\Models\SalesTarget;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -556,6 +558,7 @@ class Controller extends BaseController
         $data['previousYear'] = $data['currentYear'] - 1;
         $data['futureYear'] = $data['currentYear'] + 1;
         $data['salesPersons'] = User::get();
+        $data['brands'] = BrandDiscount::where(['is_active' => 1])->get();
         return view('sales.targetForm', $data);
     }
 
@@ -564,10 +567,32 @@ class Controller extends BaseController
         $validator = Validator::make($request->all(), [
             'userId' => 'required',
             'financialYear' => 'required',
+            'totalTarget' => 'required|numeric'
         ]);
         if ($validator->fails()) {
             return back()->with('error', $validator->errors()->all());
         } else {
+            $totalTarget = $request->totalTarget;
+
+            // $targetData = array(
+            //     'financial_year' => $leadInfo->id,
+            //     'user_id' => $leadOldStage,
+            //     'bd_code' => 'Lead is lost',
+            //     'brand_name' => Auth()->user()->id,
+            //     'july' => 
+            //     'august' => 
+            //     'september' =>
+            //     'october' =>
+            //     'november' =>
+            //     'december' =>
+            //     'january' =>
+            //     'february' =>
+            //     'march' =>
+            //     'april' =>
+            //     'may' =>
+            //     'june' =>
+            // );
+            // SalesTarget::create($targetData);
         }
     }
 }

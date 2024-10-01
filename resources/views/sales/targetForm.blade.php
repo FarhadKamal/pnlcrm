@@ -174,6 +174,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <center><small class="text-danger" id="BrandErrorText"></small></center>
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -412,6 +413,7 @@
         document.getElementById('monthQ4Label').innerText = q4Per + '% BDT: ' + q4Amount.toFixed(3);
         calculateMonth();
 
+        calculateBrand();
         let totalQuarterPer = q1Per + q2Per + q3Per + q4Per;
         document.getElementById('toalQuarterPer').innerText = totalQuarterPer + '%';
         if (totalQuarterPer > 100) {
@@ -545,6 +547,10 @@
         let q4Per = Number($('#q4Per').val());
         let q4Amount = Number(totalTarget) * (Number(q4Per) / 100);
 
+        let totalQuarterOneBrandPer = 0;
+        let totalQuarterTwoBrandPer = 0;
+        let totalQuarterThreeBrandPer = 0;
+        let totalQuarterFourBrandPer = 0;
         allBrands.forEach(element => {
             let brandName = element.brand_name;
             let BPerQ1 = Number($('#' + brandName + 'PerQ1').val());
@@ -562,7 +568,38 @@
             document.getElementById(brandName + 'Q3').innerText = BAmountQ3.toFixed(3);
             document.getElementById(brandName + 'Q4').innerText = BAmountQ4.toFixed(3);
 
+            totalQuarterOneBrandPer = totalQuarterOneBrandPer + BPerQ1;
+            totalQuarterTwoBrandPer = totalQuarterTwoBrandPer + BPerQ2;
+            totalQuarterThreeBrandPer = totalQuarterThreeBrandPer + BPerQ3;
+            totalQuarterFourBrandPer = totalQuarterFourBrandPer + BPerQ4;
         });
+
+        let showError = false;
+        let errQ = '';
+        if (totalQuarterOneBrandPer > 100) {
+            showError = true;
+            errQ = 'Total brand percentage of quarter one is exceed 100%';
+        }
+        if (totalQuarterTwoBrandPer > 100) {
+            showError = true;
+            errQ = 'Total brand percentage of quarter two is exceed 100%';
+        }
+        if (totalQuarterThreeBrandPer > 100) {
+            showError = true;
+            errQ = 'Total brand percentage of quarter three is exceed 100%';
+        }
+        if (totalQuarterFourBrandPer > 100) {
+            showError = true;
+            errQ = 'Total brand percentage of quarter four is exceed 100%';
+        }
+
+        if (showError) {
+            document.getElementById('BrandErrorText').innerText = errQ;
+            document.getElementById('insertBTN').disabled = true;
+        } else {
+            document.getElementById('BrandErrorText').innerText = '';
+            document.getElementById('insertBTN').disabled = false;
+        }
 
     }
 

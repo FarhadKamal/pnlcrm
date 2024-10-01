@@ -567,16 +567,62 @@ class Controller extends BaseController
         $validator = Validator::make($request->all(), [
             'userId' => 'required',
             'financialYear' => 'required',
-            'totalTarget' => 'required|numeric'
+            'totalTarget' => 'required|numeric',
+            'q1Per' => 'required|numeric',
+            'q2Per' => 'required|numeric',
+            'q3Per' => 'required|numeric',
+            'q4Per' => 'required|numeric',
+            'julPer' => 'required|numeric',
+            'augPer' => 'required|numeric',
+            'sepPer' => 'required|numeric',
+            'octPer' => 'required|numeric',
+            'novPer' => 'required|numeric',
+            'decPer' => 'required|numeric',
+            'janPer' => 'required|numeric',
+            'febPer' => 'required|numeric',
+            'marPer' => 'required|numeric',
+            'aprPer' => 'required|numeric',
+            'mayPer' => 'required|numeric',
+            'junPer' => 'required|numeric'
+
         ]);
         if ($validator->fails()) {
             return back()->with('error', $validator->errors()->all());
         } else {
             $totalTarget = $request->totalTarget;
+            $q1Per = $request->q1Per;
+            $q2Per = $request->q2Per;
+            $q3Per = $request->q3Per;
+            $q4Per = $request->q4Per;
+
+           
+
+            $brands = BrandDiscount::get();
+            foreach($brands as $brand){
+                $brandFieldNameQ1 = $brand.'PerQ1';
+                $brandFieldNameQ2 = $brand.'PerQ2';
+                $brandFieldNameQ3 = $brand.'PerQ3';
+                $brandFieldNameQ4 = $brand.'PerQ4';
+                if($request->brandFieldNameQ1){
+                    // $q1Amount = $totalTarget * (Number(q1Per) / 100);
+                    // $julAmount = 
+                }
+            }
+
+            $julAmount = $totalTarget * $request->julPer;
+            $augAmount = $totalTarget * $request->augPer;
+            $sepAmount = $totalTarget * $request->sepPer;
+            $octAmount = $totalTarget * $request->octPer;
+            $novAmount = $totalTarget * $request->novPer;
+            $decAmount = $totalTarget * $request->decPer;
+            $janAmount = $totalTarget * $request->janPer;
+            $febAmount = $totalTarget * $request->febPer;
+            $marAmount = $totalTarget * $request->marPer;
+
 
             // $targetData = array(
-            //     'financial_year' => $leadInfo->id,
-            //     'user_id' => $leadOldStage,
+            //     'financial_year' => $request->financialYear,
+            //     'user_id' => $request->userId,
             //     'bd_code' => 'Lead is lost',
             //     'brand_name' => Auth()->user()->id,
             //     'july' => 

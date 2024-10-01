@@ -93,6 +93,8 @@
 
 @if (isset($reportData) && count($reportData) > 0)
     <div class="m-2">
+        <button id="outstandingReportPrintBtn" onclick="exportExcel()"
+            class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Excel Report</button>
         <button id="outstandingReportPrintBtn" onclick="printOutstandingReport()"
             class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Print Report</button>
         {{-- <center>
@@ -104,12 +106,18 @@
             <table class="table table-bordered fs-06rem table-hover">
                 <thead class="thead">
                     <tr>
-                        <td colspan="11" class="p-1 text-center">PNL Holdings Limited - Outstanding Report</td>
+                        <td colspan="11" class="p-1 text-center">
+                            <center>PNL Holdings Limited - Outstanding Report</center>
+                        </td>
                     </tr>
                     <tr>
-                        <td colspan="11" class="p-1 text-center">As On Date:
-                            {{ date('d-M-Y', strtotime($filterDate)) }}
+                        <td colspan="5" class="p-1 text-end">As On Date</td>
+                        <td colspan="6" class="p-1 text-start">{{ date('d-M-Y', strtotime($filterDate)) }}</td>
                     </tr>
+                    {{-- <tr>
+                        <td colspan="11" class="p-1 text-center">As On Date -
+                            {{ date('d-M-Y', strtotime($filterDate)) }}
+                    </tr> --}}
                     <tr class="fixed-header">
                         <td class="p-1 text-center">BD-Code</td>
                         <td class="p-1 text-center">Employee</td>
@@ -222,8 +230,6 @@
                             }
                         ?>
                     @endforeach
-                </tbody>
-                <tfoot>
                     <tr style="background-color: #c49e77">
                         <td class="p-1 text-center fw-bold" colspan="4">Grand Total</td>
                         <td class="p-1 text-end fw-bold">{{ number_format((float) $grandTotalNetDue, 2, '.', ',') }}
@@ -241,7 +247,26 @@
                         <td class="p-1 text-end fw-bold">
                             {{ number_format((float) $grandTotal365plus, 2, '.', ',') }}</td>
                     </tr>
-                </tfoot>
+                </tbody>
+                {{-- <tfoot>
+                    <tr style="background-color: #c49e77">
+                        <td class="p-1 text-center fw-bold" colspan="4">Grand Total</td>
+                        <td class="p-1 text-end fw-bold">{{ number_format((float) $grandTotalNetDue, 2, '.', ',') }}
+                        </td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotaldueWithin30, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotaldueWithin31_60, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotaldueWithin61_90, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotaldueWithin91_180, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotal180plus, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotal365plus, 2, '.', ',') }}</td>
+                    </tr>
+                </tfoot> --}}
             </table>
         </div>
     </div>
@@ -263,5 +288,14 @@
 
     function printOutstandingReport() {
         window.print();
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
+<script>
+    function exportExcel() {
+        let table2excel = new Table2Excel();
+        let fileName = 'Outstanding Report.xlsx';
+        table2excel.export(document.querySelector("#outstandingReportTable table"), fileName);
     }
 </script>

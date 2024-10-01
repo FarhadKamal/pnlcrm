@@ -94,6 +94,8 @@
 
 @if (isset($reportData) && count($reportData) > 0)
     <div class="m-2">
+        <button id="outstandingReportPrintBtn" onclick="exportExcel()"
+            class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Excel Report</button>
         <button id="discountReportPrintBtn" onclick="printDiscountReport()"
             class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Print Report</button>
         {{-- <center>
@@ -136,6 +138,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $grandTotalProductPrice = 0;
+                        $grandTotalDiscountAmount = 0;
+                        $grandTotalTradeDiscountAmount = 0;
+                        $grandTotalSpecialDiscountAmount = 0;
+                        $grandTotalNetPrice = 0;
+                    @endphp
                     @foreach ($reportData as $item)
                         @php
                             $totalPrice = $item->unit_price * $item->qty;
@@ -148,6 +157,17 @@
                                 $type = 'Spare Parts';
                             }
                             $netPrice = $totalPrice - $item->discount_price;
+
+                            if($item->discount_price <= 0){
+                                $totalTradeDiscount = 0;
+                                $item->trade_discount = 0; 
+                            }
+
+                            $grandTotalProductPrice = $grandTotalProductPrice + $totalPrice;
+                            $grandTotalDiscountAmount = $grandTotalDiscountAmount + $item->discount_price;
+                            $grandTotalTradeDiscountAmount = $grandTotalTradeDiscountAmount + $totalTradeDiscount;
+                            $grandTotalSpecialDiscountAmount = $grandTotalSpecialDiscountAmount + $specialDiscount;
+                            $grandTotalNetPrice = $grandTotalNetPrice + $netPrice;
                         @endphp
                         <tr>
                             <td class="p-1 text-center">{{ $item->sap_invoice }}</td>
@@ -172,6 +192,21 @@
                             <td class="p-1 text-end">{{ number_format((float) $netPrice, 2, '.', ',') }}</td>
                         </tr>
                     @endforeach
+                    <tr style="background-color: #c49e77">
+                        <td colspan="11" class="p-1 text-center fw-bold">Grand Total</td>
+                        <td class="p-1 text-end fw-bold">{{ number_format((float) $grandTotalProductPrice, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">{{ number_format((float) $grandTotalDiscountAmount, 2, '.', ',') }}
+                        </td>
+                        <td class="p-1"></td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotalTradeDiscountAmount, 2, '.', ',') }}</td>
+                        <td class="p-1"></td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotalSpecialDiscountAmount, 2, '.', ',') }}</td>
+                        <td class="p-1"></td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotalNetPrice, 2, '.', ',') }}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -192,5 +227,14 @@
 
     function printDiscountReport() {
         window.print();
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
+<script>
+    function exportExcel() {
+        let table2excel = new Table2Excel();
+        let fileName = 'Discount Report.xlsx';
+        table2excel.export(document.querySelector("#discountReportTable table"), fileName);
     }
 </script>

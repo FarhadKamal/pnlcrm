@@ -177,9 +177,11 @@
                             $type = 'VAT Amount';
                         }
                         if ($item->transaction_file) {
-                                $type .= "<small><a href='" . asset('transactionAttachment/' . $item->transaction_file) . "' target='_blank'><small class='badge badge-info'>Attachment</small></a></small>";
-
-                            }
+                            $type .=
+                                "<small><a href='" .
+                                asset('transactionAttachment/' . $item->transaction_file) .
+                                "' target='_blank'><small class='badge badge-info'>Attachment</small></a></small>";
+                        }
                     @endphp
                     <tr>
                         <td class="p-1">{{ $sl }}</td>
@@ -343,7 +345,7 @@
         let transAmt = $('#transactionAmount').val();
         let totalNetPrice = '<?php echo $totalNetPrice; ?>';
         let totalPaid = '<?php echo $totalPaid; ?>';
-        let balance = totalNetPrice - totalPaid;
+        let balance = Number(totalNetPrice) - Number(totalPaid);
 
         if (transAmt <= 0) {
             Swal.fire({
@@ -355,8 +357,9 @@
             });
             proceedFlag = 0;
         }
-
-        if (transAmt > totalNetPrice) {
+        console.log(transAmt);
+        console.log(totalNetPrice);
+        if (Number(transAmt) > Number(totalNetPrice)) {
             Swal.fire({
                 position: 'top-end',
                 icon: 'error',
@@ -367,7 +370,7 @@
             });
             proceedFlag = 0;
         }
-        if (transAmt > balance) {
+        if (Number(transAmt) > Number(balance)) {
             Swal.fire({
                 position: 'top-end',
                 icon: 'error',

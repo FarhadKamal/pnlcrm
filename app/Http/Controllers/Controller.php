@@ -589,56 +589,168 @@ class Controller extends BaseController
         if ($validator->fails()) {
             return back()->with('error', $validator->errors()->all());
         } else {
+            $userInfo = User::find($request->userId);
+            $userCode = $userInfo->assign_to;
+
             $totalTarget = $request->totalTarget;
             $q1Per = $request->q1Per;
             $q2Per = $request->q2Per;
             $q3Per = $request->q3Per;
             $q4Per = $request->q4Per;
 
-           
+            $julPer = $request->julPer;
+            $augPer = $request->augPer;
+            $sepPer = $request->sepPer;
+            $octPer = $request->octPer;
+            $novPer = $request->novPer;
+            $decPer = $request->decPer;
+            $janPer = $request->janPer;
+            $febPer = $request->febPer;
+            $marPer = $request->marPer;
+            $aprPer = $request->aprPer;
+            $mayPer = $request->mayPer;
+            $junPer = $request->junPer;
+
+            $q1JulTotalAmount = $totalTarget * $request->julPer;
+            $q1AugTotalAmount = $totalTarget * $request->augPer;
+            $q1SepTotalAmount = $totalTarget * $request->sepPer;
+            $q2OctTotalAmount = $totalTarget * $request->octPer;
+            $q2NovTotalAmount = $totalTarget * $request->novPer;
+            $q2DecTotalAmount = $totalTarget * $request->decPer;
+            $q3JanTotalAmount = $totalTarget * $request->janPer;
+            $q3FebTotalAmount = $totalTarget * $request->febPer;
+            $q3MarTotalAmount = $totalTarget * $request->marPer;
+            $q4AprTotalAmount = $totalTarget * $request->aprPer;
+            $q4MayTotalAmount = $totalTarget * $request->mayPer;
+            $q4JunTotalAmount = $totalTarget * $request->junPer;
 
             $brands = BrandDiscount::get();
-            foreach($brands as $brand){
-                $brandFieldNameQ1 = $brand.'PerQ1';
-                $brandFieldNameQ2 = $brand.'PerQ2';
-                $brandFieldNameQ3 = $brand.'PerQ3';
-                $brandFieldNameQ4 = $brand.'PerQ4';
-                if($request->brandFieldNameQ1){
-                    // $q1Amount = $totalTarget * (Number(q1Per) / 100);
-                    // $julAmount = 
+            foreach ($brands as $brand) {
+                $brandName = $brand->brand_name;
+                $brandFieldNameQ1 = $brandName . 'PerQ1';
+                $brandFieldNameQ2 = $brandName . 'PerQ2';
+                $brandFieldNameQ3 = $brandName . 'PerQ3';
+                $brandFieldNameQ4 = $brandName . 'PerQ4';
+
+                // Quarter One Brand Target 
+                if ($request->brandFieldNameQ1) {
+                    $q1Amount = $totalTarget * ($q1Per / 100);
+                    $q1JulAmount =  $totalTarget * ($julPer / 100);
+                    $q1JulBrandAmount = $q1JulAmount * ($request->brandFieldNameQ1 / 100);
+                    $q1AugAmount =  $totalTarget * ($augPer / 100);
+                    $q1AugBrandAmount = $q1AugAmount * ($request->brandFieldNameQ1 / 100);
+                    $q1SepAmount =  $totalTarget * ($sepPer / 100);
+                    $q1SepBrandAmount = $q1SepAmount * ($request->brandFieldNameQ1 / 100);
+
+                    $q1JulTotalAmount = $q1JulTotalAmount - $q1JulBrandAmount;
+                    $q1AugTotalAmount = $q1AugTotalAmount - $q1AugBrandAmount;
+                    $q1SepTotalAmount = $q1SepTotalAmount - $q1SepBrandAmount;
+                    $totalTarget = $totalTarget - ($q1JulBrandAmount + $q1AugBrandAmount + $q1SepBrandAmount);
+                } else {
+                    $q1JulBrandAmount = 0;
+                    $q1AugBrandAmount = 0;
+                    $q1SepBrandAmount = 0;
                 }
+
+                if ($request->brandFieldNameQ2) {
+                    $q2Amount = $totalTarget * ($q2Per / 100);
+                    $q2OctAmount =  $totalTarget * ($octPer / 100);
+                    $q2OctBrandAmount = $q2OctAmount * ($request->brandFieldNameq2 / 100);
+                    $q2NovAmount =  $totalTarget * ($novPer / 100);
+                    $q2NovBrandAmount = $q2NovAmount * ($request->brandFieldNameq2 / 100);
+                    $q2DecAmount =  $totalTarget * ($decPer / 100);
+                    $q2DecBrandAmount = $q2DecAmount * ($request->brandFieldNameq2 / 100);
+
+                    $q2OctTotalAmount = $q2OctTotalAmount - $q2OctBrandAmount;
+                    $q2NovTotalAmount = $q2NovTotalAmount - $q2NovBrandAmount;
+                    $q2DecTotalAmount = $q2DecTotalAmount - $q2DecBrandAmount;
+                    $totalTarget = $totalTarget - ($q2OctBrandAmount + $q2NovBrandAmount + $q2DecBrandAmount);
+                } else {
+                    $q2OctBrandAmount = 0;
+                    $q2NovBrandAmount = 0;
+                    $q2DecBrandAmount = 0;
+                }
+
+                if ($request->brandFieldNameQ3) {
+                    $q3Amount = $totalTarget * ($q3Per / 100);
+                    $q3JanAmount =  $totalTarget * ($janPer / 100);
+                    $q3JanBrandAmount = $q3JanAmount * ($request->brandFieldNameq3 / 100);
+                    $q3FebAmount =  $totalTarget * ($febPer / 100);
+                    $q3FebBrandAmount = $q3FebAmount * ($request->brandFieldNameq3 / 100);
+                    $q3MarAmount =  $totalTarget * ($marPer / 100);
+                    $q3MarBrandAmount = $q3MarAmount * ($request->brandFieldNameq3 / 100);
+
+                    $q3JanTotalAmount = $q3JanTotalAmount - $q3JanBrandAmount;
+                    $q3FebTotalAmount = $q3FebTotalAmount - $q3FebBrandAmount;
+                    $q3MarTotalAmount = $q3MarTotalAmount - $q3MarBrandAmount;
+                    $totalTarget = $totalTarget - ($q3JanBrandAmount + $q3FebBrandAmount + $q3MarBrandAmount);
+                } else {
+                    $q3JanBrandAmount = 0;
+                    $q3FebBrandAmount = 0;
+                    $q3MarBrandAmount = 0;
+                }
+
+                if ($request->brandFieldNameQ4) {
+                    $q4Amount = $totalTarget * ($q4Per / 100);
+                    $q4AprAmount =  $totalTarget * ($aprPer / 100);
+                    $q4AprBrandAmount = $q4AprAmount * ($request->brandFieldNameq4 / 100);
+                    $q4MayAmount =  $totalTarget * ($mayPer / 100);
+                    $q4MayBrandAmount = $q4MayAmount * ($request->brandFieldNameq4 / 100);
+                    $q4JunAmount =  $totalTarget * ($junPer / 100);
+                    $q4JunBrandAmount = $q4JunAmount * ($request->brandFieldNameq4 / 100);
+
+                    $q4AprTotalAmount = $q4AprTotalAmount -  $q4AprBrandAmount;
+                    $q4MayTotalAmount = $q4MayTotalAmount - $q4MayBrandAmount;
+                    $q4JunTotalAmount = $q4JunTotalAmount - $q4JunBrandAmount;
+                    $totalTarget = $totalTarget - ($q4AprBrandAmount + $q4MayBrandAmount + $q4JunBrandAmount);
+                } else {
+                    $q4AprBrandAmount = 0;
+                    $q4MayBrandAmount = 0;
+                    $q4JunBrandAmount = 0;
+                }
+
+                $targetData = array(
+                    'financial_year' => $request->financialYear,
+                    'user_id' => $request->userId,
+                    'bd_code' => $userCode,
+                    'brand_name' => $brandName,
+                    'july' => $q1JulBrandAmount,
+                    'august' => $q1AugBrandAmount,
+                    'september' => $q1SepBrandAmount,
+                    'october' => $q2OctBrandAmount,
+                    'november' => $q2NovBrandAmount,
+                    'december' => $q2DecBrandAmount,
+                    'january' => $q3JanBrandAmount,
+                    'february' => $q3FebBrandAmount,
+                    'march' => $q3MarBrandAmount,
+                    'april' => $q4AprBrandAmount,
+                    'may' => $q4MayBrandAmount,
+                    'june' => $q4JunBrandAmount
+                );
+                SalesTarget::create($targetData);
             }
 
-            $julAmount = $totalTarget * $request->julPer;
-            $augAmount = $totalTarget * $request->augPer;
-            $sepAmount = $totalTarget * $request->sepPer;
-            $octAmount = $totalTarget * $request->octPer;
-            $novAmount = $totalTarget * $request->novPer;
-            $decAmount = $totalTarget * $request->decPer;
-            $janAmount = $totalTarget * $request->janPer;
-            $febAmount = $totalTarget * $request->febPer;
-            $marAmount = $totalTarget * $request->marPer;
-
-
-            // $targetData = array(
-            //     'financial_year' => $request->financialYear,
-            //     'user_id' => $request->userId,
-            //     'bd_code' => 'Lead is lost',
-            //     'brand_name' => Auth()->user()->id,
-            //     'july' => 
-            //     'august' => 
-            //     'september' =>
-            //     'october' =>
-            //     'november' =>
-            //     'december' =>
-            //     'january' =>
-            //     'february' =>
-            //     'march' =>
-            //     'april' =>
-            //     'may' =>
-            //     'june' =>
-            // );
-            // SalesTarget::create($targetData);
+            if ($totalTarget > 0) {
+                $targetData = array(
+                    'financial_year' => $request->financialYear,
+                    'user_id' => $request->userId,
+                    'bd_code' => $userCode,
+                    'brand_name' => '',
+                    'july' => $q1JulTotalAmount,
+                    'august' => $q1AugTotalAmount,
+                    'september' => $q1SepTotalAmount,
+                    'october' => $q2OctTotalAmount,
+                    'november' => $q2NovTotalAmount,
+                    'december' => $q2DecTotalAmount,
+                    'january' => $q3JanTotalAmount,
+                    'february' => $q3FebTotalAmount,
+                    'march' => $q3MarTotalAmount,
+                    'april' => $q4AprTotalAmount,
+                    'may' => $q4MayTotalAmount,
+                    'june' => $q4JunTotalAmount
+                );
+                SalesTarget::create($targetData);
+            }
         }
     }
 }

@@ -131,6 +131,8 @@ Route::get('discountReport', [ReportController::class, 'discountReport'])->name(
 Route::post('discountReport', [ReportController::class, 'discountReportPull'])->name('discountReport')->middleware('auth');
 Route::get('outstandingReport', [ReportController::class, 'outstandingReport'])->name('outstandingReport')->middleware('auth');
 Route::post('outstandingReport', [ReportController::class, 'outstandingReportPull'])->name('outstandingReport')->middleware('auth');
+Route::get('targetSalesReport', [ReportController::class, 'targetSalesReport'])->name('targetSalesReport')->middleware('auth');
+Route::post('targetSalesReport', [ReportController::class, 'targetSalesReportPull'])->name('targetSalesReport')->middleware('auth');
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

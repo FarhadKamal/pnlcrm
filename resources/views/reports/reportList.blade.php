@@ -26,6 +26,12 @@
                 </a>
             </div>
         </div>
-        
+        <div class="col-md-3">
+            <div class="container reportCard">
+                <a href="{{ route('targetSalesReport') }}" target="_blank" class="text-dark">
+                    <h6>Target vs Sales Report</h6>
+                </a>
+            </div>
+        </div>
     </div>
 </div>

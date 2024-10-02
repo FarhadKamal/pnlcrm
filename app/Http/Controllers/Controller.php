@@ -611,18 +611,18 @@ class Controller extends BaseController
             $mayPer = $request->mayPer;
             $junPer = $request->junPer;
 
-            $q1JulTotalAmount = $totalTarget * $request->julPer;
-            $q1AugTotalAmount = $totalTarget * $request->augPer;
-            $q1SepTotalAmount = $totalTarget * $request->sepPer;
-            $q2OctTotalAmount = $totalTarget * $request->octPer;
-            $q2NovTotalAmount = $totalTarget * $request->novPer;
-            $q2DecTotalAmount = $totalTarget * $request->decPer;
-            $q3JanTotalAmount = $totalTarget * $request->janPer;
-            $q3FebTotalAmount = $totalTarget * $request->febPer;
-            $q3MarTotalAmount = $totalTarget * $request->marPer;
-            $q4AprTotalAmount = $totalTarget * $request->aprPer;
-            $q4MayTotalAmount = $totalTarget * $request->mayPer;
-            $q4JunTotalAmount = $totalTarget * $request->junPer;
+            $q1JulTotalAmount = $totalTarget * ($request->julPer / 100);
+            $q1AugTotalAmount = $totalTarget * ($request->augPer / 100);
+            $q1SepTotalAmount = $totalTarget * ($request->sepPer / 100);
+            $q2OctTotalAmount = $totalTarget * ($request->octPer / 100);
+            $q2NovTotalAmount = $totalTarget * ($request->novPer / 100);
+            $q2DecTotalAmount = $totalTarget * ($request->decPer / 100);
+            $q3JanTotalAmount = $totalTarget * ($request->janPer / 100);
+            $q3FebTotalAmount = $totalTarget * ($request->febPer / 100);
+            $q3MarTotalAmount = $totalTarget * ($request->marPer / 100);
+            $q4AprTotalAmount = $totalTarget * ($request->aprPer / 100);
+            $q4MayTotalAmount = $totalTarget * ($request->mayPer / 100);
+            $q4JunTotalAmount = $totalTarget * ($request->junPer / 100);
 
             $brands = BrandDiscount::get();
             foreach ($brands as $brand) {
@@ -731,7 +731,7 @@ class Controller extends BaseController
                     SalesTarget::create($targetData);
                 }
             }
-
+            
             if ($totalTarget > 0) {
                 $targetData = array(
                     'financial_year' => $request->financialYear,

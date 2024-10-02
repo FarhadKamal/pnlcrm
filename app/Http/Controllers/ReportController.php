@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BrandDiscount;
 use App\Models\Customer;
 use App\Models\Lead;
+use App\Models\SalesTarget;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -277,5 +278,91 @@ class ReportController extends Controller
             users.assign_to ASC, totalNetPrice DESC');
 
         return $data;
+    }
+
+    public function targetSalesReport()
+    {
+        $data['salesPersons'] = User::get();
+        $data['brands'] = BrandDiscount::get();
+        $data['financialYear'] = SalesTarget::distinct()->get(['financial_year']);
+        return view('reports.targetSalesReport', $data);
+    }
+
+    public function targetSalesReportPull(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required',
+            'financialYear' =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        } else {
+            $financialYear = $request->financialYear;
+            $userId = $request->userId;
+            if ($userId == 'all') {
+                $userCond = '';
+            } else {
+                $userCond = ' WHERE u.id = ' . $userId . '';
+            }
+
+            $data['reportData'] = DB::select('SELECT 
+                                    u.assign_to,
+                                    u.user_name,
+                                    COALESCE(targets.Q1_Target, 0) AS Q1_Target,
+                                    COALESCE(targets.Q2_Target, 0) AS Q2_Target,
+                                    COALESCE(targets.Q3_Target, 0) AS Q3_Target,
+                                    COALESCE(targets.Q4_Target, 0) AS Q4_Target,
+                                    COALESCE(sales.Q1_Sales, 0) AS Q1_Sales,
+                                    COALESCE(sales.Q2_Sales, 0) AS Q2_Sales,
+                                    COALESCE(sales.Q3_Sales, 0) AS Q3_Sales,
+                                    COALESCE(sales.Q4_Sales, 0) AS Q4_Sales
+                                FROM 
+                                    users u
+                                LEFT JOIN (
+                                    SELECT 
+                                        leads.created_by,
+                                        SUM(CASE 
+                                            WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9) THEN pump_choices.net_price 
+                                        END) AS Q1_Sales,
+                                        SUM(CASE 
+                                            WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (10, 11, 12) THEN pump_choices.net_price 
+                                        END) AS Q2_Sales,
+                                    SUM(CASE 
+                                            WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3) THEN pump_choices.net_price 
+                                        END) AS Q3_Sales,
+                                    SUM(CASE 
+                                            WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (4, 5, 6) THEN pump_choices.net_price 
+                                        END) AS Q4_Sales
+                                    FROM 
+                                        leads
+                                    INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
+                                    WHERE 
+                                        EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . '
+                                    GROUP BY 
+                                        leads.created_by
+                                ) sales ON sales.created_by = u.id
+                                INNER JOIN (
+                                    SELECT 
+                                        ST.user_id,
+                                        SUM(ST.july + ST.august + ST.september) AS Q1_Target,
+                                        SUM(ST.october + ST.november + ST.december) AS Q2_Target,
+                                    SUM(ST.january + ST.february + ST.march) AS Q3_Target,
+                                    SUM(ST.april + ST.may + ST.june) AS Q4_Target
+                                    FROM 
+                                        sales_targets ST
+                                    WHERE 
+                                        ST.financial_year = ' . $financialYear . '
+                                    GROUP BY 
+                                        ST.user_id
+                                ) targets ON targets.user_id = u.id
+                                ' . $userCond . ' ');
+
+            $data['reportYear'] = $financialYear;
+            $data['salesPersons'] = User::get();
+            $data['brands'] = BrandDiscount::get();
+            $data['financialYear'] = SalesTarget::distinct()->get(['financial_year']);
+            return view('reports.targetSalesReport', $data);
+        }
     }
 }

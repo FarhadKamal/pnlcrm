@@ -633,14 +633,14 @@ class Controller extends BaseController
                 $brandFieldNameQ4 = $brandName . 'PerQ4';
 
                 // Quarter One Brand Target 
-                if ($request->brandFieldNameQ1) {
+                if ($request->$brandFieldNameQ1) {
                     $q1Amount = $totalTarget * ($q1Per / 100);
                     $q1JulAmount =  $totalTarget * ($julPer / 100);
-                    $q1JulBrandAmount = $q1JulAmount * ($request->brandFieldNameQ1 / 100);
+                    $q1JulBrandAmount = $q1JulAmount * ($request->$brandFieldNameQ1 / 100);
                     $q1AugAmount =  $totalTarget * ($augPer / 100);
-                    $q1AugBrandAmount = $q1AugAmount * ($request->brandFieldNameQ1 / 100);
+                    $q1AugBrandAmount = $q1AugAmount * ($request->$brandFieldNameQ1 / 100);
                     $q1SepAmount =  $totalTarget * ($sepPer / 100);
-                    $q1SepBrandAmount = $q1SepAmount * ($request->brandFieldNameQ1 / 100);
+                    $q1SepBrandAmount = $q1SepAmount * ($request->$brandFieldNameQ1 / 100);
 
                     $q1JulTotalAmount = $q1JulTotalAmount - $q1JulBrandAmount;
                     $q1AugTotalAmount = $q1AugTotalAmount - $q1AugBrandAmount;
@@ -652,14 +652,14 @@ class Controller extends BaseController
                     $q1SepBrandAmount = 0;
                 }
 
-                if ($request->brandFieldNameQ2) {
+                if ($request->$brandFieldNameQ2) {
                     $q2Amount = $totalTarget * ($q2Per / 100);
                     $q2OctAmount =  $totalTarget * ($octPer / 100);
-                    $q2OctBrandAmount = $q2OctAmount * ($request->brandFieldNameq2 / 100);
+                    $q2OctBrandAmount = $q2OctAmount * ($request->$brandFieldNameQ2 / 100);
                     $q2NovAmount =  $totalTarget * ($novPer / 100);
-                    $q2NovBrandAmount = $q2NovAmount * ($request->brandFieldNameq2 / 100);
+                    $q2NovBrandAmount = $q2NovAmount * ($request->$brandFieldNameQ2 / 100);
                     $q2DecAmount =  $totalTarget * ($decPer / 100);
-                    $q2DecBrandAmount = $q2DecAmount * ($request->brandFieldNameq2 / 100);
+                    $q2DecBrandAmount = $q2DecAmount * ($request->$brandFieldNameQ2 / 100);
 
                     $q2OctTotalAmount = $q2OctTotalAmount - $q2OctBrandAmount;
                     $q2NovTotalAmount = $q2NovTotalAmount - $q2NovBrandAmount;
@@ -671,14 +671,14 @@ class Controller extends BaseController
                     $q2DecBrandAmount = 0;
                 }
 
-                if ($request->brandFieldNameQ3) {
+                if ($request->$brandFieldNameQ3) {
                     $q3Amount = $totalTarget * ($q3Per / 100);
                     $q3JanAmount =  $totalTarget * ($janPer / 100);
-                    $q3JanBrandAmount = $q3JanAmount * ($request->brandFieldNameq3 / 100);
+                    $q3JanBrandAmount = $q3JanAmount * ($request->$brandFieldNameQ3 / 100);
                     $q3FebAmount =  $totalTarget * ($febPer / 100);
-                    $q3FebBrandAmount = $q3FebAmount * ($request->brandFieldNameq3 / 100);
+                    $q3FebBrandAmount = $q3FebAmount * ($request->$brandFieldNameQ3 / 100);
                     $q3MarAmount =  $totalTarget * ($marPer / 100);
-                    $q3MarBrandAmount = $q3MarAmount * ($request->brandFieldNameq3 / 100);
+                    $q3MarBrandAmount = $q3MarAmount * ($request->$brandFieldNameQ3 / 100);
 
                     $q3JanTotalAmount = $q3JanTotalAmount - $q3JanBrandAmount;
                     $q3FebTotalAmount = $q3FebTotalAmount - $q3FebBrandAmount;
@@ -690,14 +690,14 @@ class Controller extends BaseController
                     $q3MarBrandAmount = 0;
                 }
 
-                if ($request->brandFieldNameQ4) {
+                if ($request->$brandFieldNameQ4) {
                     $q4Amount = $totalTarget * ($q4Per / 100);
                     $q4AprAmount =  $totalTarget * ($aprPer / 100);
-                    $q4AprBrandAmount = $q4AprAmount * ($request->brandFieldNameq4 / 100);
+                    $q4AprBrandAmount = $q4AprAmount * ($request->$brandFieldNameQ4 / 100);
                     $q4MayAmount =  $totalTarget * ($mayPer / 100);
-                    $q4MayBrandAmount = $q4MayAmount * ($request->brandFieldNameq4 / 100);
+                    $q4MayBrandAmount = $q4MayAmount * ($request->$brandFieldNameQ4 / 100);
                     $q4JunAmount =  $totalTarget * ($junPer / 100);
-                    $q4JunBrandAmount = $q4JunAmount * ($request->brandFieldNameq4 / 100);
+                    $q4JunBrandAmount = $q4JunAmount * ($request->$brandFieldNameQ4 / 100);
 
                     $q4AprTotalAmount = $q4AprTotalAmount -  $q4AprBrandAmount;
                     $q4MayTotalAmount = $q4MayTotalAmount - $q4MayBrandAmount;
@@ -709,25 +709,27 @@ class Controller extends BaseController
                     $q4JunBrandAmount = 0;
                 }
 
-                $targetData = array(
-                    'financial_year' => $request->financialYear,
-                    'user_id' => $request->userId,
-                    'bd_code' => $userCode,
-                    'brand_name' => $brandName,
-                    'july' => $q1JulBrandAmount,
-                    'august' => $q1AugBrandAmount,
-                    'september' => $q1SepBrandAmount,
-                    'october' => $q2OctBrandAmount,
-                    'november' => $q2NovBrandAmount,
-                    'december' => $q2DecBrandAmount,
-                    'january' => $q3JanBrandAmount,
-                    'february' => $q3FebBrandAmount,
-                    'march' => $q3MarBrandAmount,
-                    'april' => $q4AprBrandAmount,
-                    'may' => $q4MayBrandAmount,
-                    'june' => $q4JunBrandAmount
-                );
-                SalesTarget::create($targetData);
+                if ($request->$brandFieldNameQ1 || $request->$brandFieldNameQ2 || $request->$brandFieldNameQ3 || $request->$brandFieldNameQ4) {
+                    $targetData = array(
+                        'financial_year' => $request->financialYear,
+                        'user_id' => $request->userId,
+                        'bd_code' => $userCode,
+                        'brand_name' => $brandName,
+                        'july' => $q1JulBrandAmount,
+                        'august' => $q1AugBrandAmount,
+                        'september' => $q1SepBrandAmount,
+                        'october' => $q2OctBrandAmount,
+                        'november' => $q2NovBrandAmount,
+                        'december' => $q2DecBrandAmount,
+                        'january' => $q3JanBrandAmount,
+                        'february' => $q3FebBrandAmount,
+                        'march' => $q3MarBrandAmount,
+                        'april' => $q4AprBrandAmount,
+                        'may' => $q4MayBrandAmount,
+                        'june' => $q4JunBrandAmount
+                    );
+                    SalesTarget::create($targetData);
+                }
             }
 
             if ($totalTarget > 0) {

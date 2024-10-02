@@ -19,7 +19,7 @@
         ?>
         <div class="row">
             <div class="col-md-3 col-6 fs-08rem">
-                <kbd>Customer Info</kbd>
+                <kbd>Customer Info</kbd> <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                 <br>
                 <p class="p-0 m-0"><strong>Name: {{ $item->clientInfo->customer_name }}</strong></p>
                 <p class="p-0 m-0">Phone: {{ $item->lead_phone }}</p>

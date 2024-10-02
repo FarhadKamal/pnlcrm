@@ -22,8 +22,8 @@
                 <kbd>Customer Info</kbd> <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                 <br>
                 <p class="p-0 m-0"><strong>Name: {{ $item->clientInfo->customer_name }}</strong></p>
-                <p class="p-0 m-0">Phone: {{ $item->lead_phone }}</p>
-                <p class="p-0 m-0">Emai: {{ $item->lead_email }}</p>
+                <p class="p-0 m-0">Customer ID: {{ $item->clientInfo->sap_id }}</p>
+                <p class="p-0 m-0">Salesperson: {{ $item->clientInfo->assignTo->user_name }}</p>
             </div>
             <?php
             $totalNet = DB::select("SELECT SUM(unit_price*qty) AS totalPrice, SUM(net_price) AS totalNet, SUM(discount_price) AS totalDiscount FROM pump_choices WHERE lead_id = $item->id");

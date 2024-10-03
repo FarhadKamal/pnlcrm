@@ -474,9 +474,16 @@ class BookingController extends Controller
                 }
             }
 
+            $leadInfo = Lead::find($request->transactionLead);
+            $currentSatge = $leadInfo->current_stage;
+            if($currentSatge == 'BOOKING'){
+                $logStage = 'BOOKING';
+            }else{
+                $logStage = 'OUTSTANDING';
+            }
             $log_data = array(
                 'lead_id' => $request->transactionLead,
-                'log_stage' => 'BOOKING',
+                'log_stage' => $logStage,
                 'log_task' => 'Transaction insertion of BDT ' . $request->transactionAmount . '/-',
                 'log_by' => Auth()->user()->id,
                 'log_next' => 'Verify Transaction'
@@ -700,7 +707,7 @@ class BookingController extends Controller
 
             $log_data = array(
                 'lead_id' => $leadId,
-                'log_stage' => 'Outstanding',
+                'log_stage' => 'OUTSTANDING',
                 'log_task' => 'Outstanding Cleared. Remarks: ' . $request->clearRemark . '',
                 'log_by' => Auth()->user()->id,
                 'log_next' => ''

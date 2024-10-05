@@ -22,7 +22,7 @@
             visibility: hidden;
         }
 
-        #discountReportExcelBtn{
+        #discountReportExcelBtn {
             visibility: hidden;
         }
 
@@ -66,12 +66,19 @@
             <div class="col-md-3">
                 <label for="" class="form-label fs-07rem">Select Salesperson</label>
                 <select name="userId" id="userId" class="form-select fs-07rem p-1">
-                    <option value="all" selected>All Salesperson</option>
-                    @foreach ($salesPersons as $item)
-                        @if ($item->assign_to)
-                            <option value="{{ $item->id }}">{{ $item->assign_to }} - {{ $item->user_name }}</option>
-                        @endif
-                    @endforeach
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'salesPerson'))
+                        <option value="{{ Auth()->user()->id }}">{{ Auth()->user()->assign_to }} -
+                            {{ Auth()->user()->user_name }}
+                        </option>
+                    @else
+                        <option value="all" selected>All Salesperson</option>
+                        @foreach ($salesPersons as $item)
+                            @if ($item->assign_to)
+                                <option value="{{ $item->id }}">{{ $item->assign_to }} - {{ $item->user_name }}
+                                </option>
+                            @endif
+                        @endforeach
+                    @endif
                 </select>
             </div>
             <div class="col-md-3">
@@ -162,9 +169,9 @@
                             }
                             $netPrice = $totalPrice - $item->discount_price;
 
-                            if($item->discount_price <= 0){
+                            if ($item->discount_price <= 0) {
                                 $totalTradeDiscount = 0;
-                                $item->trade_discount = 0; 
+                                $item->trade_discount = 0;
                             }
 
                             $grandTotalProductPrice = $grandTotalProductPrice + $totalPrice;
@@ -198,8 +205,10 @@
                     @endforeach
                     <tr style="background-color: #c49e77">
                         <td colspan="11" class="p-1 text-center fw-bold">Grand Total</td>
-                        <td class="p-1 text-end fw-bold">{{ number_format((float) $grandTotalProductPrice, 2, '.', ',') }}</td>
-                        <td class="p-1 text-end fw-bold">{{ number_format((float) $grandTotalDiscountAmount, 2, '.', ',') }}
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotalProductPrice, 2, '.', ',') }}</td>
+                        <td class="p-1 text-end fw-bold">
+                            {{ number_format((float) $grandTotalDiscountAmount, 2, '.', ',') }}
                         </td>
                         <td class="p-1"></td>
                         <td class="p-1 text-end fw-bold">

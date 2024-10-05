@@ -62,21 +62,36 @@
             <div class="col-md-3">
                 <label for="" class="form-label fs-07rem">Select Salesperson</label>
                 <select name="userId" id="userId" class="form-select fs-07rem p-1">
-                    <option value="all" selected>All Salesperson</option>
-                    @foreach ($salesPersons as $item)
-                        @if ($item->assign_to)
-                            <option value="{{ $item->id }}">{{ $item->assign_to }} - {{ $item->user_name }}</option>
-                        @endif
-                    @endforeach
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'salesPerson'))
+                        <option value="{{ Auth()->user()->id }}">{{ Auth()->user()->assign_to }} -
+                            {{ Auth()->user()->user_name }}
+                        </option>
+                    @else
+                        <option value="all" selected>All Salesperson</option>
+                        @foreach ($salesPersons as $item)
+                            @if ($item->assign_to)
+                                <option value="{{ $item->id }}">{{ $item->assign_to }} - {{ $item->user_name }}
+                                </option>
+                            @endif
+                        @endforeach
+                    @endif
                 </select>
             </div>
             <div class="col-md-3">
                 <label for="" class="form-label fs-07rem">Select Customer</label>
                 <select name="customerId" id="customerId" class="form-select fs-07rem p-1">
-                    <option value="all" selected>All Customer</option>
-                    @foreach ($customerList as $item)
-                        <option value="{{ $item->id }}">{{ $item->customer_name }}</option>
-                    @endforeach
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'salesPerson'))
+                        <option value="all" selected>All Customer</option>
+                        @foreach (Auth()->user()->clientInfo as $item)
+                            <option value="{{ $item->id }}">{{ $item->customer_name }}</option>
+                        @endforeach
+                    @else
+                        <option value="all" selected>All Customer</option>
+                        @foreach ($customerList as $item)
+                            <option value="{{ $item->id }}">{{ $item->customer_name }}</option>
+                        @endforeach
+                    @endif
+
                 </select>
             </div>
             <div class="col-md-3">

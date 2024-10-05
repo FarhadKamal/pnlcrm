@@ -22,7 +22,10 @@
             visibility: hidden;
         }
 
-        #discountReportPrintBtn {
+        #targetSalesReportPrintBtn {
+            visibility: hidden;
+        }
+        #targetSalesReportExcelBtn {
             visibility: hidden;
         }
 
@@ -34,7 +37,7 @@
             visibility: hidden;
         }
 
-        #discountReportTable {
+        #targetSalesReportTable {
             position: absolute;
             top: 0;
         }
@@ -97,9 +100,9 @@
 
 @if (isset($reportData) && count($reportData) > 0)
     <div class="m-2">
-        <button id="outstandingReportPrintBtn" onclick="exportExcel()"
+        <button id="targetSalesReportExcelBtn" onclick="exportExcel()"
             class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Excel Report</button>
-        <button id="discountReportPrintBtn" onclick="printDiscountReport()"
+        <button id="targetSalesReportPrintBtn" onclick="printDiscountReport()"
             class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Print Report</button>
         {{-- <center>
             <h7>Discount Report</h7><br>
@@ -107,39 +110,39 @@
                 {{ date('d-M-Y', strtotime($toDate)) }} </small>
         </center> --}}
         <div id="targetSalesReportTable">
-            <table class="table table-bordered fs-06rem table-hover">
+            <table class="table table-bordered border-dark fs-07rem table-hover">
                 <thead class="thead">
                     <tr>
                         <td colspan="18" class="p-1 text-center">PNL Holdings Limited - Target vs Sales Report</td>
                     </tr>
                     <tr>
-                        <td colspan="18" class="p-1 text-center">Financial Year: {{ $reportYear }}</td>
+                        <td colspan="18" class="p-1 text-center">Financial Year: {{ (string)$reportYear }}</td>
                     </tr>
                     <tr class="fixed-header">
-                        <td rowspan="2" class="p-1 text-center">BD Code</td>
-                        <td rowspan="2" class="p-1 text-center">Sales Person</td>
+                        <td rowspan="2" class="p-1 text-center" style="align-content: start;">BD Code</td>
+                        <td rowspan="2" class="p-1 text-center" style="align-content: start;">Sales Person</td>
                         <td colspan="4" class="p-1 text-center">Quarter 1</td>
                         <td colspan="4" class="p-1 text-center">Quarter 2</td>
                         <td colspan="4" class="p-1 text-center">Quarter 3</td>
                         <td colspan="4" class="p-1 text-center">Quarter 4</td>
                     </tr>
-                    <tr class="fixed-header">
-                        <td class="p1 text-center">Target</td>
-                        <td class="p1 text-center">Sales</td>
-                        <td class="p1 text-center">Achieve</td>
-                        <td class="p1 text-center">Gap</td>
-                        <td class="p1 text-center">Target</td>
-                        <td class="p1 text-center">Sales</td>
-                        <td class="p1 text-center">Achieve</td>
-                        <td class="p1 text-center">Gap</td>
-                        <td class="p1 text-center">Target</td>
-                        <td class="p1 text-center">Sales</td>
-                        <td class="p1 text-center">Achieve</td>
-                        <td class="p1 text-center">Gap</td>
-                        <td class="p1 text-center">Target</td>
-                        <td class="p1 text-center">Sales</td>
-                        <td class="p1 text-center">Achieve</td>
-                        <td class="p1 text-center">Gap</td>
+                    <tr class="fixed-header" style="background-color: #c49e77">
+                        <td class="p-1 text-center">Target</td>
+                        <td class="p-1 text-center">Sales</td>
+                        <td class="p-1 text-center">Achieve</td>
+                        <td class="p-1 text-center">Gap</td>
+                        <td class="p-1 text-center">Target</td>
+                        <td class="p-1 text-center">Sales</td>
+                        <td class="p-1 text-center">Achieve</td>
+                        <td class="p-1 text-center">Gap</td>
+                        <td class="p-1 text-center">Target</td>
+                        <td class="p-1 text-center">Sales</td>
+                        <td class="p-1 text-center">Achieve</td>
+                        <td class="p-1 text-center">Gap</td>
+                        <td class="p-1 text-center">Target</td>
+                        <td class="p-1 text-center">Sales</td>
+                        <td class="p-1 text-center">Achieve</td>
+                        <td class="p-1 text-center">Gap</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -199,7 +202,7 @@
                             <td class="p-1 text-end">{{ number_format((float) $userGapQ4, 2, '.', ',') }}</td>
                         </tr>
                     @endforeach
-                    <tr style="background-color: #c49e77">
+                    <tr style="background-color: #F4DFDF">
                         <td colspan="2" class="p-1 text-center fw-bold">Grand Total</td>
                         <td class="p-1 text-end fw-bold">
                             {{ number_format((float) $grandTotalQ1Target, 2, '.', ',') }}</td>

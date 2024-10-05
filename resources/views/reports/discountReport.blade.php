@@ -22,6 +22,10 @@
             visibility: hidden;
         }
 
+        #discountReportExcelBtn{
+            visibility: hidden;
+        }
+
         #discountReportPrintBtn {
             visibility: hidden;
         }
@@ -94,7 +98,7 @@
 
 @if (isset($reportData) && count($reportData) > 0)
     <div class="m-2">
-        <button id="outstandingReportPrintBtn" onclick="exportExcel()"
+        <button id="discountReportExcelBtn" onclick="exportExcel()"
             class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Excel Report</button>
         <button id="discountReportPrintBtn" onclick="printDiscountReport()"
             class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Print Report</button>
@@ -104,7 +108,7 @@
                 {{ date('d-M-Y', strtotime($toDate)) }} </small>
         </center> --}}
         <div id="discountReportTable">
-            <table class="table table-bordered fs-06rem table-hover">
+            <table class="table table-bordered border-dark fs-07rem table-hover">
                 <thead class="thead">
                     <tr>
                         <td colspan="19" class="p-1 text-center">PNL Holdings Limited - Discount Report</td>

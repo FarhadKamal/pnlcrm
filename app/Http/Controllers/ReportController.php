@@ -130,61 +130,7 @@ class ReportController extends Controller
             }
 
             $filterDate = date('Y-m-d', strtotime($request->filterDate));
-            $data['reportData'] = DB::select('SELECT 
-                            customers.sap_id, 
-                            customers.customer_name, 
-                            users.user_name,
-                            users.assign_to,
-                            COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
-                            COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
-                            COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
-
-                            FROM 
-                                customers
-                            INNER JOIN 
-                                users ON users.assign_to = customers.assign_to
-                            INNER JOIN (
-                                SELECT 
-                                    leads.customer_id,
-                                    SUM(pump_choices.net_price) AS total_net_price
-                                FROM 
-                                    leads
-                                INNER JOIN 
-                                    pump_choices ON pump_choices.lead_id = leads.id
-                                WHERE 
-                                    leads.is_outstanding = 1 
-                                    AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
-                                GROUP BY 
-                                    leads.customer_id
-                            ) AS pump_totals ON pump_totals.customer_id = customers.id
-                            LEFT JOIN (
-                                SELECT 
-                                    leads.customer_id,
-                                    SUM(transactions.pay_amount) AS total_verified_paid
-                                FROM 
-                                    transactions
-                                INNER JOIN 
-                                    leads ON leads.id = transactions.lead_id
-                                WHERE 
-                                    leads.is_outstanding = 1 
-                                    AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
-                                    AND transactions.is_verified = 1
-                                GROUP BY 
-                                    leads.customer_id
-                            ) AS transactions ON transactions.customer_id = customers.id 
-                            LEFT JOIN 
-                                leads ON leads.customer_id = customers.id
-                            LEFT JOIN 
-                                pump_choices ON pump_choices.lead_id = leads.id 
-                            WHERE 
-                                leads.is_outstanding = 1 
-                                AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
-                                ' . $userCond . '
-                                ' . $customerCond . '
-                            GROUP BY 
-                                customers.id, users.user_name, users.assign_to
-                            ORDER BY 
-                                users.assign_to ASC, totalNetPrice DESC');
+            $data['reportData'] = $this->outStandingNetDueQuery($filterDate, $userCond, $customerCond);
 
             // Now Divide the net due into different interval 
             foreach ($data['reportData'] as $item) {
@@ -209,6 +155,67 @@ class ReportController extends Controller
             $data['filterDate'] = $filterDate;
             return view('reports.outstandingReport', $data);
         }
+    }
+
+    public function outStandingNetDueQuery($filterDate, $userCond, $customerCond)
+    {
+        $fetchData = DB::select('SELECT 
+        customers.sap_id, 
+        customers.customer_name, 
+        users.user_name,
+        users.assign_to,
+        COALESCE(pump_totals.total_net_price, 0) AS totalNetPrice,
+        COALESCE(transactions.total_verified_paid, 0) AS totalVerifiedPaid,
+        COALESCE(pump_totals.total_net_price, 0) - COALESCE(transactions.total_verified_paid, 0) AS netDue
+
+        FROM 
+            customers
+        INNER JOIN 
+            users ON users.assign_to = customers.assign_to
+        INNER JOIN (
+            SELECT 
+                leads.customer_id,
+                SUM(pump_choices.net_price) AS total_net_price
+            FROM 
+                leads
+            INNER JOIN 
+                pump_choices ON pump_choices.lead_id = leads.id
+            WHERE 
+                leads.is_outstanding = 1 
+                AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
+            GROUP BY 
+                leads.customer_id
+        ) AS pump_totals ON pump_totals.customer_id = customers.id
+        LEFT JOIN (
+            SELECT 
+                leads.customer_id,
+                SUM(transactions.pay_amount) AS total_verified_paid
+            FROM 
+                transactions
+            INNER JOIN 
+                leads ON leads.id = transactions.lead_id
+            WHERE 
+                leads.is_outstanding = 1 
+                AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
+                AND transactions.is_verified = 1
+            GROUP BY 
+                leads.customer_id
+        ) AS transactions ON transactions.customer_id = customers.id 
+        LEFT JOIN 
+            leads ON leads.customer_id = customers.id
+        LEFT JOIN 
+            pump_choices ON pump_choices.lead_id = leads.id 
+        WHERE 
+            leads.is_outstanding = 1 
+            AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
+            ' . $userCond . '
+            ' . $customerCond . '
+        GROUP BY 
+            customers.id, users.user_name, users.assign_to
+        ORDER BY 
+            users.assign_to ASC, totalNetPrice DESC');
+
+        return $fetchData;
     }
 
     public function dueIntervalCalculation($customerSAPID, $filterDate, $firstDate, $lastDate)
@@ -306,7 +313,19 @@ class ReportController extends Controller
                 $userCond = ' WHERE u.id = ' . $userId . '';
             }
 
-            $data['reportData'] = DB::select('SELECT 
+            $data['reportData'] = $this->targetSalesReportQuery($userCond, $financialYear);
+
+            $data['reportYear'] = $financialYear;
+            $data['salesPersons'] = User::get();
+            $data['brands'] = BrandDiscount::get();
+            $data['financialYear'] = SalesTarget::distinct()->get(['financial_year']);
+            return view('reports.targetSalesReport', $data);
+        }
+    }
+
+    public function targetSalesReportQuery($userCond, $financialYear)
+    {
+        $fetchData = DB::select('SELECT 
                                     u.assign_to,
                                     u.user_name,
                                     COALESCE(targets.Q1_Target, 0) AS Q1_Target,
@@ -358,11 +377,6 @@ class ReportController extends Controller
                                 ) targets ON targets.user_id = u.id
                                 ' . $userCond . ' ');
 
-            $data['reportYear'] = $financialYear;
-            $data['salesPersons'] = User::get();
-            $data['brands'] = BrandDiscount::get();
-            $data['financialYear'] = SalesTarget::distinct()->get(['financial_year']);
-            return view('reports.targetSalesReport', $data);
-        }
+        return $fetchData;
     }
 }

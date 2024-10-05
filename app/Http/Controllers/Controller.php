@@ -346,7 +346,50 @@ class Controller extends BaseController
             $data['encodedDeliveryStage'] = json_encode(['']);
         }
 
+        $dashOverview = $this->currentQuarterTargetSales();
+        $currentMonth = date('m');
+        if (isset($dashOverview['targetSales'][0])) {
+            if ($currentMonth >= 7 && $currentMonth <= 9) {
+                $data['currentTarget'] = $dashOverview['targetSales'][0]->Q1_Target;
+                $data['currentSales'] = $dashOverview['targetSales'][0]->Q1_Sales;
+                $data['targetLabel'] = 'Quarter One';
+            } elseif ($currentMonth >= 10 && $currentMonth <= 12) {
+                $data['currentTarget'] = $dashOverview['targetSales'][0]->Q2_Target;
+                $data['currentSales'] = $dashOverview['targetSales'][0]->Q2_Sales;
+                $data['targetLabel'] = 'Quarter Two';
+            } elseif ($currentMonth >= 1 && $currentMonth <= 3) {
+                $data['currentTarget'] = $dashOverview['targetSales'][0]->Q3_Target;
+                $data['currentSales'] = $dashOverview['targetSales'][0]->Q3_Sales;
+                $data['targetLabel'] = 'Quarter Three';
+            } elseif ($currentMonth >= 4 && $currentMonth <= 6) {
+                $data['currentTarget'] = $dashOverview['targetSales'][0]->Q4_Target;
+                $data['currentSales'] = $dashOverview['targetSales'][0]->Q4_Sales;
+                $data['targetLabel'] = 'Quarter Four';
+            }
+        }else{
+            $data['targetLabel'] = 'N/A';
+        }
+        $data['currentNetDue'] = 0;
+        if (isset($dashOverview['outStanding'])) {
+            foreach ($dashOverview['outStanding'] as $item) {
+                $data['currentNetDue'] = $data['currentNetDue'] + $item->netDue;
+            }
+        }
         return view('sales.dashboard2', $data);
+    }
+
+    function currentQuarterTargetSales()
+    {
+        $userId = Auth()->user()->id;
+        $userCond = ' WHERE u.id = ' . $userId . '';
+        $financialYear = date('Y');
+        $reportController = new ReportController();
+        $data['targetSales'] = $reportController->targetSalesReportQuery($userCond, $financialYear);
+        $filterDate = date('Y-m-d');
+        $userCond2 = ' AND users.id = ' . $userId . '';
+        $customerCond = '';
+        $data['outStanding'] = $reportController->outStandingNetDueQuery($filterDate, $userCond2, $customerCond);
+        return $data;
     }
 
     public function lostForm($leadId)

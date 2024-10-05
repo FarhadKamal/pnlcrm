@@ -1,5 +1,5 @@
 @include('layouts.navbar')
-<div class="container-fluid mt-3 mb-5" style="position: static;padding-top: 4rem;">
+<div class="container-fluid mt-3 mb-5" style="position: static;">
     <style>
         .stageLabel {
             /* position: fixed; */
@@ -28,6 +28,93 @@
             width: 100%;
         }
     </style>
+
+    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'salesPerson'))
+        <div class="row m-1">
+            <div class="col-md-3 p-1">
+                <div class="card bg-darkblue">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-bullseye text-white fa-2x"></i>
+                                <p class="mb-0 fs-06rem text-white">{{ $targetLabel }}</p>
+                            </div>
+                            <div class="text-end text-white">
+                                @if (isset($currentTarget))
+                                    <h5>{{ number_format((float) $currentTarget, 2, '.', ',') }}</h5>
+                                @else
+                                    <h5>N/A</h5>
+                                @endif
+                                <p class="mb-0 fs-08rem">Target (BDT)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 p-1">
+                <div class="card bg-info">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-bangladeshi-taka-sign text-white fa-2x"></i>
+                                <p class="mb-0 fs-06rem text-white">{{ $targetLabel }}</p>
+                            </div>
+                            <div class="text-end text-white">
+                                @if (isset($currentSales))
+                                    <h5>{{ number_format((float) $currentSales, 2, '.', ',') }}</h5>
+                                @else
+                                    <h5>N/A</h5>
+                                @endif
+                                <p class="mb-0 fs-08rem">Sales (BDT)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 p-1">
+                <div class="card bg-dark">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-award text-white fa-2x"></i>
+                                <p class="mb-0 fs-06rem text-white">{{ $targetLabel }}</p>
+                            </div>
+                            <div class="text-end text-white">
+                                @if (isset($currentSales) && isset($currentTarget))
+                                    @php
+                                        $achievement = ($currentSales / $currentTarget) * 100;
+                                    @endphp
+                                @else
+                                    @php
+                                        $achievement = 0;
+                                    @endphp
+                                @endif
+
+                                <h5>{{ number_format((float) $achievement, 2, '.', ',') }}%</h5>
+                                <p class="mb-0 fs-08rem">Achievement</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 p-1">
+                <div class="card bg-danger">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-rotate-left text-white fa-2x"></i>
+                            </div>
+                            <div class="text-end text-white">
+                                <h5>{{ number_format((float) $currentNetDue, 2, '.', ',') }}</h5>
+                                <p class="mb-0 fs-08rem">Total Due (BDT)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!---------------------------- DropDown for Mobile view ---------------- -->
 
     <div class="col mb-3 d-block d-sm-none stageLabelMobileSelection">

@@ -64,7 +64,7 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar"
-        style="background-color: #0B2E41;position: fixed;width: -webkit-fill-available;top: 0;width: -moz-available;">
+        style="background-color: #0B2E41;position: fixed;width: -webkit-fill-available;top: 0;width: -moz-available;z-index: 10000;">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Navbar brand -->
@@ -98,20 +98,6 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
-                    {{-- <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
-                            role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                            Inventory
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                            <li>
-                                <a class="dropdown-item" href="#">Menu 1</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Menu 2</a>
-                            </li>
-                        </ul>
-                    </li> --}}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink"
                             role="button" data-mdb-toggle="dropdown" aria-expanded="false">
@@ -244,7 +230,7 @@
     </nav>
 
     <!-- Navbar -->
-    <nav class="bg-info navClose pt-2" id="navbarButtonsSidebar">
+    <nav class="bg-info navClose pt-2" id="navbarButtonsSidebar" style="margin-top:5rem">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-wrap flex-row justify-content-evenly text-white">
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>

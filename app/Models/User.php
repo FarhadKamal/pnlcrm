@@ -52,4 +52,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(SystemLocation::class, 'id', 'user_location');
     }
+    public function clientInfo()
+    {
+        return $this->hasMany(Customer::class, 'assign_to', 'assign_to');
+    }
 }

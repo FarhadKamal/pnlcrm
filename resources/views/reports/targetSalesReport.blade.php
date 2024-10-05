@@ -25,6 +25,7 @@
         #targetSalesReportPrintBtn {
             visibility: hidden;
         }
+
         #targetSalesReportExcelBtn {
             visibility: hidden;
         }
@@ -65,12 +66,19 @@
             <div class="col-md-3">
                 <label for="" class="form-label fs-07rem">Select Salesperson</label>
                 <select name="userId" id="userId" class="form-select fs-07rem p-1">
-                    <option value="all" selected>All Salesperson</option>
-                    @foreach ($salesPersons as $item)
-                        @if ($item->assign_to)
-                            <option value="{{ $item->id }}">{{ $item->assign_to }} - {{ $item->user_name }}</option>
-                        @endif
-                    @endforeach
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'salesPerson'))
+                        <option value="{{ Auth()->user()->id }}">{{ Auth()->user()->assign_to }} -
+                            {{ Auth()->user()->user_name }}
+                        </option>
+                    @else
+                        <option value="all" selected>All Salesperson</option>
+                        @foreach ($salesPersons as $item)
+                            @if ($item->assign_to)
+                                <option value="{{ $item->id }}">{{ $item->assign_to }} - {{ $item->user_name }}
+                                </option>
+                            @endif
+                        @endforeach
+                    @endif
                 </select>
             </div>
             <div class="col-md-3">
@@ -116,7 +124,7 @@
                         <td colspan="18" class="p-1 text-center">PNL Holdings Limited - Target vs Sales Report</td>
                     </tr>
                     <tr>
-                        <td colspan="18" class="p-1 text-center">Financial Year: {{ (string)$reportYear }}</td>
+                        <td colspan="18" class="p-1 text-center">Financial Year: {{ (string) $reportYear }}</td>
                     </tr>
                     <tr class="fixed-header">
                         <td rowspan="2" class="p-1 text-center" style="align-content: start;">BD Code</td>

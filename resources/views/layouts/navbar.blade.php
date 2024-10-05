@@ -35,6 +35,32 @@
 
 <body>
 
+    @if (session('swError'))
+        <div>
+            <script>
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: '<?= session('swError') ?>',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+            </script>
+        </div>
+    @endif
+    @if (session('swSuccess'))
+        <div>
+            <script>
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '<?= session('swSuccess') ?>',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+            </script>
+        </div>
+    @endif
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark" id="mainNavbar"
@@ -100,11 +126,11 @@
                                     <a class="dropdown-item" href="{{ route('productEntry') }}">Product Entry</a>
                                 </li>
                             @endif
-                            {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'targetStore')) --}}
+                            @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'targetStore'))
                                 <li>
-                                    {{-- <a class="dropdown-item" href="{{ route('targetEntry') }}">Target Entry</a> --}}
+                                    <a class="dropdown-item" href="{{ route('targetEntry') }}">Target Entry</a>
                                 </li>
-                            {{-- @endif --}}
+                            @endif
                             <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                         </ul>
                     </li>
@@ -238,11 +264,11 @@
                             <a class="dropdown-item" href="{{ route('productEntry') }}">Product Entry</a>
                         </li>
                     @endif
-                    {{-- @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'targetStore')) --}}
-                    <li>
-                        {{-- <a class="dropdown-item" href="{{ route('targetEntry') }}">Target Entry</a> --}}
-                    </li>
-                {{-- @endif --}}
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'targetStore'))
+                        <li>
+                            <a class="dropdown-item" href="{{ route('targetEntry') }}">Target Entry</a>
+                        </li>
+                    @endif
                     <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                 </ul>
             </li>

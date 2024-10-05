@@ -103,7 +103,7 @@
                 {{ date('d-M-Y', strtotime($toDate)) }} </small>
         </center> --}}
         <div id="outstandingReportTable">
-            <table class="table table-bordered fs-06rem table-hover">
+            <table class="table table-bordered border-dark fs-07rem table-hover">
                 <thead class="thead">
                     <tr>
                         <td colspan="11" class="p-1 text-center">

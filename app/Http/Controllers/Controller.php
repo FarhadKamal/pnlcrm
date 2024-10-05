@@ -554,6 +554,9 @@ class Controller extends BaseController
 
     public function targetForm()
     {
+        if (!Helper::permissionCheck(Auth()->user()->id, 'targetStore')) {
+            return back()->with('swError', 'You are not authorized!');
+        }
         $data['currentYear'] = date('Y');
         $data['previousYear'] = $data['currentYear'] - 1;
         $data['futureYear'] = $data['currentYear'] + 1;
@@ -564,6 +567,9 @@ class Controller extends BaseController
 
     public function targetStore(Request $request)
     {
+        if (!Helper::permissionCheck(Auth()->user()->id, 'targetStore')) {
+            return back()->with('swError', 'You are not authorized!');
+        }
         $validator = Validator::make($request->all(), [
             'userId' => 'required',
             'financialYear' => 'required',
@@ -731,7 +737,7 @@ class Controller extends BaseController
                     SalesTarget::create($targetData);
                 }
             }
-            
+
             if ($totalTarget > 0) {
                 $targetData = array(
                     'financial_year' => $request->financialYear,

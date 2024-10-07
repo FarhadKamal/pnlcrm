@@ -129,11 +129,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $grandTotalOutstanding = 0;
+                    @endphp
                     @foreach ($reportData as $item)
                         @php
                             $outStandingWithoutVatTax = $item->invoice_amount - $item->baseAmount - $item->otherAmount;
-                            $outStandingTotal =
-                                $item->invoice_amount - $outStandingWithoutVatTax - $item->vatAmount - $item->taxAmount;
+                            $outStandingTotal = $outStandingWithoutVatTax - ($item->vatAmount + $item->taxAmount);
+                            $grandTotalOutstanding = $grandTotalOutstanding + $outStandingTotal;
                         @endphp
                         <tr>
                             <td class="p-1">{{ $item->customer_name }}</td>
@@ -153,23 +156,11 @@
                             <td class="p-1 text-end">{{ number_format((float) $outStandingTotal, 2, '.', ',') }}</td>
                         </tr>
                     @endforeach
-                    {{-- <tr style="background-color: #c49e77">
-                        <td colspan="11" class="p-1 text-center fw-bold">Grand Total</td>
+                    <tr style="background-color: #c49e77">
+                        <td colspan="12" class="p-1 text-center fw-bold">Grand Total</td>
                         <td class="p-1 text-end fw-bold">
-                            {{ number_format((float) $grandTotalProductPrice, 2, '.', ',') }}</td>
-                        <td class="p-1 text-end fw-bold">
-                            {{ number_format((float) $grandTotaltransactionAmount, 2, '.', ',') }}
-                        </td>
-                        <td class="p-1"></td>
-                        <td class="p-1 text-end fw-bold">
-                            {{ number_format((float) $grandTotalTradetransactionAmount, 2, '.', ',') }}</td>
-                        <td class="p-1"></td>
-                        <td class="p-1 text-end fw-bold">
-                            {{ number_format((float) $grandTotalSpecialtransactionAmount, 2, '.', ',') }}</td>
-                        <td class="p-1"></td>
-                        <td class="p-1 text-end fw-bold">
-                            {{ number_format((float) $grandTotalNetPrice, 2, '.', ',') }}</td>
-                    </tr> --}}
+                            {{ number_format((float) $grandTotalOutstanding, 2, '.', ',') }}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

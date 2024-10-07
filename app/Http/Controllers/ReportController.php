@@ -379,4 +379,81 @@ class ReportController extends Controller
 
         return $fetchData;
     }
+
+    public function transactionReport()
+    {
+        $data['salesPersons'] = User::get();
+        return view('reports.transactionReport', $data);
+    }
+
+    public function transactionReportPull(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required',
+            'invoiceDateFilter' =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        } else {
+            if (strpos($request->invoiceDateFilter, 'to') !== false) {
+                list($startDateStr, $endDateStr) = explode(" to ", $request->invoiceDateFilter);
+                $startDate = date('Y-m-d', strtotime($startDateStr));
+                $endDate = date('Y-m-d', strtotime($endDateStr));
+            } else {
+                $startDate = date('Y-m-d', strtotime($request->invoiceDateFilter));
+                $endDate = date('Y-m-d', strtotime($request->invoiceDateFilter));
+            }
+
+            $data['fromDate'] = $startDate;
+            $data['toDate'] = $endDate;
+
+            $userId = $request->userId;
+
+            if ($userId == 'all') {
+                $userCond = '';
+            } else {
+                $userInfo = User::find($userId);
+                $userAssign = $userInfo->assign_to;
+                $userCond = ' AND customers.assign_to = "' . $userAssign . '"';
+            }
+
+            $data['reportData'] = DB::select('
+                                        SELECT 
+                                            leads.id, 
+                                            leads.invoice_date, 
+                                            leads.sap_invoice, 
+                                            customers.customer_name, 
+                                            customers.sap_id, 
+                                            quotations.quotation_po, 
+                                            quotations.quotation_po_date,
+                                            SUM(pump_choices.net_price) AS invoice_amount,
+                                            SUM(CASE WHEN transactions.transaction_type = "base" AND transactions.is_verified = 1 AND transactions.is_return = 0 THEN transactions.pay_amount ELSE 0 END) AS baseAmount,
+                                            SUM(CASE WHEN transactions.transaction_type = "vat" AND transactions.is_verified = 1 AND transactions.is_return = 0 THEN transactions.pay_amount ELSE 0 END) AS vatAmount,
+                                            SUM(CASE WHEN transactions.transaction_type = "tax" AND transactions.is_verified = 1 AND transactions.is_return = 0 THEN transactions.pay_amount ELSE 0 END) AS taxAmount,
+                                            SUM(CASE WHEN transactions.transaction_type = "" AND transactions.is_verified = 1 AND transactions.is_return = 0 THEN transactions.pay_amount ELSE 0 END) AS otherAmount
+                                        FROM leads
+                                        INNER JOIN customers ON customers.id = leads.customer_id
+                                        INNER JOIN quotations ON quotations.lead_id=leads.id
+                                        INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
+                                        LEFT JOIN transactions ON transactions.lead_id = leads.id
+                                        WHERE quotations.is_accept=1 
+                                        AND leads.is_outstanding = 1 
+                                        AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" 
+                                        ' . $userCond . '
+                                        GROUP BY 
+                                            leads.id, 
+                                            leads.invoice_date, 
+                                            leads.sap_invoice, 
+                                            customers.customer_name, 
+                                            customers.sap_id, 
+                                            quotations.quotation_po, 
+                                            quotations.quotation_po_date
+                                    ');
+
+
+            $data['salesPersons'] = User::get();
+            return view('reports.transactionReport', $data);
+        }
+    }
 }

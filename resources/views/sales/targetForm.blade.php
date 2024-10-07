@@ -54,7 +54,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label fs-08rem">
                         Financial Year <span class="text-danger">*</span>
                     </label>
@@ -64,12 +64,20 @@
                         <option value="{{ $currentYear }}">{{ $currentYear }} To {{ $futureYear }}</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label fs-08rem">
                         Total Annual Target (BDT) <span class="text-danger">*</span>
                     </label>
                     <input type="number" class="form-control fs-08rem p-1" min="1" name="totalTarget"
                         id="totalTarget" onkeyup="calculateAll()" required>
+                </div>
+                <div class="col-md-4">
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'targetRevision'))
+                        <label class="form-label fs-08rem">Revised Target</label>
+                        <input type="checkBox" name="revisionCheck" id="revisionCheck" onchange="checkRevision()">
+                        <input type="text" name="revisionRemarks" id="revisionRemarks"
+                            class="form-control fs-08rem p-1">
+                    @endif
                 </div>
                 <div class="col-md-4">
                     <label class="form-label bg-offwhite fs-08rem p-2 mt-1 rounded w-100">
@@ -601,6 +609,15 @@
             document.getElementById('insertBTN').disabled = false;
         }
 
+    }
+
+    function checkRevision() {
+        let checkBox = $('#revisionCheck').prop('checked');
+        if (checkBox) {
+            document.getElementById('revisionRemarks').required = true;
+        } else {
+            document.getElementById('revisionRemarks').required = false;
+        }
     }
 
     $('#taregtInsertionForm').submit(function(e, params) {

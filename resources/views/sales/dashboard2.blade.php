@@ -192,7 +192,7 @@
                                 <small class="card-text mb-1"><b>Created By:</b>
                                     {{ $item['createdBy']->user_name }}</small>
                                 <div class="d-none">
-                                    <?php $encoded = json_encode($item); ?>
+                                    <?php $encoded = json_encode($item, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>
                                     <button type="button" data-mdb-toggle="modal" data-mdb-target="#newLeadModal"
                                         class="btn btn-sm btn-darkblue  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100"
                                         onclick='dataShowModal(<?= $encoded ?>)'>{{ $leadButtonLabel }}</button>

@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SalesTarget extends Model
+class SalesTargetLog extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'ref_id',
         'financial_year',
         'user_id',
         'bd_code',
@@ -27,6 +28,3 @@ class SalesTarget extends Model
         'june',
     ];
 }
-
-
-

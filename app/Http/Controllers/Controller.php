@@ -9,6 +9,7 @@ use App\Models\PumpChoice;
 use App\Models\Quotation;
 use App\Models\SalesLog;
 use App\Models\SalesTarget;
+use App\Models\SalesTargetLog;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -366,7 +367,7 @@ class Controller extends BaseController
                 $data['currentSales'] = $dashOverview['targetSales'][0]->Q4_Sales;
                 $data['targetLabel'] = 'Quarter Four';
             }
-        }else{
+        } else {
             $data['targetLabel'] = 'N/A';
         }
         $data['currentNetDue'] = 0;
@@ -641,6 +642,28 @@ class Controller extends BaseController
             $userInfo = User::find($request->userId);
             $userCode = $userInfo->assign_to;
 
+            $revisionCheck = $request->revisionCheck;
+            if ($revisionCheck && $revisionCheck == 'on') {
+                // Backup Exist Data
+                $targetInfo = SalesTarget::where(['user_id' => $request->userId, 'financial_year' => $request->financialYear])->get();
+                $ref_id = floor(time() - 999999999);
+                $targetInfo->ref_id = $ref_id;
+                foreach ($targetInfo as $item) {
+                    $itemArray = $item->toArray();
+                    $itemArray['ref_id'] = $ref_id;
+                    SalesTargetLog::create($itemArray);
+                }
+                SalesTarget::where(['user_id' => $request->userId, 'financial_year' => $request->financialYear])->delete();
+            } else {
+                // Check User Already Exist In the Target Table 
+                $targetInfo = SalesTarget::where(['user_id' => $request->userId, 'financial_year' => $request->financialYear])->get();
+                if ($targetInfo && count($targetInfo) > 0) {
+                    return back()->with('swError', 'The selected person already exist in the current financial year target');
+                }
+            }
+
+
+
             $totalTarget = $request->totalTarget;
             $q1Per = $request->q1Per;
             $q2Per = $request->q2Per;
@@ -802,6 +825,8 @@ class Controller extends BaseController
                 );
                 SalesTarget::create($targetData);
             }
+
+            return back()->with('swSuccess', 'Target Inserted!');
         }
     }
 }

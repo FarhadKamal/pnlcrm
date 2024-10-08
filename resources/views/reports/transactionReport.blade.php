@@ -113,6 +113,7 @@
                             {{ date('d-M-Y', strtotime($toDate)) }}</td>
                     </tr>
                     <tr class="fixed-header">
+                        <td class="p-1"></td>
                         <td class="p-1 text-center">Customer Name</td>
                         <td class="p-1 text-center">Customer Code</td>
                         <td class="p-1 text-center">PO Number</td>
@@ -139,12 +140,14 @@
                             $grandTotalOutstanding = $grandTotalOutstanding + $outStandingTotal;
                         @endphp
                         <tr>
+                            <td class="p-1"><small class="badge badge-success">Lead ID: {{ $item->id }}</small></td>
                             <td class="p-1">{{ $item->customer_name }}</td>
                             <td class="p-1 text-center">{{ $item->sap_id }}</td>
                             <td class="p-1 text-center">{{ $item->quotation_po }}</td>
                             <td class="p-1">{{ date('d-M-Y', strtotime($item->quotation_po_date)) }}</td>
                             <td class="p-1">{{ date('d-M-Y', strtotime($item->invoice_date)) }}</td>
-                            <td class="p-1 text-center">{{ $item->sap_invoice }}</td>
+                            <td class="p-1 text-center"><a href="{{ route('detailsLog', ['leadId' => $item->id]) }}"
+                                    target="_blank">{{ $item->sap_invoice }}</a></td>
                             <td class="p-1 text-end">{{ number_format((float) $item->invoice_amount, 2, '.', ',') }}
                             </td>
                             <td class="p-1 text-end">{{ number_format((float) $item->baseAmount, 2, '.', ',') }}</td>
@@ -157,7 +160,7 @@
                         </tr>
                     @endforeach
                     <tr style="background-color: #c49e77">
-                        <td colspan="12" class="p-1 text-center fw-bold">Grand Total</td>
+                        <td colspan="13" class="p-1 text-center fw-bold">Grand Total</td>
                         <td class="p-1 text-end fw-bold">
                             {{ number_format((float) $grandTotalOutstanding, 2, '.', ',') }}</td>
                     </tr>

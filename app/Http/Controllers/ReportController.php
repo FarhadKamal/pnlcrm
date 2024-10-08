@@ -418,8 +418,7 @@ class ReportController extends Controller
                 $userCond = ' AND customers.assign_to = "' . $userAssign . '"';
             }
 
-            $data['reportData'] = DB::select('
-                                    SELECT 
+            $data['reportData'] = DB::select('SELECT 
                                         leads.id, 
                                         leads.invoice_date, 
                                         leads.sap_invoice, 
@@ -431,11 +430,15 @@ class ReportController extends Controller
                                         IFNULL(transaction_sums.vatAmount, 0) AS vatAmount,
                                         IFNULL(transaction_sums.taxAmount, 0) AS taxAmount,
                                         IFNULL(transaction_sums.otherAmount, 0) AS otherAmount,
-                                        SUM(pump_choices.net_price) AS invoice_amount
+                                        IFNULL(pump_totals.invoice_amount, 0) AS invoice_amount
                                     FROM leads
                                     INNER JOIN customers ON customers.id = leads.customer_id
                                     INNER JOIN quotations ON quotations.lead_id = leads.id
-                                    INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
+                                    LEFT JOIN (
+                                        SELECT lead_id, SUM(net_price) AS invoice_amount
+                                        FROM pump_choices
+                                        GROUP BY lead_id
+                                    ) AS pump_totals ON pump_totals.lead_id = leads.id
                                     LEFT JOIN (
                                         SELECT lead_id,
                                             SUM(CASE WHEN transaction_type = "base" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS baseAmount,
@@ -447,9 +450,8 @@ class ReportController extends Controller
                                         GROUP BY lead_id
                                     ) AS transaction_sums ON transaction_sums.lead_id = leads.id
                                     WHERE quotations.is_accept = 1 
-                                    AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" 
-                                    ' . $userCond . '
-                                    GROUP BY leads.id, leads.invoice_date, leads.sap_invoice, customers.customer_name, customers.sap_id, quotations.quotation_po, quotations.quotation_po_date');
+                                    AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . ' 
+                                    GROUP BY leads.id');
 
             $data['salesPersons'] = User::get();
             return view('reports.transactionReport', $data);

@@ -57,7 +57,7 @@
                     <div class="mb-1">
                         <label class="form-label m-0 fs-08rem">Deposit Amount (BDT) <span
                                 class="text-danger">*</span></label>
-                        <input name="transactionAmount" id="transactionAmount" type="number"
+                        <input name="transactionAmount" id="transactionAmount" type="number" step=".001"
                             class="form-control lh-sm fs-08rem p-1" required>
                     </div>
                     <div class="mb-1">

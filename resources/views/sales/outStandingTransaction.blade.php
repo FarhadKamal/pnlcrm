@@ -36,7 +36,7 @@
                     <div class="mb-1">
                         <label class="form-label m-0  fs-08rem">Deposit Amount (BDT) <span
                                 class="text-danger">*</span></label>
-                        <input name="transactionAmount" id="transactionAmount" type="number"
+                        <input name="transactionAmount" id="transactionAmount" type="number" step=".001"
                             class="form-control lh-sm fs-08rem p-1" required>
                     </div>
                     <div class="mb-1">
@@ -237,16 +237,22 @@
         @endif
     </div>
     @if ($leadInfo->is_outstanding == 1 && App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'accountsClearance'))
-        <div class="container">
-            <form action="{{ route('outstandingsClearance') }}" method="POST" id="OutstandingsClearanceForm">
-                @csrf
-                <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}">
-                <label for="" class="fs-08rem">Clearance Remarks</label>
-                <textarea name="clearRemark" id="clearRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
-                <br>
-                <center><button class="btn btn-sm btn-darkblue">Proceed Outstanding Clearance</button></center>
-            </form>
-        </div>
+        @if ($totalNetPrice - $totalPaid > 0)
+            <center>
+                <h5 class="badge badge-danger">Balance Need To Zero For Outstanding Clearance</h5>
+            </center>
+        @else
+            <div class="container">
+                <form action="{{ route('outstandingsClearance') }}" method="POST" id="OutstandingsClearanceForm">
+                    @csrf
+                    <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}">
+                    <label for="" class="fs-08rem">Clearance Remarks</label>
+                    <textarea name="clearRemark" id="clearRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
+                    <br>
+                    <center><button class="btn btn-sm btn-darkblue">Proceed Outstanding Clearance</button></center>
+                </form>
+            </div>
+        @endif
     @endif
 
 

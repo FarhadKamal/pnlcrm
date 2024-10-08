@@ -18,7 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('lead_id');
             $table->integer('quotation_id');
             $table->date('deposit_date');
-            $table->integer('pay_amount');
+            $table->double('pay_amount');
             $table->string('transaction_type');
             $table->string('transaction_file');
             $table->string('transaction_remarks')->nullable();

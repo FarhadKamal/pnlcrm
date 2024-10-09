@@ -467,7 +467,12 @@
                             </p>
                         @endif
                         @php
-                            $ts = $ts + 1;
+                            $ts = isset($ts) ? $ts++ : ($ts = 6);
+                            // if (isset($ts)) {
+                            //     $ts = $ts + 1;
+                            // } else {
+                            //     $ts = 6;
+                            // }
                         @endphp
                         @if ($pedHCPDrainageTermFlag == 1)
                             <p class="">{{ $ts }}. 2 (Two)

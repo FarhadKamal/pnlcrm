@@ -467,7 +467,7 @@
                             </p>
                         @endif
                         @php
-                            $ts++;
+                            $ts = $ts + 1;
                         @endphp
                         @if ($pedHCPDrainageTermFlag == 1)
                             <p class="">{{ $ts }}. 2 (Two)

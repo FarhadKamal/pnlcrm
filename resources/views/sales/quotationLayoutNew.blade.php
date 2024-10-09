@@ -291,7 +291,8 @@
                         <?php
                         $allSurfaceTermFlag = 0;
                         $allSubmersibleTermFlag = 0;
-                        $pedDrainageTermFlag = 0;
+                        $pedHCPDrainageTermFlag = 0;
+                        $bgFlowDrainageTermFlag = 0;
                         ?>
                         @foreach ($reqInfo as $itemReq)
                             <div class="pagebreakAvoid">
@@ -335,13 +336,17 @@
                                                 if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Submersible') {
                                                     $allSubmersibleTermFlag = 1;
                                                 }
-                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->brand_name == 'Pedrollo') {
-                                                    $pedDrainageTermFlag = 1;
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && ($itemPump->brand_name == 'Pedrollo' || $itemPump->brand_name == 'HCP')) {
+                                                    $pedHCPDrainageTermFlag = 1;
                                                 }
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->brand_name == 'BGFlow') {
+                                                    $bgFlowDrainageTermFlag = 1;
+                                                }
+                                                
                                                 if ($itemPump->spare_parts == 0) {
                                                     if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
                                                         $country = $itemPump->productInfo->country_name;
-                                                        $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' pump</b> ('.$country.'). <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <br><b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head(M):</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head . '. <b>Suction Dia:</b> ' . $itemPump->productInfo->suction_dia . ' Inch. ' . '<b>Delivery Dia:</b> ' . $itemPump->productInfo->delivery_dia . ' Inch.';
+                                                        $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' pump</b> (' . $country . '). <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <br><b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head(M):</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head . '. <b>Suction Dia:</b> ' . $itemPump->productInfo->suction_dia . ' Inch. ' . '<b>Delivery Dia:</b> ' . $itemPump->productInfo->delivery_dia . ' Inch.';
                                                     } else {
                                                         $country = $itemPump->productInfo->country_name;
                                                         $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->productInfo->mat_name;
@@ -449,7 +454,7 @@
                                 Warranty as per our company policy.
                             </p>
                         @endif
-                        @if ($allSubmersibleTermFlag == 1 || $pedDrainageTermFlag == 1)
+                        @if ($allSubmersibleTermFlag == 1 || $pedHCPDrainageTermFlag == 1)
                             <?php if ($allSurfaceTermFlag == 1) {
                                 $ts = 7;
                             } else {
@@ -461,13 +466,26 @@
                                 Warranty as per our company policy.
                             </p>
                         @endif
-                        {{-- @if ($pedDrainageTermFlag == 1)
-                            <p class=""> 2 (Two)
-                                Years’
+                        @php
+                            $ts++;
+                        @endphp
+                        @if ($pedHCPDrainageTermFlag == 1)
+                            <p class="">{{ $ts }}. 2 (Two)
+                                Years’ Drainage Pump (Pedrollo/HCP)
                                 Service
                                 Warranty as per our company policy.
                             </p>
-                        @endif --}}
+                            @php
+                                $ts++;
+                            @endphp
+                        @endif
+                        @if ($bgFlowDrainageTermFlag == 1)
+                            <p class="">{{ $ts }}. 1 (One)
+                                Years’ Drainage Pump (BGFlow)
+                                Service
+                                Warranty as per our company policy.
+                            </p>
+                        @endif
 
 
                     </div>

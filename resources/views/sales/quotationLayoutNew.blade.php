@@ -467,7 +467,7 @@
                             </p>
                         @endif
                         @php
-                            $ts = isset($ts) ? $ts++ : ($ts = 6);
+                            $ts = isset($ts) ? $ts++ : 6;
                             // if (isset($ts)) {
                             //     $ts = $ts + 1;
                             // } else {

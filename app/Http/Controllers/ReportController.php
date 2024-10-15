@@ -457,4 +457,70 @@ class ReportController extends Controller
             return view('reports.transactionReport', $data);
         }
     }
+
+    public function graphReport()
+    {
+        $userCond = '';
+        $financialYear = date('Y');
+        $reportData = $this->targetSalesReportQuery($userCond, $financialYear);
+        $annualTarget = 0;
+        $annualSales = 0;
+        $q1Target = 0;
+        $q1Sales = 0;
+        $q2Target = 0;
+        $q2Sales = 0;
+        $q3Target = 0;
+        $q3Sales = 0;
+        $q4Target = 0;
+        $q4Sales = 0;
+        foreach ($reportData as $item) {
+            $annualTarget = $annualTarget + $item->Q1_Target + $item->Q2_Target + $item->Q3_Target + $item->Q4_Target;
+            $annualSales = $annualSales + $item->Q1_Sales + $item->Q2_Sales + $item->Q3_Sales + $item->Q4_Sales;
+            $q1Target = $q1Target + $item->Q1_Target;
+            $q1Sales = $q1Sales + $item->Q1_Sales;
+            $q2Target = $q2Target + $item->Q2_Target;
+            $q2Sales = $q2Sales + $item->Q2_Sales;
+            $q3Target = $q3Target + $item->Q3_Target;
+            $q3Sales = $q3Sales + $item->Q3_Sales;
+            $q4Target = $q4Target + $item->Q4_Target;
+            $q4Sales = $q4Sales + $item->Q4_Sales;
+        }
+        $data['annualAchievementPer'] = ($annualSales / $annualTarget) * 100;
+        $data['q1AchievementPer'] = ($q1Sales / $q1Target) * 100;
+        $data['q2AchievementPer'] = ($q2Sales / $q2Target) * 100;
+        $data['q3AchievementPer'] = ($q3Sales / $q3Target) * 100;
+        $data['q4AchievementPer'] = ($q3Sales / $q3Target) * 100;
+
+        $currentMonth = date('m');
+        if ($currentMonth >= 7) {
+            $startDate = date('Y-07-01');
+            $endDate = date('Y-06-t', strtotime('+1 year'));
+        } else {
+            $startDate = date('Y-07-01', strtotime('-1 year'));
+            $endDate = date('Y-06-t');
+        }
+        $limit = 20;
+        $data['topSoldProduct'] = $this->topSoldProduct($startDate, $endDate, $limit);
+        return view('reports.graphReport', $data);
+    }
+
+
+    function topSoldProduct($startDate, $endDate, $limit)
+    {
+        $reportData = DB::select('SELECT pump_choices.product_id, 
+                                pump_choices.spare_parts, 
+                                COUNT(pump_choices.product_id) AS InvoiceQty,
+                                SUM(pump_choices.qty) AS totalSoldQty,
+                                items.mat_name AS productName
+                            FROM leads
+                            INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
+                            LEFT JOIN items ON items.id = pump_choices.product_id
+                            WHERE leads.is_won = 1 
+                            AND DATE(leads.invoice_date) BETWEEN "' . $startDate . '" AND "' . $endDate . '"
+                            AND pump_choices.spare_parts = 0
+                            GROUP BY pump_choices.product_id 
+                            ORDER BY totalSoldQty DESC 
+                            LIMIT ' . $limit . '');
+        return $reportData;
+    }
 }

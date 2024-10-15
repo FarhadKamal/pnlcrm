@@ -1036,8 +1036,8 @@
         var data = [];
         topSoldProduct.forEach(element => {
             let chartValue = {
-                country: element.productName,
-                value: element.totalSoldQty
+                "country": element.productName,
+                "value": element.totalSoldQty
             };
             data.push(chartValue);
         });

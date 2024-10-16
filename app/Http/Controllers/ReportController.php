@@ -498,13 +498,17 @@ class ReportController extends Controller
         if ($currentMonth >= 7) {
             $startDate = date('Y-07-01');
             $endDate = date('Y-06-30', strtotime('+1 year'));
+            $data['financialYear'] = date('Y', strtotime($startDate)).'-'.date('Y', strtotime($endDate));
         } else {
             $startDate = date('Y-07-01', strtotime('-1 year'));
             $endDate = date('Y-06-30');
+            $data['financialYear'] = date('Y', strtotime($startDate)).'-'.date('Y', strtotime($endDate));
         }
         $limit = 20;
         $data['topSoldProduct'] = $this->topSoldProduct($startDate, $endDate, $limit);
         // Top Sold Product End 
+
+        $data['topSoldBrand'] = $this->topSoldBrand($startDate, $endDate);
 
         return view('reports.graphReport', $data);
     }
@@ -516,7 +520,8 @@ class ReportController extends Controller
                                 pump_choices.spare_parts, 
                                 COUNT(pump_choices.product_id) AS InvoiceQty,
                                 SUM(pump_choices.qty) AS totalSoldQty,
-                                items.mat_name AS productName
+                                items.mat_name AS productName,
+                                items.brand_name
                             FROM leads
                             INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
                             LEFT JOIN items ON items.id = pump_choices.product_id
@@ -526,6 +531,25 @@ class ReportController extends Controller
                             GROUP BY pump_choices.product_id 
                             ORDER BY totalSoldQty DESC 
                             LIMIT ' . $limit . '');
+        return $reportData;
+    }
+
+    function topSoldBrand($startDate, $endDate)
+    {
+        $reportData = DB::select('SELECT pump_choices.product_id, 
+                                pump_choices.spare_parts, 
+                                COUNT(pump_choices.product_id) AS InvoiceQty,
+                                SUM(pump_choices.qty) AS totalSoldQty,
+                                items.mat_name AS productName,
+                                items.brand_name
+                            FROM leads
+                            INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
+                            LEFT JOIN items ON items.id = pump_choices.product_id
+                            WHERE leads.is_won = 1 
+                            AND DATE(leads.invoice_date) BETWEEN "' . $startDate . '" AND "' . $endDate . '"
+                            AND pump_choices.spare_parts = 0
+                            GROUP BY items.brand_name
+                            ORDER BY totalSoldQty DESC');
         return $reportData;
     }
 }

@@ -460,6 +460,7 @@ class ReportController extends Controller
 
     public function graphReport()
     {
+        // Annual and Quarter Achievement Start
         $userCond = '';
         $financialYear = date('Y');
         $reportData = $this->targetSalesReportQuery($userCond, $financialYear);
@@ -490,17 +491,21 @@ class ReportController extends Controller
         $data['q2AchievementPer'] = ($q2Sales / $q2Target) * 100;
         $data['q3AchievementPer'] = ($q3Sales / $q3Target) * 100;
         $data['q4AchievementPer'] = ($q3Sales / $q3Target) * 100;
+        // Annual and Quarter Achievement End 
 
+        // Top Sold Product Start 
         $currentMonth = date('m');
         if ($currentMonth >= 7) {
             $startDate = date('Y-07-01');
-            $endDate = date('Y-06-t', strtotime('+1 year'));
+            $endDate = date('Y-06-30', strtotime('+1 year'));
         } else {
             $startDate = date('Y-07-01', strtotime('-1 year'));
-            $endDate = date('Y-06-t');
+            $endDate = date('Y-06-30');
         }
         $limit = 20;
         $data['topSoldProduct'] = $this->topSoldProduct($startDate, $endDate, $limit);
+        // Top Sold Product End 
+
         return view('reports.graphReport', $data);
     }
 

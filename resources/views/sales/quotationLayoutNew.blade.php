@@ -336,13 +336,13 @@
                                                 if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Submersible') {
                                                     $allSubmersibleTermFlag = 1;
                                                 }
-                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && ($itemPump->brand_name == 'Pedrollo' || $itemPump->brand_name == 'HCP')) {
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && ($itemPump->productInfo->brand_name == 'PEDROLLO' || $itemPump->productInfo->brand_name == 'HCP')) {
                                                     $pedHCPDrainageTermFlag = 1;
                                                 }
-                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->brand_name == 'BGFlow') {
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->productInfo->brand_name == 'BGFlow') {
                                                     $bgFlowDrainageTermFlag = 1;
                                                 }
-                                                
+                                               
                                                 if ($itemPump->spare_parts == 0) {
                                                     if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
                                                         $country = $itemPump->productInfo->country_name;
@@ -454,7 +454,7 @@
                                 Warranty as per our company policy.
                             </p>
                         @endif
-                        @if ($allSubmersibleTermFlag == 1 || $pedHCPDrainageTermFlag == 1)
+                        @if ($allSubmersibleTermFlag == 1)
                             <?php if ($allSurfaceTermFlag == 1) {
                                 $ts = 7;
                             } else {
@@ -475,7 +475,7 @@
                             // }
                         @endphp
                         @if ($pedHCPDrainageTermFlag == 1)
-                            <p class="">{{ $ts }}. 2 (Two)
+                            <p class="colText">{{ $ts }}. 2 (Two)
                                 Years’ Drainage Pump (Pedrollo/HCP)
                                 Service
                                 Warranty as per our company policy.

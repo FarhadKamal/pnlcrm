@@ -39,7 +39,13 @@
 
     #topSoldBrand {
         width: 100%;
-        height: 300px;
+        height: 400px;
+        font-size: 0.7rem;
+    }
+
+    #totalOutstanding {
+        width: 100%;
+        height: 400px;
         font-size: 0.7rem;
     }
 </style>
@@ -86,6 +92,10 @@
         <div class="col-md-6 p-1" style="background:rgb(240, 240, 240)">
             <p class="text-center p-0 m-0 fw-bold fs-08rem">Top Sold Brands</p>
             <div id="topSoldBrand"></div>
+        </div>
+        <div class="col-md-6">
+            <p class="text-center p-0 m-0 fw-bold fs-08rem">Total Outstanding</p>
+            <div id="totalOutstanding"></div>
         </div>
     </div>
 </div>
@@ -1174,7 +1184,7 @@
             data.push(chartValue);
         });
 
-        
+
 
         yAxis.data.setAll(data);
         series.data.setAll(data);
@@ -1241,6 +1251,179 @@
         // Make stuff animate on load
         // https://www.amcharts.com/docs/v5/concepts/animations/
         series.appear(1000);
+        chart.appear(1000, 100);
+
+    }); // end am5.ready()
+</script>
+
+<script>
+    am5.ready(function() {
+
+        // Create root element
+        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+        var root = am5.Root.new("totalOutstanding");
+
+
+        // Set themes
+        // https://www.amcharts.com/docs/v5/concepts/themes/
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+
+
+        // Create chart
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+            panX: false,
+            panY: false,
+            wheelX: "panX",
+            wheelY: "zoomX",
+            paddingLeft: 0,
+            layout: root.verticalLayout
+        }));
+
+
+        // Add legend
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/legend-xy-series/
+        var legend = chart.children.push(am5.Legend.new(root, {
+            centerX: am5.p50,
+            x: am5.p50
+        }))
+
+        // Data
+        var data = [{
+            year: "Total",
+            income: JSON.parse('<?php echo json_encode($grandTotalOutstanding); ?>'),
+            // expenses: 18.1
+        }, {
+            year: "Within 30",
+            // income: 26.2,
+            expenses: JSON.parse('<?php echo json_encode($grandTotaldueWithin30); ?>'),
+        }, {
+            year: "31 To 60",
+            // income: 30.1,
+            expenses: JSON.parse('<?php echo json_encode($grandTotaldueWithin31_60); ?>'),
+        }, {
+            year: "61 To 90",
+            // income: 29.5,
+            expenses: JSON.parse('<?php echo json_encode($grandTotaldueWithin61_90); ?>'),
+        }, {
+            year: "91 To 180",
+            // income: 24.6,
+            expenses: JSON.parse('<?php echo json_encode($grandTotaldueWithin91_180); ?>'),
+        }, {
+            year: "180 Plus",
+            // income: 24.6,
+            expenses: JSON.parse('<?php echo json_encode($grandTotaldueWithin180plus); ?>'),
+        }, {
+            year: "365 Plus",
+            // income: 24.6,
+            expenses: JSON.parse('<?php echo json_encode($grandTotaldueWithin365plus); ?>'),
+        }];
+
+
+        // Create axes
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+        var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
+            categoryField: "year",
+            renderer: am5xy.AxisRendererY.new(root, {
+                inversed: true,
+                cellStartLocation: 0.1,
+                cellEndLocation: 0.9,
+                minorGridEnabled: true
+            })
+        }));
+
+        yAxis.data.setAll(data);
+
+        var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
+            renderer: am5xy.AxisRendererX.new(root, {
+                strokeOpacity: 0.1,
+                minGridDistance: 100
+            }),
+            min: 0
+        }));
+
+
+        // Add series
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+        function createSeries(field, name) {
+            var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+                name: name,
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueXField: field,
+                categoryYField: "year",
+                sequencedInterpolation: true,
+                tooltip: am5.Tooltip.new(root, {
+                    pointerOrientation: "horizontal",
+                    labelText: "[bold]{name}[/]\n{categoryY}: {valueX}"
+                })
+            }));
+
+            series.columns.template.setAll({
+                height: am5.p100,
+                strokeOpacity: 1
+            });
+
+
+            series.bullets.push(function() {
+                return am5.Bullet.new(root, {
+                    locationX: 1,
+                    locationY: 0.5,
+                    sprite: am5.Label.new(root, {
+                        centerY: am5.p50,
+                        text: "{valueX}",
+                        populateText: true
+                    })
+                });
+            });
+
+            series.bullets.push(function() {
+                return am5.Bullet.new(root, {
+                    locationX: 1,
+                    locationY: 0.5,
+                    sprite: am5.Label.new(root, {
+                        centerX: am5.p100,
+                        centerY: am5.p50,
+                        text: "{name}",
+                        fill: am5.color(0xffffff),
+                        populateText: true
+                    })
+                });
+            });
+
+            series.data.setAll(data);
+            series.appear();
+
+            return series;
+        }
+
+        createSeries("income", "Total Net Due");
+        createSeries("expenses", "Due");
+
+
+        // Add legend
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/legend-xy-series/
+        var legend = chart.children.push(am5.Legend.new(root, {
+            centerX: am5.p50,
+            x: am5.p50
+        }));
+
+        legend.data.setAll(chart.series.values);
+
+
+        // Add cursor
+        // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+            behavior: "zoomY"
+        }));
+        cursor.lineY.set("forceHidden", true);
+        cursor.lineX.set("forceHidden", true);
+
+
+        // Make stuff animate on load
+        // https://www.amcharts.com/docs/v5/concepts/animations/
         chart.appear(1000, 100);
 
     }); // end am5.ready()

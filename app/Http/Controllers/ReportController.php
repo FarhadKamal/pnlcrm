@@ -498,17 +498,56 @@ class ReportController extends Controller
         if ($currentMonth >= 7) {
             $startDate = date('Y-07-01');
             $endDate = date('Y-06-30', strtotime('+1 year'));
-            $data['financialYear'] = date('Y', strtotime($startDate)).'-'.date('Y', strtotime($endDate));
+            $data['financialYear'] = date('Y', strtotime($startDate)) . '-' . date('Y', strtotime($endDate));
         } else {
             $startDate = date('Y-07-01', strtotime('-1 year'));
             $endDate = date('Y-06-30');
-            $data['financialYear'] = date('Y', strtotime($startDate)).'-'.date('Y', strtotime($endDate));
+            $data['financialYear'] = date('Y', strtotime($startDate)) . '-' . date('Y', strtotime($endDate));
         }
         $limit = 20;
         $data['topSoldProduct'] = $this->topSoldProduct($startDate, $endDate, $limit);
         // Top Sold Product End 
 
+        // Top Sold Brand Start
         $data['topSoldBrand'] = $this->topSoldBrand($startDate, $endDate);
+        // Top Sold Brand End
+
+        // Total Outstanding Start 
+        $filterDate = date('Y-m-d');
+        $customerCond = ''; // All Customer
+        $grandTotalOutstanding = 0;
+        $grandTotaldueWithin30 = 0;
+        $grandTotaldueWithin31_60 = 0;
+        $grandTotaldueWithin61_90 = 0;
+        $grandTotaldueWithin91_180 = 0;
+        $grandTotaldueWithin180plus = 0;
+        $grandTotaldueWithin365plus = 0;
+        $outstandingList = $this->outStandingNetDueQuery($filterDate, $userCond, $customerCond);
+        foreach ($outstandingList as $item) {
+            $grandTotalOutstanding = $grandTotalOutstanding + $item->netDue;
+            $customerSAPID =  $item->sap_id;
+            $dueWithin30 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 0, 30);
+            $dueWithin31_60 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 30, 60);
+            $dueWithin61_90 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 60, 90);
+            $dueWithin91_180 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 90, 180);
+            $dueWithin180plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 180, 0);
+            $dueWithin365plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 365, 0);
+
+            $grandTotaldueWithin30 = $grandTotaldueWithin30 + ($dueWithin30[0]->netDue ?? 0);
+            $grandTotaldueWithin31_60 = $grandTotaldueWithin31_60 + ($dueWithin31_60[0]->netDue ?? 0);
+            $grandTotaldueWithin61_90 = $grandTotaldueWithin61_90 + ($dueWithin61_90[0]->netDue ?? 0);
+            $grandTotaldueWithin91_180 = $grandTotaldueWithin91_180 + ($dueWithin91_180[0]->netDue ?? 0);
+            $grandTotaldueWithin180plus = $grandTotaldueWithin180plus + ($dueWithin180plus[0]->netDue ?? 0);
+            $grandTotaldueWithin365plus = $grandTotaldueWithin365plus + ($dueWithin365plus[0]->netDue ?? 0);
+        }
+        $data['grandTotalOutstanding'] = $grandTotalOutstanding;
+        $data['grandTotaldueWithin30'] = $grandTotaldueWithin30;
+        $data['grandTotaldueWithin31_60'] = $grandTotaldueWithin31_60;
+        $data['grandTotaldueWithin61_90'] = $grandTotaldueWithin61_90;
+        $data['grandTotaldueWithin91_180'] = $grandTotaldueWithin91_180;
+        $data['grandTotaldueWithin180plus'] = $grandTotaldueWithin180plus;
+        $data['grandTotaldueWithin365plus'] = $grandTotaldueWithin365plus;
+        // Total Outstanding End 
 
         return view('reports.graphReport', $data);
     }

@@ -442,7 +442,7 @@ class BookingController extends Controller
                 $transactionFileUpdateName = time() . "." . $transactionFileUpdate->getClientOriginalExtension();
                 $destinationPath = 'transactionAttachment/';
                 $transactionFileUpdate->move($destinationPath, $transactionFileUpdateName);
-            }else{
+            } else {
                 $transactionFileUpdateName = '';
             }
 
@@ -476,9 +476,9 @@ class BookingController extends Controller
 
             $leadInfo = Lead::find($request->transactionLead);
             $currentSatge = $leadInfo->current_stage;
-            if($currentSatge == 'BOOKING'){
+            if ($currentSatge == 'BOOKING') {
                 $logStage = 'BOOKING';
-            }else{
+            } else {
                 $logStage = 'OUTSTANDING';
             }
             $log_data = array(
@@ -547,6 +547,24 @@ class BookingController extends Controller
             SalesLog::create($log_data);
             return back()->with('success', 'Transaction Verified');
         }
+    }
+
+    public function deleteTheTransaction($transactionId)
+    {
+        $transaction = Transaction::find($transactionId);
+        $leadId = $transaction->lead_id;
+        $amount = $transaction->pay_amount;
+        $transaction->delete();
+
+        $log_data = array(
+            'lead_id' => $leadId,
+            'log_stage' => 'BOOKING',
+            'log_task' => 'Transaction Deleted of BDT ' . $amount . '/-',
+            'log_by' => Auth()->user()->id,
+            'log_next' => 'Transaction/Accounts Clearence'
+        );
+        SalesLog::create($log_data);
+        return back()->with('success', 'Transaction Deleted');
     }
 
     public function accountsCleared(Request $request)

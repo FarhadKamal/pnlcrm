@@ -88,6 +88,7 @@ Route::get('transaction/{leadId}', [BookingController::class, 'transactionForm']
 Route::post('insertTransaction', [BookingController::class, 'storeTransaction'])->name('insertTransaction')->middleware('auth');
 Route::get('verifyTransaction/{leadId}', [BookingController::class, 'verifyTransaction'])->name('verifyTransaction')->middleware('auth');
 Route::post('verifiedTransaction', [BookingController::class, 'verifyTheTransaction'])->name('verifiedTransaction')->middleware('auth');
+Route::get('deleteTransaction/{transactionId}', [BookingController::class, 'deleteTheTransaction'])->name('deleteTransaction')->middleware('auth');
 Route::post('accountsClearance', [BookingController::class, 'accountsCleared'])->name('accountsClearance')->middleware('auth');
 Route::get('outstandings', [BookingController::class, 'outstandingList'])->name('outstandings')->middleware('auth');
 Route::get('outStandingTransaction/{leadId}', [BookingController::class, 'outStandingTransaction'])->name('outStandingTransaction')->middleware('auth');

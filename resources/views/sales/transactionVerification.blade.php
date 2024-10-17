@@ -215,7 +215,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $sl = 1; ?>
+                    <?php $sl = 1;
+                    $tranVerifyFlag = 0; ?>
                     @foreach ($transactionInfo as $item)
                         @php
                             $type = '';
@@ -229,8 +230,10 @@
                                 $type = 'VAT Amount';
                             }
                             if ($item->transaction_file) {
-                                $type .= "<small><a href='" . asset('transactionAttachment/' . $item->transaction_file) . "' target='_blank'><small class='badge badge-info'>Attachment</small></a></small>";
-
+                                $type .=
+                                    "<small><a href='" .
+                                    asset('transactionAttachment/' . $item->transaction_file) .
+                                    "' target='_blank'><small class='badge badge-info'>Attachment</small></a></small>";
                             }
                         @endphp
                         <tr>
@@ -240,13 +243,19 @@
                             <td class="p-1">{!! $type !!}</td>
                             <td class="p-1">{{ $item->transaction_remarks }}</td>
                             @if ($item->is_verified == 0)
+                                @php
+                                    $tranVerifyFlag = 1;
+                                @endphp
                                 <form action="{{ route('verifiedTransaction') }}" method="POST"
                                     id="verifyTransactionForm">
                                     @csrf
                                     <input type="hidden" name="transactionId" value="{{ $item->id }}">
                                     <td>
-                                        <input type="text" class="flatpickr form-control p-1 fs-07rem"
+                                        <input type="text" class="flatpickr form-control p-1 fs-07rem mb-2"
                                             name="depositedDate" id="depositedDate" required>
+
+                                        <a href="{{ route('deleteTransaction', ['transactionId' => $item->id]) }}"
+                                            class="btn btn-danger fs-06rem p-1">Delete</a>
                                     </td>
                                     <td>
                                         <textarea name="depositedRemarks" id="depositedRemarks" cols="30" rows="2"></textarea>
@@ -271,19 +280,26 @@
     @endif
 
 
-    <div class="container">
-        <form action="{{ route('accountsClearance') }}" method="POST" id="AccountsClearanceForm">
-            @csrf
-            <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}">
-            <input type="hidden" name="quotation_id" value="{{ $leadInfo->id }}">
-            <label for="" class="fs-08rem">Clearance Remarks</label>
-            <textarea name="clearRemark" id="clearRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
-            @if ($leadInfo->accounts_clearance == 0)
-                <br>
-                <center><button class="btn btn-sm btn-darkblue">Proceed Accounts Clearance</button></center>
-            @endif
-        </form>
-    </div>
+    @if ($tranVerifyFlag == 1)
+        <center>
+            <h5 class="badge badge-danger">You have unverified transaction. First verify it / if duplicate input delete
+                it.</h5>
+        </center>
+    @else
+        <div class="container">
+            <form action="{{ route('accountsClearance') }}" method="POST" id="AccountsClearanceForm">
+                @csrf
+                <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}">
+                <input type="hidden" name="quotation_id" value="{{ $leadInfo->id }}">
+                <label for="" class="fs-08rem">Clearance Remarks</label>
+                <textarea name="clearRemark" id="clearRemark" class="form-control fs-08rem p-1" rows="3"></textarea>
+                @if ($leadInfo->accounts_clearance == 0)
+                    <br>
+                    <center><button class="btn btn-sm btn-darkblue">Proceed Accounts Clearance</button></center>
+                @endif
+            </form>
+        </div>
+    @endif
 
 
 </div>

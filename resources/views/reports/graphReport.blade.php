@@ -33,7 +33,7 @@
 
     #topSoldProduct {
         width: 100%;
-        height: 300px;
+        height: 400px;
         font-size: 0.7rem;
     }
 
@@ -1339,7 +1339,7 @@
         var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
             renderer: am5xy.AxisRendererX.new(root, {
                 strokeOpacity: 0.1,
-                minGridDistance: 100
+                minGridDistance: 200
             }),
             min: 0
         }));

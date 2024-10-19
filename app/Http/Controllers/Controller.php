@@ -309,11 +309,11 @@ class Controller extends BaseController
 
         // WON Stage
         if (Helper::permissionCheck(Auth()->user()->id, 'wonStageAll')) {
-            $data['wonStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->get();
+            $data['wonStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->take(20)->get();
         } elseif (Helper::permissionCheck(Auth()->user()->id, 'wonStage')) {
             $data['wonStage'] = Lead::orderBy('updated_at', 'DESC')->with('clientInfo:id,customer_name,group_name,district,contact_person,contact_mobile,assign_to', 'source:id,source_name', 'createdBy:id,user_name')->where('current_stage', 'WON')->whereHas('clientInfo', function ($query) {
                 $query->where(['assign_to' => Auth()->user()->assign_to]);
-            })->get();
+            })->take(20)->get();
         }
 
         // Lost Stage

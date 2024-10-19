@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\BrandDiscount;
 use App\Models\Customer;
 use App\Models\Lead;
+use App\Models\PumpChoice;
+use App\Models\Quotation;
+use App\Models\SalesLog;
 use App\Models\SalesTarget;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -458,7 +463,7 @@ class ReportController extends Controller
         }
     }
 
-    public function graphReport()
+    public function graphReportPull()
     {
         // Annual and Quarter Achievement Start
         $userCond = '';
@@ -590,5 +595,43 @@ class ReportController extends Controller
                             GROUP BY items.brand_name
                             ORDER BY totalSoldQty DESC');
         return $reportData;
+    }
+
+    function leadDetailReport()
+    {
+        $data['ownLead'] = Lead::whereHas('clientInfo', function ($query) {
+            $query->where(['assign_to' => Auth()->user()->assign_to]);
+        })->get();
+        return view('reports.leadDetailReport', $data);
+    }
+
+    function leadDetailReportPull(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'leadId' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $data['errors'] = $validator->errors()->all();
+            return back()->with('errorsData', $data);
+        } else {
+            $leadId = $request->leadId;
+            $data['leadInfo'] = Lead::find($leadId);
+            if (!$data['leadInfo']) {
+                return back()->with('swError', 'No Lead Found');
+            }
+            if ((Auth()->user()->assign_to != $data['leadInfo']->clientInfo->assign_to) && (!Helper::permissionCheck(Auth()->user()->id, 'salesLog'))) {
+                return back()->with('swError', 'You Are Not Authorized');
+            }
+
+            $data['pumpInfo'] = PumpChoice::where(['lead_id' => $leadId])->get();
+            $data['quotationInfo'] = Quotation::orderBy('id', 'desc')->take(1)->where(['lead_id' => $leadId, 'is_accept' => 1])->get();
+            $data['salesLog'] = SalesLog::where('lead_id', $leadId)->orderBy('id', 'DESC')->get();
+            $data['transactionInfo'] = Transaction::where(['lead_id' => $leadId])->get();
+
+            $data['ownLead'] = Lead::whereHas('clientInfo', function ($query) {
+                $query->where(['assign_to' => Auth()->user()->assign_to]);
+            })->get();
+            return view('reports.leadDetailReport', $data);
+        }
     }
 }

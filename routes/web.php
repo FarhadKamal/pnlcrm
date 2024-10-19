@@ -136,8 +136,9 @@ Route::get('targetSalesReport', [ReportController::class, 'targetSalesReport'])-
 Route::post('targetSalesReport', [ReportController::class, 'targetSalesReportPull'])->name('targetSalesReport')->middleware('auth');
 Route::get('transactionReport', [ReportController::class, 'transactionReport'])->name('transactionReport')->middleware('auth');
 Route::post('transactionReport', [ReportController::class, 'transactionReportPull'])->name('transactionReport')->middleware('auth');
-Route::get('graphReport', [ReportController::class, 'graphReport'])->name('graphReport')->middleware('auth');
-
+Route::get('graphReport', [ReportController::class, 'graphReportPull'])->name('graphReport')->middleware('auth');
+Route::get('leadDetailReport', [ReportController::class, 'leadDetailReport'])->name('leadDetailReport')->middleware('auth');
+Route::post('leadDetailReport', [ReportController::class, 'leadDetailReportPull'])->name('leadDetailReport')->middleware('auth');
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

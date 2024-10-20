@@ -96,7 +96,7 @@ class ReportController extends Controller
                                     LEFT JOIN spare_items ON spare_items.id = pump_choices.product_id AND pump_choices.spare_parts = 1
                                     INNER JOIN brand_discounts ON brand_discounts.brand_name=COALESCE(items.brand_name, spare_items.brand_name)
                                     INNER JOIN users ON users.assign_to = customers.assign_to
-                                    WHERE leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . '' . $brandCond . '
+                                    WHERE leads.is_lost != 1 AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . '' . $brandCond . '
                                     ORDER BY leads.sap_invoice ASC');
 
             $data['salesPersons'] = User::get();
@@ -187,6 +187,7 @@ class ReportController extends Controller
                 pump_choices ON pump_choices.lead_id = leads.id
             WHERE 
                 leads.is_outstanding = 1 
+                AND leads.is_lost != 1 
                 AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
             GROUP BY 
                 leads.customer_id
@@ -201,6 +202,7 @@ class ReportController extends Controller
                 leads ON leads.id = transactions.lead_id
             WHERE 
                 leads.is_outstanding = 1 
+                AND leads.is_lost != 1 
                 AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
                 AND transactions.is_verified = 1
             GROUP BY 
@@ -212,6 +214,7 @@ class ReportController extends Controller
             pump_choices ON pump_choices.lead_id = leads.id 
         WHERE 
             leads.is_outstanding = 1 
+            AND leads.is_lost != 1 
             AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
             ' . $userCond . '
             ' . $customerCond . '
@@ -257,6 +260,7 @@ class ReportController extends Controller
                 pump_choices ON pump_choices.lead_id = leads.id
             WHERE 
                 leads.is_outstanding = 1 
+                AND leads.is_lost != 1 
                 AND ' . $dateCond . '
             GROUP BY 
                 leads.customer_id
@@ -271,6 +275,7 @@ class ReportController extends Controller
                 leads ON leads.id = transactions.lead_id
             WHERE 
                 leads.is_outstanding = 1 
+                AND leads.is_lost != 1 
                 AND ' . $dateCond . '
                 AND transactions.is_verified = 1
             GROUP BY 
@@ -282,6 +287,7 @@ class ReportController extends Controller
             pump_choices ON pump_choices.lead_id = leads.id 
         WHERE 
             leads.is_outstanding = 1 
+            AND leads.is_lost != 1 
             AND ' . $dateCond . '
             AND customers.sap_id = ' . $customerSAPID . '
         GROUP BY 
@@ -363,6 +369,7 @@ class ReportController extends Controller
                                     INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
                                     WHERE 
                                         EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . '
+                                        AND leads.is_lost != 1 
                                     GROUP BY 
                                         leads.created_by
                                 ) sales ON sales.created_by = u.id
@@ -454,7 +461,7 @@ class ReportController extends Controller
                                         WHERE is_verified = 1 AND is_return = 0
                                         GROUP BY lead_id
                                     ) AS transaction_sums ON transaction_sums.lead_id = leads.id
-                                    WHERE quotations.is_accept = 1 
+                                    WHERE quotations.is_accept = 1 AND leads.is_lost != 1
                                     AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . ' 
                                     GROUP BY leads.id');
 
@@ -571,6 +578,7 @@ class ReportController extends Controller
                             LEFT JOIN items ON items.id = pump_choices.product_id
                             WHERE leads.is_won = 1 
                             AND DATE(leads.invoice_date) BETWEEN "' . $startDate . '" AND "' . $endDate . '"
+                            AND leads.is_lost != 1
                             AND pump_choices.spare_parts = 0
                             GROUP BY pump_choices.product_id 
                             ORDER BY totalSoldQty DESC 
@@ -589,7 +597,7 @@ class ReportController extends Controller
                             FROM leads
                             INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
                             LEFT JOIN items ON items.id = pump_choices.product_id
-                            WHERE leads.is_won = 1 
+                            WHERE leads.is_won = 1 AND leads.is_lost != 1
                             AND DATE(leads.invoice_date) BETWEEN "' . $startDate . '" AND "' . $endDate . '"
                             AND pump_choices.spare_parts = 0
                             GROUP BY items.brand_name

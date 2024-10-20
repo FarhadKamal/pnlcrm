@@ -60,6 +60,10 @@
 
 <div class="container mt-2 mb-3" id="discountReportForm">
     <h6 class="text-center">Discount Report</h6>
+    <center>
+        <small class="text-danger">The report show all the items from the on going sales process to win. No lost item is
+            shown.</small>
+    </center>
     <form action="{{ route('discountReport') }}" method="POST">
         @csrf
         <div class="row">

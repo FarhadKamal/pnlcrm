@@ -198,6 +198,9 @@
                                 <td>
                                     <input type="text" class="flatpickr form-control p-1 fs-07rem"
                                         name="depositedDate" id="depositedDate" required>
+                                        
+                                    <a href="{{ route('deleteTransaction', ['transactionId' => $item->id]) }}"
+                                        class="btn btn-danger fs-06rem p-1">Delete</a>
                                 </td>
                                 <td>
                                     <textarea name="depositedRemarks" id="depositedRemarks" cols="30" rows="2"></textarea>

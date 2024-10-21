@@ -505,6 +505,43 @@ class ReportController extends Controller
         $data['q4AchievementPer'] = ($q3Sales / $q3Target) * 100;
         // Annual and Quarter Achievement End 
 
+        // Top 5 salesperson ranking Current Quarter Start
+        $currentMonth = date('m');
+        $topSalesPersonCQ = [];
+        $i = 0;
+        foreach ($reportData as $item) {
+            if ($currentMonth >= 7 && $currentMonth <= 9) {
+                $target = $item->Q1_Target;
+                $sales = $item->Q1_Sales;
+                $achieve = ($sales / $target) * 100;
+                $topSalesPersonCQ[$i] = ['name' => $item->user_name, 'per' => $achieve];
+            }
+            if ($currentMonth >= 10 && $currentMonth <= 12) {
+                $target = $item->Q2_Target;
+                $sales = $item->Q2_Sales;
+                $achieve = ($sales / $target) * 100;
+                $topSalesPersonCQ[$i] = ['name' => $item->user_name, 'per' => $achieve];
+            }
+            if ($currentMonth >= 1 && $currentMonth <= 3) {
+                $target = $item->Q3_Target;
+                $sales = $item->Q3_Sales;
+                $achieve = ($sales / $target) * 100;
+                $topSalesPersonCQ[$i] = ['name' => $item->user_name, 'per' => $achieve];
+            }
+            if ($currentMonth >= 4 && $currentMonth <= 6) {
+                $target = $item->Q4_Target;
+                $sales = $item->Q4_Sales;
+                $achieve = ($sales / $target) * 100;
+                $topSalesPersonCQ[$i] = ['name' => $item->user_name, 'per' => $achieve];
+            }
+            $i++;
+        }
+        usort($topSalesPersonCQ, function ($a, $b) {
+            return $b['per'] <=> $a['per'];
+        });
+        $data['top5SalesPersonsCQ'] = array_slice($topSalesPersonCQ, 0, 5, true);
+        // Top 5 salesperson ranking Current Quarter End
+
         // Top Sold Product Start 
         $currentMonth = date('m');
         if ($currentMonth >= 7) {

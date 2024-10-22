@@ -15,6 +15,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ReportController extends Controller
@@ -472,7 +473,7 @@ class ReportController extends Controller
 
     public function graphReportPull()
     {
-        // Annual and Quarter Achievement Start
+        // // Annual and Quarter Achievement Start
         $userCond = '';
         $financialYear = date('Y');
         $reportData = $this->targetSalesReportQuery($userCond, $financialYear);
@@ -503,7 +504,7 @@ class ReportController extends Controller
         $data['q2AchievementPer'] = ($q2Sales / $q2Target) * 100;
         $data['q3AchievementPer'] = ($q3Sales / $q3Target) * 100;
         $data['q4AchievementPer'] = ($q3Sales / $q3Target) * 100;
-        // Annual and Quarter Achievement End 
+        // // Annual and Quarter Achievement End 
 
         // Top 5 salesperson ranking Current Quarter Start
         $currentMonth = date('m');
@@ -679,4 +680,170 @@ class ReportController extends Controller
             return view('reports.leadDetailReport', $data);
         }
     }
+
+    function graphReport2()
+    {
+        $currentMonth = date('m');
+        if ($currentMonth >= 7) {
+            $startDate = date('Y-07-01');
+            $endDate = date('Y-06-30', strtotime('+1 year'));
+            $data['financialYear'] = date('Y', strtotime($startDate)) . '-' . date('Y', strtotime($endDate));
+        } else {
+            $startDate = date('Y-07-01', strtotime('-1 year'));
+            $endDate = date('Y-06-30');
+            $data['financialYear'] = date('Y', strtotime($startDate)) . '-' . date('Y', strtotime($endDate));
+        }
+        return view('reports.graphReport2', $data);
+    }
+    function annualAchieveGraph()
+    {
+        $userCond = '';
+        $financialYear = date('Y');
+        $reportData = $this->targetSalesReportQuery($userCond, $financialYear);
+        $annualTarget = 0;
+        $annualSales = 0;
+        $q1Target = 0;
+        $q1Sales = 0;
+        $q2Target = 0;
+        $q2Sales = 0;
+        $q3Target = 0;
+        $q3Sales = 0;
+        $q4Target = 0;
+        $q4Sales = 0;
+        foreach ($reportData as $item) {
+            $annualTarget = $annualTarget + $item->Q1_Target + $item->Q2_Target + $item->Q3_Target + $item->Q4_Target;
+            $annualSales = $annualSales + $item->Q1_Sales + $item->Q2_Sales + $item->Q3_Sales + $item->Q4_Sales;
+            $q1Target = $q1Target + $item->Q1_Target;
+            $q1Sales = $q1Sales + $item->Q1_Sales;
+            $q2Target = $q2Target + $item->Q2_Target;
+            $q2Sales = $q2Sales + $item->Q2_Sales;
+            $q3Target = $q3Target + $item->Q3_Target;
+            $q3Sales = $q3Sales + $item->Q3_Sales;
+            $q4Target = $q4Target + $item->Q4_Target;
+            $q4Sales = $q4Sales + $item->Q4_Sales;
+        }
+        $data['annualAchievementPer'] = ($annualSales / $annualTarget) * 100;
+        $data['q1AchievementPer'] = ($q1Sales / $q1Target) * 100;
+        $data['q2AchievementPer'] = ($q2Sales / $q2Target) * 100;
+        $data['q3AchievementPer'] = ($q3Sales / $q3Target) * 100;
+        $data['q4AchievementPer'] = ($q3Sales / $q3Target) * 100;
+        return response()->json($data);
+    }
+
+    function top5SalesPersonGraph()
+    {
+        $userCond = '';
+        $financialYear = date('Y');
+        $reportData = $this->targetSalesReportQuery($userCond, $financialYear);
+        $currentMonth = date('m');
+        $topSalesPersonCQ = [];
+        $i = 0;
+        foreach ($reportData as $item) {
+            if ($currentMonth >= 7 && $currentMonth <= 9) {
+                $target = $item->Q1_Target;
+                $sales = $item->Q1_Sales;
+                $achieve = ($sales / $target) * 100;
+                $topSalesPersonCQ[$i] = ['name' => $item->user_name, 'per' => $achieve];
+            }
+            if ($currentMonth >= 10 && $currentMonth <= 12) {
+                $target = $item->Q2_Target;
+                $sales = $item->Q2_Sales;
+                $achieve = ($sales / $target) * 100;
+                $topSalesPersonCQ[$i] = ['name' => $item->user_name, 'per' => $achieve];
+            }
+            if ($currentMonth >= 1 && $currentMonth <= 3) {
+                $target = $item->Q3_Target;
+                $sales = $item->Q3_Sales;
+                $achieve = ($sales / $target) * 100;
+                $topSalesPersonCQ[$i] = ['name' => $item->user_name, 'per' => $achieve];
+            }
+            if ($currentMonth >= 4 && $currentMonth <= 6) {
+                $target = $item->Q4_Target;
+                $sales = $item->Q4_Sales;
+                $achieve = ($sales / $target) * 100;
+                $topSalesPersonCQ[$i] = ['name' => $item->user_name, 'per' => $achieve];
+            }
+            $i++;
+        }
+        usort($topSalesPersonCQ, function ($a, $b) {
+            return $b['per'] <=> $a['per'];
+        });
+        $data['top5SalesPersonsCQ'] = array_slice($topSalesPersonCQ, 0, 5, true);
+        return response()->json($data);
+    }
+
+    function topSoldProductGraph()
+    {
+        $currentMonth = date('m');
+        if ($currentMonth >= 7) {
+            $startDate = date('Y-07-01');
+            $endDate = date('Y-06-30', strtotime('+1 year'));
+            $data['financialYear'] = date('Y', strtotime($startDate)) . '-' . date('Y', strtotime($endDate));
+        } else {
+            $startDate = date('Y-07-01', strtotime('-1 year'));
+            $endDate = date('Y-06-30');
+            $data['financialYear'] = date('Y', strtotime($startDate)) . '-' . date('Y', strtotime($endDate));
+        }
+        $limit = 20;
+        $data['topSoldProduct'] = $this->topSoldProduct($startDate, $endDate, $limit);
+        return response()->json($data);
+    }
+
+    function topSoldBrandGraph()
+    {
+        $currentMonth = date('m');
+        if ($currentMonth >= 7) {
+            $startDate = date('Y-07-01');
+            $endDate = date('Y-06-30', strtotime('+1 year'));
+            $data['financialYear'] = date('Y', strtotime($startDate)) . '-' . date('Y', strtotime($endDate));
+        } else {
+            $startDate = date('Y-07-01', strtotime('-1 year'));
+            $endDate = date('Y-06-30');
+            $data['financialYear'] = date('Y', strtotime($startDate)) . '-' . date('Y', strtotime($endDate));
+        }
+        $data['topSoldBrand'] = $this->topSoldBrand($startDate, $endDate);
+        return response()->json($data);
+    }
+
+    function totalOutstandingGraph()
+    {
+        $userCond = '';
+        $filterDate = date('Y-m-d');
+        $customerCond = ''; // All Customer
+        $grandTotalOutstanding = 0;
+        $grandTotaldueWithin30 = 0;
+        $grandTotaldueWithin31_60 = 0;
+        $grandTotaldueWithin61_90 = 0;
+        $grandTotaldueWithin91_180 = 0;
+        $grandTotaldueWithin180plus = 0;
+        $grandTotaldueWithin365plus = 0;
+        $outstandingList = $this->outStandingNetDueQuery($filterDate, $userCond, $customerCond);
+        foreach ($outstandingList as $item) {
+            $grandTotalOutstanding = $grandTotalOutstanding + $item->netDue;
+            $customerSAPID =  $item->sap_id;
+            $dueWithin30 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 0, 30);
+            $dueWithin31_60 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 30, 60);
+            $dueWithin61_90 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 60, 90);
+            $dueWithin91_180 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 90, 180);
+            $dueWithin180plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 180, 0);
+            $dueWithin365plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 365, 0);
+
+            $grandTotaldueWithin30 = $grandTotaldueWithin30 + ($dueWithin30[0]->netDue ?? 0);
+            $grandTotaldueWithin31_60 = $grandTotaldueWithin31_60 + ($dueWithin31_60[0]->netDue ?? 0);
+            $grandTotaldueWithin61_90 = $grandTotaldueWithin61_90 + ($dueWithin61_90[0]->netDue ?? 0);
+            $grandTotaldueWithin91_180 = $grandTotaldueWithin91_180 + ($dueWithin91_180[0]->netDue ?? 0);
+            $grandTotaldueWithin180plus = $grandTotaldueWithin180plus + ($dueWithin180plus[0]->netDue ?? 0);
+            $grandTotaldueWithin365plus = $grandTotaldueWithin365plus + ($dueWithin365plus[0]->netDue ?? 0);
+        }
+        $data['grandTotalOutstanding'] = $grandTotalOutstanding;
+        $data['grandTotaldueWithin30'] = $grandTotaldueWithin30;
+        $data['grandTotaldueWithin31_60'] = $grandTotaldueWithin31_60;
+        $data['grandTotaldueWithin61_90'] = $grandTotaldueWithin61_90;
+        $data['grandTotaldueWithin91_180'] = $grandTotaldueWithin91_180;
+        $data['grandTotaldueWithin180plus'] = $grandTotaldueWithin180plus;
+        $data['grandTotaldueWithin365plus'] = $grandTotaldueWithin365plus;
+        return response()->json($data);
+    }
+
+    // return response()->json($data);
 }

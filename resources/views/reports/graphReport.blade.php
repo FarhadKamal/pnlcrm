@@ -106,7 +106,7 @@
     </div>
     <div class="row mt-5">
         <div class="col-md-6 p-1">
-            <p class="text-center p-0 m-0 fw-bold fs-08rem">Top 5 Salesperson Current Quarter</p>
+            <p class="text-center p-0 m-0 fw-bold fs-08rem">Top 5 Salesperson Current Quarter (Target/Sales)</p>
             <div id="top5SalesPersonsCQ"></div>
         </div>
     </div>
@@ -188,7 +188,7 @@
             fontSize: "3em"
         }));
 
-        let annualAchievementPer = JSON.parse('<?php echo json_encode($annualAchievementPer); ?>');
+        let annualAchievementPer = JSON.parse('<?php echo json_encode($annualAchievementPer); ?>'); 
         axisDataItem.set("value", annualAchievementPer);
         bullet.get("sprite").on("rotation", function() {
             var value = axisDataItem.get("value");
@@ -1513,7 +1513,7 @@
             categoryYField: "network",
             tooltip: am5.Tooltip.new(root, {
                 pointerOrientation: "left",
-                labelText: "{valueX}"+"%"
+                labelText: "{valueX}" + "%"
             })
         }));
 
@@ -1539,10 +1539,10 @@
         let top5SalesPersonsCQ = JSON.parse('<?php echo json_encode($top5SalesPersonsCQ); ?>');
         var data = [];
         top5SalesPersonsCQ.forEach(element => {
-            console.log(element)
+            let per = Number(element.per.toFixed(2));
             let chartValue = {
                 "network": element.name,
-                "value": element.per
+                "value": per
             };
             data.push(chartValue);
         });

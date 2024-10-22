@@ -140,6 +140,13 @@ Route::get('graphReport', [ReportController::class, 'graphReportPull'])->name('g
 Route::get('leadDetailReport', [ReportController::class, 'leadDetailReport'])->name('leadDetailReport')->middleware('auth');
 Route::post('leadDetailReport', [ReportController::class, 'leadDetailReportPull'])->name('leadDetailReport')->middleware('auth');
 
+Route::get('graphReport2', [ReportController::class, 'graphReport2'])->name('graphReport2')->middleware('auth');
+Route::get('annualAchieveGraph', [ReportController::class, 'annualAchieveGraph'])->name('annualAchieveGraph')->middleware('auth');
+Route::get('top5SalesPersonGraph', [ReportController::class, 'top5SalesPersonGraph'])->name('top5SalesPersonGraph')->middleware('auth');
+Route::get('topSoldProduct', [ReportController::class, 'topSoldProductGraph'])->name('topSoldProduct')->middleware('auth');
+Route::get('topSoldBrand', [ReportController::class, 'topSoldBrandGraph'])->name('topSoldBrand')->middleware('auth');
+Route::get('totalOutstanding', [ReportController::class, 'totalOutstandingGraph'])->name('totalOutstanding')->middleware('auth');
+
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');
 Route::post('users', [AdminController::class, 'storeUser'])->name('users')->middleware('auth');

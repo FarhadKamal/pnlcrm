@@ -56,6 +56,13 @@
         </div>
         <div class="col-md-3">
             <div class="container reportCard">
+                <a href="{{ route('graphReport2') }}" target="_blank">
+                    <h6>Graph Report 2</h6>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="container reportCard">
                 <a href="{{ route('leadDetailReport') }}" target="_blank">
                     <h6>Lead Detail Info</h6>
                 </a>

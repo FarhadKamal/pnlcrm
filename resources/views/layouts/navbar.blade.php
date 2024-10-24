@@ -117,6 +117,7 @@
                                     <a class="dropdown-item" href="{{ route('targetEntry') }}">Target Entry</a>
                                 </li>
                             @endif
+                            <li><a class="dropdown-item" href="{{ route('productDemand') }}">Product Demand</a></li>
                             <li><a class="dropdown-item" href="{{ route('tutorialVisual') }}">Video Tutorial</a></li>
                         </ul>
                     </li>

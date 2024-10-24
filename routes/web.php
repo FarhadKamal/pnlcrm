@@ -125,6 +125,10 @@ Route::post('insertProduct', [ProductController::class, 'storeProduct'])->name('
 Route::get('targetEntry', [Controller::class, 'targetForm'])->name('targetEntry')->middleware('auth');
 Route::post('targetEntry', [Controller::class, 'targetStore'])->name('targetEntry')->middleware('auth');
 
+Route::get('productDemand', [ProductController::class, 'newProductDemandForm'])->name('productDemand')->middleware('auth');
+Route::post('productDemand', [ProductController::class, 'storeDemandProduct'])->name('productDemand')->middleware('auth');
+
+
 Route::get('tutorialVideo', [Controller::class, 'tutorialVisual'])->name('tutorialVisual')->middleware('auth');
 
 Route::get('reportList', [ReportController::class, 'reportListPage'])->name('reportList')->middleware('auth');
@@ -146,6 +150,9 @@ Route::get('top5SalesPersonGraph', [ReportController::class, 'top5SalesPersonGra
 Route::get('topSoldProduct', [ReportController::class, 'topSoldProductGraph'])->name('topSoldProduct')->middleware('auth');
 Route::get('topSoldBrand', [ReportController::class, 'topSoldBrandGraph'])->name('topSoldBrand')->middleware('auth');
 Route::get('totalOutstanding', [ReportController::class, 'totalOutstandingGraph'])->name('totalOutstanding')->middleware('auth');
+
+Route::get('productDemandReport', [ReportController::class, 'productDemandReport'])->name('productDemandReport')->middleware('auth');
+Route::post('productDemandReport', [ReportController::class, 'productDemandReportPull'])->name('productDemandReport')->middleware('auth');
 
 // Admin Routes 
 Route::get('users', [AdminController::class, 'index'])->name('users')->middleware('auth');

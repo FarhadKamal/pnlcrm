@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BrandDiscount;
 use App\Models\Items;
+use App\Models\itemsDemand;
 use App\Models\SpareItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -126,5 +127,47 @@ class ProductController extends Controller
         ];
 
         return response()->json($response);
+    }
+
+    public function newProductDemandForm()
+    {
+        return view('product.productDemandForm');
+    }
+
+    public function storeDemandProduct(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'prType' => 'required',
+            'prName' => 'required',
+            'prBrand' => 'required',
+            'prQuantity' => 'required|numeric',
+            'customerName' => 'required',
+            'customerPhone' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return back()->with('errors', $validator->errors()->all());
+        } else {
+            $prType = $request->prType;
+            $prName = $request->prName;
+            $prBrand = $request->prBrand;
+            $prQuantity = $request->prQuantity;
+            $prDescription = $request->prDescription;
+            $customerName = $request->customerName;
+            $customerPhone = $request->customerPhone;
+
+            $itemData = array(
+                'item_type' => $prType,
+                'item_brand' => $prBrand,
+                'item_name' => $prName,
+                'item_quantity' => $prQuantity,
+                'item_description' => $prDescription,
+                'customer_name' => $customerName,
+                'customer_phone' => $customerPhone,
+                'created_by' => Auth()->user()->id
+            );
+            
+            itemsDemand::create($itemData);
+            return back()->with('swSuccess', 'Item Inserted');
+        }
     }
 }

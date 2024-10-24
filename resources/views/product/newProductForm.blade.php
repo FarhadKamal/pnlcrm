@@ -109,28 +109,28 @@
                     <label class="form-label fs-08rem">
                         Pump Min Capacity <span class="text-danger">*</span>
                     </label>
-                    <input type="number" min="0" class="form-control fs-08rem" name="minCapacity"
+                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01" class="form-control fs-08rem" name="minCapacity"
                         id="minCapacity" required>
                 </div>
                 <div class="col-md-3 itemTab">
                     <label class="form-label fs-08rem">
                         Pump Max Capacity <span class="text-danger">*</span>
                     </label>
-                    <input type="number" min="0" class="form-control fs-08rem" name="maxCapacity"
+                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01" class="form-control fs-08rem" name="maxCapacity"
                         id="maxCapacity" required>
                 </div>
                 <div class="col-md-3 itemTab">
                     <label class="form-label fs-08rem">
                         Pump Min Head <span class="text-danger">*</span>
                     </label>
-                    <input type="number" min="0" class="form-control fs-08rem" name="minHead"
+                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01" class="form-control fs-08rem" name="minHead"
                         id="minHead" required>
                 </div>
                 <div class="col-md-3 itemTab">
                     <label class="form-label fs-08rem">
                         Pump Max Head <span class="text-danger">*</span>
                     </label>
-                    <input type="number" min="0" class="form-control fs-08rem" name="maxHead"
+                    <input type="number" min="0" pattern="[0-9]+([\.,][0-9]+)?" step="0.01" class="form-control fs-08rem" name="maxHead"
                         id="maxHead" required>
                 </div>
                 <div class="col-md-3">

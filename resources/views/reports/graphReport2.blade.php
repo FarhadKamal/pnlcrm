@@ -101,7 +101,10 @@
         </div>
         <div class="col-md-6">
             <p class="text-center p-0 m-0 fw-bold fs-08rem">Total Outstanding</p>
-            <div id="totalOutstanding"></div>
+            <div id="totalOutstanding">
+                <img src="{{ asset('images/system/waves.gif') }}" alt="" class="graphLoadingGif"
+                    id="totalOutstandingLoader">
+            </div>
         </div>
     </div>
     <div class="row mt-5">
@@ -218,6 +221,7 @@
                 grandTotaldueWithin180plus = json.grandTotaldueWithin180plus;
                 grandTotaldueWithin365plus = json.grandTotaldueWithin365plus;
                 totalOutstandings();
+                document.querySelector('#totalOutstandingLoader').classList.add("d-none");
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);

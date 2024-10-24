@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Helper;
 use App\Models\BrandDiscount;
 use App\Models\Customer;
+use App\Models\itemsDemand;
 use App\Models\Lead;
 use App\Models\PumpChoice;
 use App\Models\Quotation;
@@ -845,5 +846,36 @@ class ReportController extends Controller
         return response()->json($data);
     }
 
-    // return response()->json($data);
+    function productDemandReport()
+    {
+        $data['salesPersons'] = User::get();
+        return view('reports.productDemandReport');
+    }
+
+    function productDemandReportPull(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'searchYear' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return back()->with('errors', $validator->errors()->all());
+        } else {
+            $userId = $request->userId;
+            if ($userId == 'all') {
+                $userCond = '';
+            } else {
+                $userCond = ' AND created_by = ' . $userId . '';
+            }
+
+            $query = itemsDemand::query();
+            $year = $request->searchYear;
+            $query->whereYear('created_at', $year);
+            if ($userId != 'all') {
+                $query->where('created_by', $userId);
+            }
+            $data['reportData'] = $query->get();
+
+            return view('reports.productDemandReport', $data);
+        }
+    }
 }

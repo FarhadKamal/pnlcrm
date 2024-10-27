@@ -849,7 +849,7 @@ class ReportController extends Controller
     function productDemandReport()
     {
         $data['salesPersons'] = User::get();
-        return view('reports.productDemandReport');
+        return view('reports.productDemandReport', $data);
     }
 
     function productDemandReportPull(Request $request)

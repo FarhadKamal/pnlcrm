@@ -26,7 +26,7 @@
     <div class="bg-darkblue">
         <h5 class="text-center text-white fs-5 p-3 m-0">Payment Mood: {{ $leadInfo->payment_type }}</h5>
     </div>
-    @if (count($transactionInfo) < 1)
+    {{-- @if (count($transactionInfo) < 1) --}}
         <form action=" {{ route('returnQuotationStage') }}" method="POST">
             @csrf
             <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
@@ -40,7 +40,7 @@
                 </div>
             </div>
         </form>
-    @endif
+    {{-- @endif --}}
     <hr>
     <div class="row">
         @if ($leadInfo->payment_type == 'Cash')

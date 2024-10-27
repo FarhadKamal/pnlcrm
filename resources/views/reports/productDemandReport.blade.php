@@ -89,58 +89,61 @@
     </form>
 </div>
 
-@if (isset($reportData) && count($reportData) > 0)
-    <div class="m-2">
-        <button id="productDemandReportPrintBtn" onclick="exportExcel()"
-            class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Excel Report</button>
-        <button id="productDemandReportPrintBtn" onclick="printProductDemandReport()"
-            class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Print Report</button>
+@if (isset($reportData))
+    @if (count($reportData) > 0)
+        <div class="m-2">
+            <button id="productDemandReportPrintBtn" onclick="exportExcel()"
+                class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Excel Report</button>
+            <button id="productDemandReportPrintBtn" onclick="printProductDemandReport()"
+                class="btn btn-darkblue btm-sm fs-07rem p-1 float-end m-2">Print Report</button>
 
-        <div id="productDemandReportTable">
-            <table class="table table-bordered border-dark fs-07rem table-hover">
-                <thead class="thead">
-                    <tr>
-                        <td colspan="11" class="p-1 text-center">
-                            <center>PNL Holdings Limited - Product Demand Report</center>
-                        </td>
-                    </tr>
-                    <tr class="fixed-header">
-                        <td class="p-1 text-center">Item Type</td>
-                        <td class="p-1 text-center">Item Brand</td>
-                        <td class="p-1 text-center">Item Name</td>
-                        <td class="p-1 text-center">Item Quantity</td>
-                        <td class="p-1 text-center">Item Description</td>
-                        <td class="p-1 text-center">Customer Name</td>
-                        <td class="p-1 text-center">Customer Phone</td>
-                        <td class="p-1 text-center">Created By</td>
-                        <td class="p-1 text-center">Created At</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($reportData as $key => $item)
+            <div id="productDemandReportTable">
+                <table class="table table-bordered border-dark fs-07rem table-hover">
+                    <thead class="thead">
                         <tr>
-                            <td class="p-1">{{ $item->item_type }}</td>
-                            <td class="p-1 text-center">{{ $item->item_brand }}</td>
-                            <td class="p-1">{{ $item->item_name }}</td>
-                            <td class="p-1 text-center">{{ number_format((float) $item->item_quantity, 2, '.', ',') }}
+                            <td colspan="11" class="p-1 text-center">
+                                <center>PNL Holdings Limited - Product Demand Report</center>
                             </td>
-                            <td class="p-1">{{ $item->item_description }}</td>
-                            <td class="p-1">{{ $item->customer_name }}</td>
-                            <td class="p-1 text-center">{{ $item->customer_phone }}</td>
-                            <td class="p-1">{{ $item->createdBy->user_name }}</td>
-                            <td class="p-1 text-center">{{ date('d-M-Y', strtotime($item->created_at)) }}</td>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                        <tr class="fixed-header">
+                            <td class="p-1 text-center">Item Type</td>
+                            <td class="p-1 text-center">Item Brand</td>
+                            <td class="p-1 text-center">Item Name</td>
+                            <td class="p-1 text-center">Item Quantity</td>
+                            <td class="p-1 text-center">Item Description</td>
+                            <td class="p-1 text-center">Customer Name</td>
+                            <td class="p-1 text-center">Customer Phone</td>
+                            <td class="p-1 text-center">Created By</td>
+                            <td class="p-1 text-center">Created At</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($reportData as $key => $item)
+                            <tr>
+                                <td class="p-1">{{ $item->item_type }}</td>
+                                <td class="p-1 text-center">{{ $item->item_brand }}</td>
+                                <td class="p-1">{{ $item->item_name }}</td>
+                                <td class="p-1 text-center">
+                                    {{ number_format((float) $item->item_quantity, 2, '.', ',') }}
+                                </td>
+                                <td class="p-1">{{ $item->item_description }}</td>
+                                <td class="p-1">{{ $item->customer_name }}</td>
+                                <td class="p-1 text-center">{{ $item->customer_phone }}</td>
+                                <td class="p-1">{{ $item->createdBy->user_name }}</td>
+                                <td class="p-1 text-center">{{ date('d-M-Y', strtotime($item->created_at)) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-@else
-    <div>
-        <center>
-            <h4 class="bg-danger text-white p-2">No Record Found</h4>
-        </center>
-    </div>
+    @else
+        <div>
+            <center>
+                <h4 class="bg-danger text-white p-2">No Record Found</h4>
+            </center>
+        </div>
+    @endif
 @endif
 
 <script>

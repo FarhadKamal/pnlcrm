@@ -27,7 +27,8 @@
         .logInPage-imgoverlay {
             width: 100%;
             height: 100vh;
-            background-color: rgba(67, 78, 88, 0.7);
+            /* background-color: rgba(67, 78, 88, 0.7); */
+            background: #0B2E41;
             position: fixed;
         }
 
@@ -57,7 +58,7 @@
     </div>
 
     <div>
-        <img src="{{ asset('images/system/pnl_login_bg.jpg') }}" alt="" class="logInPage-img">
+        {{-- <img src="{{ asset('images/system/pnl_login_bg.jpg') }}" alt="" class="logInPage-img"> --}}
         <div class="logInPage-imgoverlay">
             <div class="loginpage-form-container">
                 <center>

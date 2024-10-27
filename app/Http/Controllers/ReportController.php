@@ -874,7 +874,7 @@ class ReportController extends Controller
                 $query->where('created_by', $userId);
             }
             $data['reportData'] = $query->get();
-
+            $data['salesPersons'] = User::get();
             return view('reports.productDemandReport', $data);
         }
     }

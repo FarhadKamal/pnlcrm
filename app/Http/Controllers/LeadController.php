@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Models\BrandDiscount;
 use App\Models\Customer;
 use App\Models\Items;
 use App\Models\SalesLog;
@@ -524,6 +525,7 @@ class LeadController extends Controller
         $data['allPumpPhase'] = Items::distinct()->orderBy('phase', 'ASC')->get('phase');
         $data['allPumpModel'] = Items::distinct()->orderBy('mat_name', 'ASC')->get();
         $data['allSpareParts'] = SpareItems::distinct()->orderBy('mat_name', 'ASC')->get();
+        $data['allBrand'] = BrandDiscount::where(['is_active' => 1])->get();
 
         return view('sales.dealForm', $data);
     }

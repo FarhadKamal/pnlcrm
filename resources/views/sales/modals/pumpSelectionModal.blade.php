@@ -40,12 +40,9 @@
                             <label for="">Brand</label><br>
                             <select name="filterBrand" id="filterBrand" class="form-select fs-07rem p-1">
                                 <option value="all">All Brand</option>
-                                <option value="Pedrollo">Pedrollo</option>
-                                <option value="BGFlow">BGFlow</option>
-                                <option value="HCP">HCP</option>
-                                <option value="Panelli">Panelli</option>
-                                <option value="Itap">Itap</option>
-                                <option value="Maxwell">Maxwell</option>
+                                @foreach ($allBrand as $item)
+                                    <option value="{{ $item->brand_name }}">{{ $item->brand_name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 d-none">
@@ -53,7 +50,8 @@
                             <select name="filterSpare" id="filterSpare" class="form-select fs-07rem p-1">
                                 <option value="all">All Spare Parts</option>
                                 @foreach ($allSpareParts as $item)
-                                    <option value="{{ $item->mat_name }}">{{ $item->new_code }}-{{ $item->mat_name }}</option>
+                                    <option value="{{ $item->mat_name }}">{{ $item->new_code }}-{{ $item->mat_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -73,7 +71,8 @@
                             <select name="filterModel" id="filterModel" class="form-select fs-07rem p-1">
                                 <option value="all">All Model</option>
                                 @foreach ($allPumpModel as $item)
-                                    <option value="{{ $item->mat_name }}">{{ $item->new_code }}-{{ $item->mat_name }}</option>
+                                    <option value="{{ $item->mat_name }}">{{ $item->new_code }}-{{ $item->mat_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>

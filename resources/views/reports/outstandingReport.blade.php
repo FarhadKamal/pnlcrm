@@ -177,7 +177,19 @@
                                 $dueWithin91_180Total = $dueWithin91_180Total + $item->dueWithin91_180;
                                 $dueWithin180plusTotal = $dueWithin180plusTotal + $item->dueWithin180plus;
                                 $dueWithin365plusTotal = $dueWithin365plusTotal + $item->dueWithin365plus;
-                            } elseif (!isset($reportData[$key + 1])) {
+                            } elseif (
+                                isset($reportData[$key + 1]) &&
+                                $reportData[$key]->assign_to != $reportData[$key + 1]->assign_to
+                            ) {
+                                $totalNetDue = $totalNetDue + $item->netDue;
+                                $dueWithin30Total = $dueWithin30Total + $item->dueWithin30;
+                                $dueWithin31_60Total = $dueWithin31_60Total + $item->dueWithin31_60;
+                                $dueWithin61_90Total = $dueWithin61_90Total + $item->dueWithin61_90;
+                                $dueWithin91_180Total = $dueWithin91_180Total + $item->dueWithin91_180;
+                                $dueWithin180plusTotal = $dueWithin180plusTotal + $item->dueWithin180plus;
+                                $dueWithin365plusTotal = $dueWithin365plusTotal + $item->dueWithin365plus;
+                            }
+                            if (!isset($reportData[$key + 1])) {
                                 $totalNetDue = $totalNetDue + $item->netDue;
                                 $dueWithin30Total = $dueWithin30Total + $item->dueWithin30;
                                 $dueWithin31_60Total = $dueWithin31_60Total + $item->dueWithin31_60;

@@ -646,9 +646,13 @@ class ReportController extends Controller
 
     function leadDetailReport()
     {
-        $data['ownLead'] = Lead::whereHas('clientInfo', function ($query) {
-            $query->where(['assign_to' => Auth()->user()->assign_to]);
-        })->get();
+        if (Helper::permissionCheck(Auth()->user()->id, 'salesPerson')) {
+            $data['ownLead'] = Lead::whereHas('clientInfo', function ($query) {
+                $query->where(['assign_to' => Auth()->user()->assign_to]);
+            })->get();
+        } else {
+            $data['ownLead'] = Lead::get();
+        }
         return view('reports.leadDetailReport', $data);
     }
 

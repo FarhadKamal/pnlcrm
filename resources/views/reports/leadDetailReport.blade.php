@@ -58,7 +58,11 @@
     </form>
     <hr>
     @if (isset($salesLog))
-        <div class="row mt-5">
+        <div class="row mt-5 border">
+            <center>
+                <h5><kbd>Lead ID: {{ $leadInfo->id }}</kbd></h5>
+            </center>
+            <br><br>
             <div class="col-md-5 col-sm-5 mb-3" style="background:rgb(240, 240, 240)">
                 <h6 class="text-center"><kbd>Lead Information</kbd></h6>
                 <div class="container fs-09rem">

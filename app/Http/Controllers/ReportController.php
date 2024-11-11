@@ -679,9 +679,13 @@ class ReportController extends Controller
             $data['salesLog'] = SalesLog::where('lead_id', $leadId)->orderBy('id', 'DESC')->get();
             $data['transactionInfo'] = Transaction::where(['lead_id' => $leadId])->get();
 
-            $data['ownLead'] = Lead::whereHas('clientInfo', function ($query) {
-                $query->where(['assign_to' => Auth()->user()->assign_to]);
-            })->get();
+            if (Helper::permissionCheck(Auth()->user()->id, 'salesPerson')) {
+                $data['ownLead'] = Lead::whereHas('clientInfo', function ($query) {
+                    $query->where(['assign_to' => Auth()->user()->assign_to]);
+                })->get();
+            } else {
+                $data['ownLead'] = Lead::get();
+            }
             return view('reports.leadDetailReport', $data);
         }
     }

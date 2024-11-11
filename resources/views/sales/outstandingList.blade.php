@@ -7,6 +7,20 @@
         </center>
     @endif
 
+    <div class="row p-2 mb-3 rounded-pill">
+        <small class="text-danger">Please reset before searching</small>
+        <p class="col-md-2">Search By Lead ID</p>
+        <div class="col-md-2 col-4">
+            <input type="number" class="form-control p-1 fs-08rem" id="searchBox">
+        </div>
+        <div class="col-md-2 col-4">
+            <button class="btn btn-darkblue p-1 fs-07rem" onclick="filterData()">Search</button>
+        </div>
+        <div class="col-md-2 col-4">
+            <button class="btn btn-primary p-1 fs-07rem" onclick="location.reload()">Reset</button>
+        </div>
+    </div>
+
     @foreach ($outstandings as $item)
         <?php
         $depositedAmount = DB::select("SELECT SUM(pay_amount) AS totalPaid FROM transactions WHERE lead_id = $item->id AND is_verified = 1");
@@ -17,7 +31,8 @@
             $depositedAmount = $depositedAmount[0]->totalPaid;
         }
         ?>
-        <div class="row">
+        <div class="row allOutRow">
+            <span class="d-none">{{ $item->id }}</span>
             <div class="col-md-3 col-6 fs-08rem">
                 <kbd>Customer Info</kbd> <small class="badge badge-success">Lead ID: {{ $item->id }}</small>
                 <br>
@@ -49,7 +64,20 @@
                 <a href="{{ route('outStandingTransaction', ['leadId' => $item->id]) }}"><button
                         class="btn btn-sm btn-darkblue badge m-1">Transaction Details</button></a>
             </div>
+            <hr>
         </div>
-        <hr>
     @endforeach
 </div>
+
+<script>
+    function filterData() {
+        let searchBox = $('#searchBox').val();
+        let allRow = document.querySelectorAll('.allOutRow');
+        allRow.forEach(element => {
+            let rowId = Number(element.childNodes[1].innerText);
+            if (searchBox != rowId) {
+                element.style.display = 'none';
+            }
+        });
+    }
+</script>

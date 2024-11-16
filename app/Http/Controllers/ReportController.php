@@ -397,6 +397,7 @@ class ReportController extends Controller
     public function transactionReport()
     {
         $data['salesPersons'] = User::get();
+        $data['customerList'] = Customer::get();
         return view('reports.transactionReport', $data);
     }
 
@@ -432,6 +433,13 @@ class ReportController extends Controller
                 $userCond = ' AND customers.assign_to = "' . $userAssign . '"';
             }
 
+            $customerId = $request->customerId;
+            if ($customerId == 'all') {
+                $customerCond = '';
+            } else {
+                $customerCond = ' AND customers.id = "' . $customerId . '"';
+            }
+
             $data['reportData'] = DB::select('SELECT 
                                         leads.id, 
                                         leads.invoice_date, 
@@ -464,10 +472,11 @@ class ReportController extends Controller
                                         GROUP BY lead_id
                                     ) AS transaction_sums ON transaction_sums.lead_id = leads.id
                                     WHERE quotations.is_accept = 1 AND leads.is_lost != 1
-                                    AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . ' 
+                                    AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . ''.$customerCond.' 
                                     GROUP BY leads.id');
 
             $data['salesPersons'] = User::get();
+            $data['customerList'] = Customer::get();
             return view('reports.transactionReport', $data);
         }
     }

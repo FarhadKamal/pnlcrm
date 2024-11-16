@@ -82,6 +82,23 @@
                 </select>
             </div>
             <div class="col-md-3">
+                <label for="" class="form-label fs-07rem">Select Customer</label>
+                <select name="customerId" id="customerId" class="form-select fs-07rem p-1">
+                    @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'salesPerson'))
+                        <option value="all" selected>All Customer</option>
+                        @foreach (Auth()->user()->clientInfo as $item)
+                            <option value="{{ $item->id }}">{{ $item->customer_name }}</option>
+                        @endforeach
+                    @else
+                        <option value="all" selected>All Customer</option>
+                        @foreach ($customerList as $item)
+                            <option value="{{ $item->id }}">{{ $item->customer_name }}</option>
+                        @endforeach
+                    @endif
+
+                </select>
+            </div>
+            <div class="col-md-3">
                 <label for="" class="form-label fs-07rem">Invoice Date Range <span
                         class="text-danger">*</span></label>
                 <input type="text" name="invoiceDateFilter" class="flatpickr form-control  fs-07rem p-1" required>
@@ -172,6 +189,9 @@
 
 <script>
     $("#userId").select2({
+        allowClear: false
+    });
+    $("#customerId").select2({
         allowClear: false
     });
 

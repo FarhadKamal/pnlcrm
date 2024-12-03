@@ -235,7 +235,8 @@ class ReportController extends Controller
         }
         if ($firstDate == 0 && $lastDate != 0) {
             // Within lastday 
-            $dateCond = 'DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL ' . $lastDate . ' DAY';
+            // $dateCond = 'DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL ' . $lastDate . ' DAY';
+            $dateCond = 'DATE(leads.invoice_date) >= DATE("' . $filterDate . '") - INTERVAL ' . $lastDate . ' DAY AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")';
         }
         if ($firstDate != 0 && $lastDate == 0) {
             // Day PLus 

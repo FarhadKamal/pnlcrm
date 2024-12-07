@@ -52,6 +52,7 @@
                 <p class="p-0 m-0">Total Price: {{ $totalAmt }}</p>
                 <p class="p-0 m-0">Total Discount: {{ $totalNetDiscount }}</p>
                 <p class="p-0 m-0"><strong>Total Net Price: {{ $totalNetAmt }}</strong></p>
+                <p class="p-0 m-0">Invoice No: {{ $item->sap_invoice }}</p>
             </div>
             <div class="col-md-3 col-6 fs-08rem">
                 <kbd>Payment Info</kbd>
@@ -59,6 +60,7 @@
                 <p class="p-0 m-0">Mood: {{ $item->payment_type }}</p>
                 <p class="p-0 m-0">Paid: {{ $depositedAmount }}</p>
                 <p class="p-0 m-0">Balance: {{ $totalNetAmt - $depositedAmount }}</p>
+                <p class="p-0 m-0">Invoice Date: {{ date('d-M-Y', strtotime($item->invoice_date)) }}</p>
             </div>
             <div class="col-md-3 col-6 fs-08rem">
                 <a href="{{ route('outStandingTransaction', ['leadId' => $item->id]) }}"><button

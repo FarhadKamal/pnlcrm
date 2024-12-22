@@ -237,7 +237,24 @@ class BookingController extends Controller
             $leadInfo->is_outstanding = 1;
             $leadInfo->creditAmt = $request->creditLimit;
             $leadInfo->current_stage = 'DELIVERY';
-            if ($leadInfo->need_discount_approval > 1) {
+            $needDiscountSet = 0;
+            // Check Trade Discount for discountset process
+            $choiceInfo = PumpChoice::where(['lead_id' => $lead_id])->get();
+            foreach ($choiceInfo as $row) {
+                $proposed_discount = $row->discount_percentage;
+                if ($row->spare_parts == 0) {
+                    $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
+                } else {
+                    $trade_discount = $proposed_discount; // For Spare Parts Assume for Package
+                }
+                if ($proposed_discount != $trade_discount) {
+                    $needDiscountSet = 1; //Due to SAP, Proposed must be = Trade
+                }
+            }
+            if ($leadInfo->need_discount_approval != 0) {
+                $needDiscountSet = 1;
+            }
+            if ($needDiscountSet == 1) {
                 $leadInfo->current_subStage = 'DISCOUNTSET';
                 $logNext = 'SAP Discount Set';
                 $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
@@ -619,7 +636,24 @@ class BookingController extends Controller
                 }
             } else {
                 $leadInfo->current_stage = 'DELIVERY';
+                $needDiscountSet = 0;
+                // Check Trade Discount for discountset process
+                $choiceInfo = PumpChoice::where(['lead_id' => $leadId])->get();
+                foreach ($choiceInfo as $row) {
+                    $proposed_discount = $row->discount_percentage;
+                    if ($row->spare_parts == 0) {
+                        $trade_discount = $row->productInfo->TradDiscontInfo->trade_discount;
+                    } else {
+                        $trade_discount = $proposed_discount; // For Spare Parts Assume for Package
+                    }
+                    if ($proposed_discount != $trade_discount) {
+                        $needDiscountSet = 1; //Due to SAP, Proposed must be = Trade
+                    }
+                }
                 if ($leadInfo->need_discount_approval != 0) {
+                    $needDiscountSet = 1;
+                }
+                if ($needDiscountSet == 1) {
                     $leadInfo->current_subStage = 'DISCOUNTSET';
                     $logNext = 'SAP Discount Set';
                     $SAPCreditUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions

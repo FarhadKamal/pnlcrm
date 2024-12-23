@@ -22,50 +22,54 @@
     </div>
     <hr>
     <div class="row">
-        @if ((string) strpos($leadInfo->clientInfo->assign_to, (string) Auth()->user()->assign_to) !== false)
-            <div class="col-md-3">
-                <h6 class="text-center"><kbd>Insert Transaction Form</kbd></h6>
-                <form action="{{ route('insertTransaction') }}" method="POST" enctype="multipart/form-data" class="m-4"
-                    id="outTransForm">
-                    @csrf
-                    <div class="mb-1">
-                        <label class="form-label m-0 fs-08rem">Deposit Date <span class="text-danger">*</span></label>
-                        <input type="text" name="transactionDate" id="transactionDate"
-                            class="form-control fs-08rem p-1" required>
-                    </div>
-                    <div class="mb-1">
-                        <label class="form-label m-0  fs-08rem">Deposit Amount (BDT) <span
-                                class="text-danger">*</span></label>
-                        <input name="transactionAmount" id="transactionAmount" type="number" step=".001"
-                            class="form-control lh-sm fs-08rem p-1" required>
-                    </div>
-                    <div class="mb-1">
-                        <label class="form-label m-0 fs-08rem">Transaction Type <span
-                                class="text-danger">*</span></label>
-                        <select name="transactionType" id="transactionType" class="form-select fs-08rem p-1" required>
-                            <option value="" selected disabled>--Select One--</option>
-                            <option value="base">Base Amount (BDT)</option>
-                            <option value="tax">TAX Amount (BDT)</option>
-                            <option value="vat">VAT Amount (BDT)</option>
-                        </select>
-                    </div>
-                    <div class="mb-1">
-                        <label class="form-label m-0 fs-07rem">Attachment</label>
-                        <input name="transactionFile" type="file" accept="image/png, image/jpeg, image/jpg, .pdf"
-                            class="form-control lh-sm fs-08rem p-1">
-                    </div>
-                    <div class="mb-1">
-                        <label class="form-label m-0 fs-07rem">Remarks</label>
-                        <textarea name="transactionRemarks" id="transactionRemarks" cols="30" rows="3"
-                            class="form-control fs-08rem p-1"></textarea>
-                    </div>
-                    <div>
-                        <input name="transactionLead" value="{{ $leadId }}" hidden>
-                        <input name="transactionQuotation" value="{{ $quotationInfo[0]->id }}" hidden>
-                        <button type="submit" class="btn btn-darkblue btn-sm w-100 mt-2">Save Transaction</button>
-                    </div>
-                </form>
-            </div>
+        @if (!empty($leadInfo->clientInfo->assign_to) && !empty(Auth()->user()->assign_to))
+            @if ((string) strpos($leadInfo->clientInfo->assign_to, (string) Auth()->user()->assign_to) !== false)
+                <div class="col-md-3">
+                    <h6 class="text-center"><kbd>Insert Transaction Form</kbd></h6>
+                    <form action="{{ route('insertTransaction') }}" method="POST" enctype="multipart/form-data"
+                        class="m-4" id="outTransForm">
+                        @csrf
+                        <div class="mb-1">
+                            <label class="form-label m-0 fs-08rem">Deposit Date <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" name="transactionDate" id="transactionDate"
+                                class="form-control fs-08rem p-1" required>
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label m-0  fs-08rem">Deposit Amount (BDT) <span
+                                    class="text-danger">*</span></label>
+                            <input name="transactionAmount" id="transactionAmount" type="number" step=".001"
+                                class="form-control lh-sm fs-08rem p-1" required>
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label m-0 fs-08rem">Transaction Type <span
+                                    class="text-danger">*</span></label>
+                            <select name="transactionType" id="transactionType" class="form-select fs-08rem p-1"
+                                required>
+                                <option value="" selected disabled>--Select One--</option>
+                                <option value="base">Base Amount (BDT)</option>
+                                <option value="tax">TAX Amount (BDT)</option>
+                                <option value="vat">VAT Amount (BDT)</option>
+                            </select>
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label m-0 fs-07rem">Attachment</label>
+                            <input name="transactionFile" type="file" accept="image/png, image/jpeg, image/jpg, .pdf"
+                                class="form-control lh-sm fs-08rem p-1">
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label m-0 fs-07rem">Remarks</label>
+                            <textarea name="transactionRemarks" id="transactionRemarks" cols="30" rows="3"
+                                class="form-control fs-08rem p-1"></textarea>
+                        </div>
+                        <div>
+                            <input name="transactionLead" value="{{ $leadId }}" hidden>
+                            <input name="transactionQuotation" value="{{ $quotationInfo[0]->id }}" hidden>
+                            <button type="submit" class="btn btn-darkblue btn-sm w-100 mt-2">Save Transaction</button>
+                        </div>
+                    </form>
+                </div>
+            @endif
         @endif
 
         <div class="col-md-8">
@@ -198,7 +202,7 @@
                                 <td>
                                     <input type="text" class="flatpickr form-control p-1 fs-07rem"
                                         name="depositedDate" id="depositedDate" required>
-                                        
+
                                     <a href="{{ route('deleteTransaction', ['transactionId' => $item->id]) }}"
                                         class="btn btn-danger fs-06rem p-1">Delete</a>
                                 </td>
@@ -355,6 +359,7 @@
         let totalNetPrice = '<?php echo $totalNetPrice; ?>';
         let totalPaid = '<?php echo $totalPaid; ?>';
         let balance = Number(totalNetPrice) - Number(totalPaid);
+        balance = (Math.round(balance * 100) / 100).toFixed(2);
 
         if (transAmt <= 0) {
             Swal.fire({
@@ -385,7 +390,8 @@
                 position: 'top-end',
                 icon: 'error',
                 title: "Invalid Deposite Amount",
-                text: "Deposited amount "+transAmt+" is greater than remaining balance "+balance+" amount",
+                text: "Deposited amount " + transAmt + " is greater than remaining balance " + balance +
+                    " amount",
                 showConfirmButton: false,
                 timer: 3000
             });

@@ -250,6 +250,7 @@
                                     id="verifyTransactionForm">
                                     @csrf
                                     <input type="hidden" name="transactionId" value="{{ $item->id }}">
+                                    <input type="hidden" name="transactionAmount" value="{{ $item->pay_amount }}">
                                     <td>
                                         <input type="text" class="flatpickr form-control p-1 fs-07rem mb-2"
                                             name="depositedDate" id="depositedDate" required>
@@ -323,6 +324,12 @@
         if (!localParams.send) {
             e.preventDefault();
         }
+
+        let proceedFlag = 1;
+        let totalNetPrice = '<?php echo $totalNetPrice; ?>';
+        let totalPaid = '<?php echo $totalPaid; ?>';
+        let balance = Number(totalNetPrice) - Number(totalPaid);
+        
         var form = e;
         Swal.fire({
             title: 'Are you sure?',
@@ -335,7 +342,7 @@
         }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                form.delegateTarget.submit()
+                // form.delegateTarget.submit()
             } else {
                 Swal.fire('Transaction is not verified', '', 'info')
             }

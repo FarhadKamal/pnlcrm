@@ -342,7 +342,7 @@
         }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                // form.delegateTarget.submit()
+                form.delegateTarget.submit()
             } else {
                 Swal.fire('Transaction is not verified', '', 'info')
             }

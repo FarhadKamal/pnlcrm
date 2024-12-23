@@ -368,6 +368,7 @@
         }
         console.log(transAmt);
         console.log(totalNetPrice);
+        console.log(balance);
         if (Number(transAmt) > Number(totalNetPrice)) {
             Swal.fire({
                 position: 'top-end',
@@ -384,7 +385,7 @@
                 position: 'top-end',
                 icon: 'error',
                 title: "Invalid Deposite Amount",
-                text: "Deposited amount is greater than remaining balance amount",
+                text: "Deposited amount "+transAmt+" is greater than remaining balance "+balance+" amount",
                 showConfirmButton: false,
                 timer: 3000
             });

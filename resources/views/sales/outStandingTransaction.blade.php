@@ -244,7 +244,7 @@
         @endif
     </div>
     @if ($leadInfo->is_outstanding == 1 && App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'accountsClearance'))
-        @if ($totalNetPrice - $totalPaid > 0)
+        @if (number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') > 0)
             <center>
                 <h5 class="badge badge-danger">Balance Need To Zero For Outstanding Clearance</h5>
             </center>

@@ -646,7 +646,7 @@ class BookingController extends Controller
                     } else {
                         $trade_discount = $proposed_discount; // For Spare Parts Assume for Package
                     }
-                    if ($proposed_discount != $trade_discount) {
+                    if ($proposed_discount != $trade_discount && $proposed_discount != 0) {
                         $needDiscountSet = 1; //Due to SAP, Proposed must be = Trade
                     }
                 }

@@ -722,9 +722,9 @@ class BookingController extends Controller
     {
         $userTag = Auth()->user()->assign_to;
         if (Helper::permissionCheck(Auth()->user()->id, 'verifyTransaction') || Helper::permissionCheck(Auth()->user()->id, 'bookingStageAll') || Helper::permissionCheck(Auth()->user()->id, 'bookingStageTask')) {
-            $data['outstandings'] = Lead::where(['is_outstanding' => 1, 'is_won' => 1])->get();
+            $data['outstandings'] = Lead::where(['is_outstanding' => 1, 'is_lost' => 0])->get();
         } else if (Helper::permissionCheck(Auth()->user()->id, 'bookingStage')) {
-            $data['outstandings'] = Lead::where(['is_outstanding' => 1])->whereHas('clientInfo', function ($query) {
+            $data['outstandings'] = Lead::where(['is_outstanding' => 1, 'is_lost' => 0])->whereHas('clientInfo', function ($query) {
                 $query->where('assign_to', '=', Auth()->user()->assign_to);
             })->get();
         }

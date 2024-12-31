@@ -287,6 +287,7 @@
         let totalNetPrice = '<?php echo $totalNetPrice; ?>';
         let totalPaid = '<?php echo $totalPaid; ?>';
         let balance = Number(totalNetPrice) - Number(totalPaid);
+        balance = (Math.round(balance * 100) / 100).toFixed(2);
         transAmt = Number(transAmt);
         totalNetPrice = Number(totalNetPrice);
         totalPaid = Number(totalPaid);

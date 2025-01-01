@@ -473,7 +473,7 @@ class ReportController extends Controller
                                         GROUP BY lead_id
                                     ) AS transaction_sums ON transaction_sums.lead_id = leads.id
                                     WHERE quotations.is_accept = 1 AND leads.is_lost != 1
-                                    AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . ''.$customerCond.' 
+                                    AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . '' . $customerCond . ' 
                                     GROUP BY leads.id');
 
             $data['salesPersons'] = User::get();
@@ -717,7 +717,13 @@ class ReportController extends Controller
     function annualAchieveGraph()
     {
         $userCond = '';
-        $financialYear = date('Y');
+        $currentMonth = date('m');
+        if ($currentMonth >= 7 && $currentMonth <= 12) {
+            $financialYear = date('Y');
+        }else{
+            $financialYear = date('Y');
+            $financialYear = $financialYear-1;
+        }
         $reportData = $this->targetSalesReportQuery($userCond, $financialYear);
         $annualTarget = 0;
         $annualSales = 0;

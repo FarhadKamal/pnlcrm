@@ -720,9 +720,9 @@ class ReportController extends Controller
         $currentMonth = date('m');
         if ($currentMonth >= 7 && $currentMonth <= 12) {
             $financialYear = date('Y');
-        }else{
+        } else {
             $financialYear = date('Y');
-            $financialYear = $financialYear-1;
+            $financialYear = $financialYear - 1;
         }
         $reportData = $this->targetSalesReportQuery($userCond, $financialYear);
         $annualTarget = 0;
@@ -758,7 +758,13 @@ class ReportController extends Controller
     function top5SalesPersonGraph()
     {
         $userCond = '';
-        $financialYear = date('Y');
+        $currentMonth = date('m');
+        if ($currentMonth >= 7 && $currentMonth <= 12) {
+            $financialYear = date('Y');
+        } else {
+            $financialYear = date('Y');
+            $financialYear = $financialYear - 1;
+        }
         $reportData = $this->targetSalesReportQuery($userCond, $financialYear);
         $currentMonth = date('m');
         $topSalesPersonCQ = [];

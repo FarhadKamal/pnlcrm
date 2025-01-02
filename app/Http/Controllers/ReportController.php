@@ -371,7 +371,9 @@ class ReportController extends Controller
                                         leads
                                     INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
                                     WHERE 
-                                        EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . '
+                                    (EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3, 4, 5, 6) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . ($financialYear + 1) . ')
+                                        OR (EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9, 10, 11, 12) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . ')
+                                       
                                         AND leads.is_lost != 1 
                                     GROUP BY 
                                         leads.created_by
@@ -751,7 +753,7 @@ class ReportController extends Controller
         $data['q1AchievementPer'] = ($q1Sales / $q1Target) * 100;
         $data['q2AchievementPer'] = ($q2Sales / $q2Target) * 100;
         $data['q3AchievementPer'] = ($q3Sales / $q3Target) * 100;
-        $data['q4AchievementPer'] = ($q3Sales / $q3Target) * 100;
+        $data['q4AchievementPer'] = ($q4Sales / $q4Target) * 100;
         return response()->json($data);
     }
 

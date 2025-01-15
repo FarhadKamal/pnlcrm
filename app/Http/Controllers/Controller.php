@@ -383,7 +383,14 @@ class Controller extends BaseController
     {
         $userId = Auth()->user()->id;
         $userCond = ' WHERE u.id = ' . $userId . '';
-        $financialYear = date('Y');
+        // $financialYear = date('Y');
+        $currentMonth = date('m');
+        if ($currentMonth >= 7 && $currentMonth <= 12) {
+            $financialYear = date('Y');
+        } else {
+            $financialYear = date('Y');
+            $financialYear = $financialYear - 1;
+        }
         $reportController = new ReportController();
         $data['targetSales'] = $reportController->targetSalesReportQuery($userCond, $financialYear);
         $filterDate = date('Y-m-d');

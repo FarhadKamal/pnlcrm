@@ -20,6 +20,7 @@ class CreateTransactionsTable extends Migration
             $table->date('deposit_date');
             $table->double('pay_amount');
             $table->string('transaction_type');
+            $table->string('transaction_by');
             $table->string('transaction_file');
             $table->string('transaction_remarks')->nullable();
             $table->boolean('is_verified')->default(0);

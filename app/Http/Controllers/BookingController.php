@@ -448,6 +448,7 @@ class BookingController extends Controller
             'transactionLead' => 'required|numeric',
             'transactionQuotation' => 'required|numeric',
             'transactionType' => 'required',
+            'advanceAmount' => 'numeric|nullable'
         ]);
         $transactionDate = date('Y-m-d', strtotime($request->transactionDate));
         if ($validator->fails()) {
@@ -463,17 +464,72 @@ class BookingController extends Controller
                 $transactionFileUpdateName = '';
             }
 
+            if ($request->transactionType != 'vat' || $request->transactionType != 'tax') {
+                $transactionType = 'base';
+            } else {
+                $transactionType = $request->transactionType;
+            }
+
+            switch ($request->transactionType) {
+                case 'bank':
+                    $by = 'Bank';
+                    break;
+                case 'cash':
+                    $by = 'Cash';
+                    break;
+                case 'advanceAdjust':
+                    $by = 'Advance Adjustment';
+                    break;
+                case 'tax':
+                    $by = 'TAX';
+                    break;
+                case 'vat':
+                    $by = 'VAT';
+                    break;
+                case 'fractionAdjust':
+                    $by = 'Fraction Adjustment';
+                    break;
+            }
+
             $insert_data = array(
                 'lead_id' => $request->transactionLead,
                 'quotation_id' => $request->transactionQuotation,
                 'deposit_date' => $transactionDate,
                 'pay_amount' => $request->transactionAmount,
-                'transaction_type' => $request->transactionType,
+                'transaction_type' => $transactionType,
+                'transaction_by' => $by,
                 'transaction_file' => $transactionFileUpdateName,
                 'transaction_remarks' => $request->transactionRemarks
             );
-
             Transaction::create($insert_data);
+
+            if (isset($request->advanceAmount) && $request->advanceAmount > 0) {
+                $insert_data = array(
+                    'lead_id' => $request->transactionLead,
+                    'quotation_id' => $request->transactionQuotation,
+                    'deposit_date' => $transactionDate,
+                    'pay_amount' => $request->advanceAmount,
+                    'transaction_type' => 'Advance Payment',
+                    'transaction_by' => $by,
+                    'transaction_file' => $transactionFileUpdateName,
+                    'transaction_remarks' => $request->transactionRemarks
+                );
+                Transaction::create($insert_data);
+            }
+
+            if(isset($request->excessAmount) && $request->excessAmount > 0){
+                $insert_data = array(
+                    'lead_id' => $request->transactionLead,
+                    'quotation_id' => $request->transactionQuotation,
+                    'deposit_date' => $transactionDate,
+                    'pay_amount' => $request->excessAmount,
+                    'transaction_type' => 'Excess Payment',
+                    'transaction_by' => $by,
+                    'transaction_file' => $transactionFileUpdateName,
+                    'transaction_remarks' => $request->transactionRemarks
+                );
+                Transaction::create($insert_data); 
+            }
 
             $verifyTransactionUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
@@ -537,7 +593,20 @@ class BookingController extends Controller
             $transaction->verified_by = Auth()->user()->id;
             $transaction->deposited_date = $depositedDate;
             $transaction->deposited_remarks = $request->depositedRemarks;
+
+            $leadInfo = Lead::find($transaction->lead_id);
+            $customerId = $leadInfo->clientInfo->id;
+            $customerInfo = Customer::find($customerId);
+
+            if ($transaction->transaction_type == 'base' && $transaction->transaction_by == 'Advance Adjustment') {
+                $customerInfo->advance_amount = $customerInfo->advance_amount - $transaction->pay_amount;
+            }
+            if ($transaction->transaction_type == 'Advance Payment') {
+                $customerInfo->advance_amount = $customerInfo->advance_amount + $transaction->pay_amount;
+            }
+            $customerInfo->save();
             $transaction->save();
+
 
             $leadId = $transaction->lead_id;
             $amount = $transaction->pay_amount;

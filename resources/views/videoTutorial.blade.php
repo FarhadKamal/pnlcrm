@@ -75,8 +75,8 @@
         </div>
         <div class="col-md-3">
             <div class="container videoCard">
-                <a href="{{ asset('tutorial/How to insert transaction (Pay Type Cash).mp4') }}" target="_blank" class="text-dark">
-                    <h6>CRM - How to insert transaction (Pay Type Cash)</h6>
+                <a href="{{ asset('tutorial/How To Insert Transaction Form (Booking Stage).mp4') }}" target="_blank" class="text-dark">
+                    <h6>CRM - How to insert transaction form (Booking Stage)</h6>
                 </a>
                 <small class="badge badge-success">Booking Stage</small>
             </div>
@@ -84,7 +84,7 @@
         <div class="col-md-3">
             <div class="container videoCard">
                 <a href="{{ asset('tutorial/How to verify transaction (Pay Type Cash).mp4') }}" target="_blank" class="text-dark">
-                    <h6>CRM - How to verify transaction (Pay Type Cash)</h6>
+                    <h6>CRM - How to verify transaction</h6>
                 </a>
                 <small class="badge badge-success">Booking Stage</small>
             </div>

@@ -14,6 +14,7 @@ class Transaction extends Model
         'deposit_date',
         'pay_amount',
         'transaction_type',
+        'transaction_by',
         'transaction_file',
         'transaction_remarks',
         'is_verified',

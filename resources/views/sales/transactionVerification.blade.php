@@ -24,6 +24,8 @@
     <div class="bg-darkblue">
         <h5 class="text-center text-white fs-5 p-3 m-0">Payment Mood: {{ $leadInfo->payment_type }}</h5>
     </div>
+    <span class="badge badge-success fs-1rem float-end">Advance Payment: <span
+            id="remainingAdvance">{{ $leadInfo->clientInfo->advance_amount }}</span></span>
     <hr>
     <div class="row container-fluid">
         <div class="col-md-5 col-sm-5">
@@ -179,7 +181,7 @@
                         <?php $totalPaid = 0; ?>
                         @foreach ($transactionInfo as $item)
                             <?php
-                            if ($item->is_verified == 1) {
+                            if ($item->is_verified == 1 && ($item->transaction_type == 'base' || $item->transaction_type == 'vat' || $item->transaction_type == 'tax')) {
                                 $totalPaid = $totalPaid + $item->pay_amount;
                             }
                             ?>
@@ -208,6 +210,7 @@
                         <th class="p-1">Deposit Date</th>
                         <th class="p-1">Taka</th>
                         <th class="p-1">Type</th>
+                        <th class="p-1">By</th>
                         <th class="p-1">Transaction Remarks</th>
                         <th class="p-1">Statement Date</th>
                         <th class="p-1">Statement Remarks</th>
@@ -222,12 +225,12 @@
                             $type = '';
                             if ($item->transaction_type == 'base') {
                                 $type = 'Base Amount';
-                            }
-                            if ($item->transaction_type == 'tax') {
+                            } elseif ($item->transaction_type == 'tax') {
                                 $type = 'TAX Amount';
-                            }
-                            if ($item->transaction_type == 'vat') {
+                            } elseif ($item->transaction_type == 'vat') {
                                 $type = 'VAT Amount';
+                            } else {
+                                $type = $item->transaction_type;
                             }
                             if ($item->transaction_file) {
                                 $type .=
@@ -241,16 +244,19 @@
                             <td class="p-1">{{ date('d-M-Y', strtotime($item->deposit_date)) }}</td>
                             <td class="p-1">{{ number_format((float) $item->pay_amount, 2, '.', ',') }}</td>
                             <td class="p-1">{!! $type !!}</td>
+                            <td class="p-1">{{ $item->transaction_by }}</td>
                             <td class="p-1">{{ $item->transaction_remarks }}</td>
                             @if ($item->is_verified == 0)
                                 @php
                                     $tranVerifyFlag = 1;
                                 @endphp
                                 <form action="{{ route('verifiedTransaction') }}" method="POST"
-                                    id="verifyTransactionForm">
+                                    id="verifyTransactionForm" class="verifyTransactionForm">
                                     @csrf
                                     <input type="hidden" name="transactionId" value="{{ $item->id }}">
                                     <input type="hidden" name="transactionAmount" value="{{ $item->pay_amount }}">
+                                    <input type="hidden" name="transactionType"
+                                        value="{{ $item->transaction_type }}">
                                     <td>
                                         <input type="text" class="flatpickr form-control p-1 fs-07rem mb-2"
                                             name="depositedDate" id="depositedDate" required>
@@ -318,7 +324,8 @@
 </script>
 
 <script>
-    $('#verifyTransactionForm').submit(function(e, params) {
+    // $('#verifyTransactionForm').submit(function(e, params) {
+    $(document).on('submit', '.verifyTransactionForm', function(e, params) {
         var localParams = params || {};
 
         if (!localParams.send) {
@@ -329,24 +336,45 @@
         let totalNetPrice = '<?php echo $totalNetPrice; ?>';
         let totalPaid = '<?php echo $totalPaid; ?>';
         let balance = Number(totalNetPrice) - Number(totalPaid);
-        
-        var form = e;
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Once verified, you will not be able to undo it!",
-            icon: "warning",
-            showDenyButton: false,
-            showCancelButton: true,
-            confirmButtonText: 'Confirm transaction',
-            // denyButtonText: `Don't save`,
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                form.delegateTarget.submit()
-            } else {
-                Swal.fire('Transaction is not verified', '', 'info')
+        // var form = e;
+        // let transactionAmount = Number(form.target[2].value);
+        // let transactionType = form.target[3].value
+        var form = e.target;
+        let transactionAmount = Number(form.transactionAmount.value);
+        let transactionType = form.transactionType.value;
+        if (transactionType == 'base' || transactionType == 'vat' || transactionType == 'tax') {
+            if (transactionAmount > balance) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: "Invalid Amount",
+                    text: "Verification amount is greater than remaining balance amount",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                proceedFlag = 0;
             }
-        })
+        }
+
+        if (proceedFlag == 1) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Once verified, you will not be able to undo it!",
+                icon: "warning",
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Confirm transaction',
+                // denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    // form.delegateTarget.submit();
+                    form.submit();
+                } else {
+                    Swal.fire('Transaction is not verified', '', 'info')
+                }
+            })
+        }
     });
 </script>
 

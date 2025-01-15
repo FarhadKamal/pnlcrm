@@ -27,20 +27,22 @@
         <h5 class="text-center text-white fs-5 p-3 m-0">Payment Mood: {{ $leadInfo->payment_type }}</h5>
     </div>
     {{-- @if (count($transactionInfo) < 1) --}}
-        <form action=" {{ route('returnQuotationStage') }}" method="POST">
-            @csrf
-            <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
-            <div class="row p-2 bg-offwhite mt-2">
-                <div class="col-md-7">
-                    <label for="" class="fs-08rem">Back Stage Remarks</label>
-                    <textarea name="returnRemark" class="form-control fs-08rem p-1" cols="30" rows="3" required></textarea>
-                </div>
-                <div class="col-md-4" style="align-content: space-evenly;">
-                    <button class="btn btn-darkblue fs-07rem p-1">Back to Quotation Stage</button>
-                </div>
+    <form action=" {{ route('returnQuotationStage') }}" method="POST">
+        @csrf
+        <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+        <div class="row p-2 bg-offwhite mt-2">
+            <div class="col-md-7">
+                <label for="" class="fs-08rem">Back Stage Remarks</label>
+                <textarea name="returnRemark" class="form-control fs-08rem p-1" cols="30" rows="3" required></textarea>
             </div>
-        </form>
+            <div class="col-md-4" style="align-content: space-evenly;">
+                <button class="btn btn-darkblue fs-07rem p-1">Back to Quotation Stage</button>
+            </div>
+        </div>
+    </form>
     {{-- @endif --}}
+    <span class="badge badge-success fs-1rem float-end">Advance Payment: <span
+            id="remainingAdvance">{{ $leadInfo->clientInfo->advance_amount }}</span></span>
     <hr>
     <div class="row">
         @if ($leadInfo->payment_type == 'Cash')
@@ -55,25 +57,39 @@
                             class="form-control fs-08rem p-1" required>
                     </div>
                     <div class="mb-1">
+                        <label class="form-label m-0 fs-08rem">Transaction Type (Base Amount)<span
+                                class="text-danger">*</span></label>
+                        <select name="transactionType" id="transactionType" class="form-select fs-08rem p-1"
+                            onchange="checkTransType()" required>
+                            <option value="" selected disabled>--Select One--</option>
+                            <option value="cash">Cash Amount</option>
+                            <option value="bank">Bank Amount</option>
+                            <option value="advanceAdjust">Advance Adjustment</option>
+                            <option value="fractionAdjust">Fraction Adjustment</option>
+                            <option value="tax">TAX Amount</option>
+                            <option value="vat">VAT Amount</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
                         <label class="form-label m-0 fs-08rem">Deposit Amount (BDT) <span
                                 class="text-danger">*</span></label>
                         <input name="transactionAmount" id="transactionAmount" type="number" step=".001"
                             class="form-control lh-sm fs-08rem p-1" required>
                     </div>
                     <div class="mb-1">
-                        <label class="form-label m-0 fs-08rem">Transaction Type <span
-                                class="text-danger">*</span></label>
-                        <select name="transactionType" id="transactionType" class="form-select fs-08rem p-1" required>
-                            <option value="" selected disabled>--Select One--</option>
-                            <option value="base">Base Amount (BDT)</option>
-                            <option value="tax">TAX Amount (BDT)</option>
-                            <option value="vat">VAT Amount (BDT)</option>
-                        </select>
+                        <label class="form-label m-0 fs-08rem">Advance Amount (Paid - Base) (BDT) </label>
+                        <input name="advanceAmount" id="advanceAmount" type="number" step=".001"
+                            class="form-control lh-sm fs-08rem p-1">
                     </div>
                     <div class="mb-1">
-                        <label class="form-label m-0 fs-07rem">Attachment</label>
-                        <input name="transactionFile" type="file" accept="image/png, image/jpeg, image/jpg, .pdf"
+                        <label class="form-label m-0 fs-08rem">Excess Amount (BDT) </label>
+                        <input name="excessAmount" id="excessAmount" type="number" step=".001"
                             class="form-control lh-sm fs-08rem p-1">
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label m-0 fs-07rem">Attachment <span class="text-danger">*</span></label>
+                        <input name="transactionFile" id="transactionFile" type="file"
+                            accept="image/png, image/jpeg, image/jpg, .pdf" class="form-control lh-sm fs-08rem p-1" required>
                     </div>
                     <div class="mb-1">
                         <label class="form-label m-0 fs-07rem">Remarks</label>
@@ -170,7 +186,7 @@
                         <?php $totalPaid = 0; ?>
                         @foreach ($transactionInfo as $item)
                             <?php
-                            if ($item->is_verified == 1) {
+                            if ($item->is_verified == 1 && ($item->transaction_type == 'base' || $item->transaction_type == 'vat' || $item->transaction_type == 'tax')) {
                                 $totalPaid = $totalPaid + $item->pay_amount;
                             }
                             ?>
@@ -190,6 +206,7 @@
                         <th class="p-1">Deposit Date</th>
                         <th class="p-1">Taka</th>
                         <th class="p-1">Type</th>
+                        <th class="p-1">By</th>
                         <th class="p-1">Transaction Remarks</th>
                         <th class="p-1">Statement Date</th>
                         <th class="p-1">Statement Remarks</th>
@@ -203,16 +220,19 @@
                             $type = '';
                             if ($item->transaction_type == 'base') {
                                 $type = 'Base Amount';
-                            }
-                            if ($item->transaction_type == 'tax') {
+                            } elseif ($item->transaction_type == 'tax') {
                                 $type = 'TAX Amount';
-                            }
-                            if ($item->transaction_type == 'vat') {
+                            } elseif ($item->transaction_type == 'vat') {
                                 $type = 'VAT Amount';
+                            } else {
+                                $type = $item->transaction_type;
                             }
-                            if ($item->transaction_file) {
-                                $type .= "<small><a href='" . asset('transactionAttachment/' . $item->transaction_file) . "' target='_blank'><small class='badge badge-info'>Attachment</small></a></small>";
 
+                            if ($item->transaction_file) {
+                                $type .=
+                                    "<small><a href='" .
+                                    asset('transactionAttachment/' . $item->transaction_file) .
+                                    "' target='_blank'><small class='badge badge-info'>Attachment</small></a></small>";
                             }
                         @endphp
                         <tr>
@@ -220,6 +240,7 @@
                             <td class="p-1">{{ date('d-M-Y', strtotime($item->deposit_date)) }}</td>
                             <td class="p-1">{{ number_format((float) $item->pay_amount, 2, '.', ',') }}</td>
                             <td class="p-1">{!! $type !!}</td>
+                            <td class="p-1">{{ $item->transaction_by }}</td>
                             <td class="p-1">{{ $item->transaction_remarks }}</td>
                             @if ($item->deposited_date)
                                 <td class="p-1">{{ date('d-M-Y', strtotime($item->deposited_date)) }}</td>
@@ -280,7 +301,7 @@
         if (!localParams.send) {
             e.preventDefault();
         }
-
+        let transType = $('#transactionType').val();
         let proceedFlag = 1;
         // Validate Deposit Amount and Net Amount 
         let transAmt = $('#transactionAmount').val();
@@ -326,6 +347,17 @@
             proceedFlag = 0;
         }
 
+        if (transType == 'fractionAdjust' && transAmt > 200) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: "Invalid Amount",
+                text: "Fraction adjustment not more than 200",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            proceedFlag = 0;
+        }
 
         if (proceedFlag == 1) {
             var form = e;
@@ -347,4 +379,41 @@
             })
         }
     });
+</script>
+
+<script>
+    function checkTransType() {
+        var transType = $('#transactionType').val();
+        document.getElementById('transactionAmount').removeAttribute('disabled');
+
+        if (transType == 'advanceAdjust') {
+            let remainingAdvance = Number($('#remainingAdvance')[0].innerText);
+            if (remainingAdvance < 1) {
+                document.getElementById('transactionAmount').setAttribute('disabled', true);
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    text: "Customer don't have advance balance",
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+            }
+        }
+
+        if(transType == 'vat' || transType == 'tax'){
+            document.getElementById('advanceAmount').parentNode.classList.add('d-none');
+        }else{
+            document.getElementById('advanceAmount').parentNode.classList.remove('d-none');
+        }
+
+        if(transType == 'advanceAdjust' || transType == 'fractionAdjust'){
+            document.getElementById('transactionFile').removeAttribute('required');
+            document.getElementById('advanceAmount').parentNode.classList.add('d-none');
+            document.getElementById('excessAmount').parentNode.classList.add('d-none');
+        }else{
+            document.getElementById('transactionFile').setAttribute('required', true);
+            document.getElementById('advanceAmount').parentNode.classList.remove('d-none');
+            document.getElementById('excessAmount').parentNode.classList.remove('d-none');
+        }
+    }
 </script>

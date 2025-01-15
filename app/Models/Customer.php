@@ -25,7 +25,8 @@ class Customer extends Model
         'contact_email',
         'assign_to',
         'sap_id',
-        'is_active'
+        'is_active',
+        'advance_amount'
     ];
 
     public function assignTo()

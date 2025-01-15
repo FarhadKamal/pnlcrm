@@ -22,17 +22,17 @@ class CreateCustomersTable extends Migration
             $table->string('zone');
             $table->string('district');
             $table->string('division');
-            $table->string('tin')->nullable();;
-            $table->string('bin')->nullable();;
+            $table->string('tin')->nullable();
+            $table->string('bin')->nullable();
             $table->string('trade_license')->nullable();;
             $table->string('contact_person');
             $table->string('contact_mobile');
             $table->string('contact_email')->nullable();
             $table->string('assign_to')->nullable();
             $table->string('sap_id')->nullable();
+            $table->double('advance_amount')->default(0);
             $table->timestamps();
             $table->boolean('is_active')->default(1);
-
         });
     }
 

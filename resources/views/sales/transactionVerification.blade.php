@@ -336,6 +336,7 @@
         let totalNetPrice = '<?php echo $totalNetPrice; ?>';
         let totalPaid = '<?php echo $totalPaid; ?>';
         let balance = Number(totalNetPrice) - Number(totalPaid);
+        balance = (Math.round(balance * 100) / 100).toFixed(2);
         // var form = e;
         // let transactionAmount = Number(form.target[2].value);
         // let transactionType = form.target[3].value

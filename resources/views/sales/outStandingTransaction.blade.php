@@ -323,12 +323,13 @@
         let totalNetPrice = '<?php echo $totalNetPrice; ?>';
         let totalPaid = '<?php echo $totalPaid; ?>';
         let balance = Number(totalNetPrice) - Number(totalPaid);
+        balance = (Math.round(balance * 100) / 100).toFixed(2);
         // var form = e;
         var form = e.target;
         let transactionAmount = Number(form.transactionAmount.value);
         let transactionType = form.transactionType.value;
-
-        if (transactionType != 'Advance Payment') {
+        
+        if (transactionType == 'base' || transactionType == 'vat' || transactionType == 'tax') {
             if (transactionAmount > balance) {
                 Swal.fire({
                     position: 'top-end',

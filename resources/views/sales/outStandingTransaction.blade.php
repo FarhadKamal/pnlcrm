@@ -498,7 +498,7 @@
             }
         }
 
-        if (transType == 'vat' || transType == 'tax') {
+        if (transType == 'vat' || transType == 'tax' || transType == 'advanceAdjust' || transType == 'fractionAdjust') {
             document.getElementById('advanceAmount').parentNode.classList.add('d-none');
         } else {
             document.getElementById('advanceAmount').parentNode.classList.remove('d-none');
@@ -506,11 +506,11 @@
 
         if (transType == 'advanceAdjust' || transType == 'fractionAdjust') {
             document.getElementById('transactionFile').removeAttribute('required');
-            document.getElementById('advanceAmount').parentNode.classList.add('d-none');
+            // document.getElementById('advanceAmount').parentNode.classList.add('d-none');
             document.getElementById('excessAmount').parentNode.classList.add('d-none');
         } else {
             document.getElementById('transactionFile').setAttribute('required', true);
-            document.getElementById('advanceAmount').parentNode.classList.remove('d-none');
+            // document.getElementById('advanceAmount').parentNode.classList.remove('d-none');
             document.getElementById('excessAmount').parentNode.classList.remove('d-none');
         }
     }

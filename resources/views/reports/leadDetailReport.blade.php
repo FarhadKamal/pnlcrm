@@ -187,7 +187,7 @@
                             <?php $totalPaid = 0; ?>
                             @foreach ($transactionInfo as $item)
                                 <?php
-                                if ($item->is_verified == 1) {
+                                if ($item->is_verified == 1 && ($item->transaction_type == 'base' || $item->transaction_type == 'vat' || $item->transaction_type == 'tax')) {
                                     $totalPaid = $totalPaid + $item->pay_amount;
                                 }
                                 ?>
@@ -216,6 +216,7 @@
                             <th class="p-1">Deposit Date</th>
                             <th class="p-1">Taka</th>
                             <th class="p-1">Type</th>
+                            <th class="p-1">By</th>
                             <th class="p-1">Transaction Remarks</th>
                             <th class="p-1">Statement Date</th>
                             <th class="p-1">Statement Remarks</th>
@@ -248,6 +249,7 @@
                                 <td class="p-1">{{ date('d-M-Y', strtotime($item->deposit_date)) }}</td>
                                 <td class="p-1">{{ number_format((float) $item->pay_amount, 2, '.', ',') }}</td>
                                 <td class="p-1">{!! $type !!}</td>
+                                <td class="p-1">{{ $item->transaction_by }}</td>
                                 <td class="p-1">{{ $item->transaction_remarks }}</td>
                                 @if ($item->deposited_date)
                                     <td class="p-1">{{ date('d-M-Y', strtotime($item->deposited_date)) }}</td>

@@ -124,7 +124,7 @@
                         <td colspan="18" class="p-1 text-center">PNL Holdings Limited - Target vs Sales Report</td>
                     </tr>
                     <tr>
-                        <td colspan="18" class="p-1 text-center">Financial Year: {{ (string) $reportYear }}</td>
+                        <td colspan="18" class="p-1 text-center">Financial Year: {{ (string) $reportYear }} - {{ (string) ($reportYear+1) }}</td>
                     </tr>
                     <tr class="fixed-header">
                         <td rowspan="2" class="p-1 text-center" style="align-content: start;">BD Code</td>

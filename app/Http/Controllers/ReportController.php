@@ -135,7 +135,7 @@ class ReportController extends Controller
             } else {
                 $customerCond = ' AND customers.id = "' . $customerId . '"';
             }
-
+            
             $filterDate = date('Y-m-d', strtotime($request->filterDate));
             $data['reportData'] = $this->outStandingNetDueQuery($filterDate, $userCond, $customerCond);
 
@@ -455,6 +455,8 @@ class ReportController extends Controller
                                         IFNULL(transaction_sums.vatAmount, 0) AS vatAmount,
                                         IFNULL(transaction_sums.taxAmount, 0) AS taxAmount,
                                         IFNULL(transaction_sums.otherAmount, 0) AS otherAmount,
+                                        IFNULL(transaction_sums.fractionAmount, 0) AS fractionAmount,
+                                        IFNULL(transaction_sums.excessAmount, 0) AS excessAmount,
                                         IFNULL(pump_totals.invoice_amount, 0) AS invoice_amount
                                     FROM leads
                                     INNER JOIN customers ON customers.id = leads.customer_id
@@ -466,17 +468,19 @@ class ReportController extends Controller
                                     ) AS pump_totals ON pump_totals.lead_id = leads.id
                                     LEFT JOIN (
                                         SELECT lead_id,
-                                            SUM(CASE WHEN transaction_type = "base" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS baseAmount,
-                                            SUM(CASE WHEN transaction_type = "vat" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS vatAmount,
-                                            SUM(CASE WHEN transaction_type = "tax" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS taxAmount,
-                                            SUM(CASE WHEN transaction_type = "" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS otherAmount
+                                            SUM(CASE WHEN transaction_type = "base" AND (transaction_by = "Bank" OR transaction_by = "Cash" OR transaction_by = "") AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS baseAmount,
+                                            SUM(CASE WHEN transaction_type = "base" AND transaction_by= "VAT" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS vatAmount,
+                                            SUM(CASE WHEN transaction_type = "base" AND transaction_by= "TAX" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS taxAmount,
+                                            SUM(CASE WHEN transaction_type = "" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS otherAmount,
+                                            SUM(CASE WHEN transaction_type = "base" AND transaction_by= "Fraction Adjustment" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS fractionAmount,
+                                            SUM(CASE WHEN transaction_type = "Excess Payment" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS excessAmount
                                         FROM transactions
                                         WHERE is_verified = 1 AND is_return = 0
                                         GROUP BY lead_id
                                     ) AS transaction_sums ON transaction_sums.lead_id = leads.id
                                     WHERE quotations.is_accept = 1 AND leads.is_lost != 1
                                     AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . '' . $customerCond . ' 
-                                    GROUP BY leads.id');
+                                    GROUP BY leads.id ORDER BY leads.invoice_date ASC');
 
             $data['salesPersons'] = User::get();
             $data['customerList'] = Customer::get();

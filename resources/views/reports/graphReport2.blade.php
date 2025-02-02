@@ -56,7 +56,7 @@
     }
 </style>
 
-<div class="container mt-2 mb-3" id="transactionReportForm">
+<div class="container mt-2 mb-3">
     <h5 class="text-center">Graph Report (Year: {{ $financialYear }})</h5>
     <hr>
     <div class="row shadow-4">

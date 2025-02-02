@@ -40,7 +40,8 @@ class Lead extends Model
         'delivery_address',
         'delivery_person',
         'delivery_mobile',
-        'delivery_attachment'
+        'delivery_attachment',
+        'is_sales_return'
     ];
 
     public function clientInfo()

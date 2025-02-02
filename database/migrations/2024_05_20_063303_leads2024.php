@@ -47,6 +47,7 @@ class Leads2024 extends Migration
             $table->string('delivery_person')->nullable();
             $table->string('delivery_mobile')->nullable();
             $table->string('delivery_attachment')->nullable();
+            $table->boolean('is_sales_return')->default(0);
             $table->timestamps();
         });
     }

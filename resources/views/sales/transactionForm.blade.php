@@ -186,7 +186,7 @@
                         <?php $totalPaid = 0; ?>
                         @foreach ($transactionInfo as $item)
                             <?php
-                            if ($item->is_verified == 1 && ($item->transaction_type == 'base' || $item->transaction_type == 'vat' || $item->transaction_type == 'tax')) {
+                            if ($item->is_verified == 1 && ($item->transaction_type == 'base')) {
                                 $totalPaid = $totalPaid + $item->pay_amount;
                             }
                             ?>

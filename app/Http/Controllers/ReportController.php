@@ -371,10 +371,9 @@ class ReportController extends Controller
                                         leads
                                     INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
                                     WHERE 
-                                    (EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3, 4, 5, 6) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . ($financialYear + 1) . ')
-                                        OR (EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9, 10, 11, 12) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . ')
-                                       
-                                        AND leads.is_lost != 1 
+                                    ((EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3, 4, 5, 6) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . ($financialYear + 1) . ')
+                                        OR (EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9, 10, 11, 12) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . '))
+                                        AND leads.is_lost != 1
                                     GROUP BY 
                                         leads.created_by
                                 ) sales ON sales.created_by = u.id

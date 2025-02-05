@@ -126,11 +126,15 @@
                         </thead>
                         <tbody>
                             <?php $totalDiscountAmt = 0;
-                            $totalNetPrice = 0; ?>
+                            $totalNetPrice = 0;
+                            // $salesReturnAmount = 0; ?>
                             @foreach ($pumpInfo as $pumps)
                                 <?php
                                 $totalDiscountAmt = $totalDiscountAmt + $pumps->discount_price;
                                 $totalNetPrice = $totalNetPrice + $pumps->net_price;
+                                // if ($pumps->returnItemInfo) {
+                                //     $salesReturnAmount = $salesReturnAmount + $pumps->returnItemInfo->return_amount;
+                                // }
                                 if ($pumps->spare_parts == 0) {
                                     $brandName = $pumps->productInfo->brand_name;
                                     $matName = $pumps->productInfo->mat_name;
@@ -141,7 +145,12 @@
                                 ?>
                                 <tr>
                                     <td class="p-1">{{ $brandName }}</td>
-                                    <td class="p-1">{{ $matName }}</td>
+                                    <td class="p-1">{{ $matName }}
+                                        {{-- @if ($pumps->returnItemInfo)
+                                            <small class="badge badge-danger">Return Oty
+                                                {{ $pumps->returnItemInfo->return_quantity }}</small>
+                                        @endif --}}
+                                    </td>
                                     <td class="p-1 text-end">
                                         {{ number_format((float) $pumps->unit_price, 2, '.', ',') }}
                                     </td>
@@ -206,6 +215,34 @@
                         </tr>
                     </tbody>
                 </table>
+
+                {{-- @if ($leadInfo->returnInfo)
+                    <h6 class="text-center"><kbd>Sales Return Summary</kbd></h6>
+                    <table class="table table-bordered fs-08rem log-table text-center">
+                        <thead class="table-warning text-center">
+                            <tr>
+                                <th class="p-1">Return Reason</th>
+                                <th class="p-1">Status</th>
+                                <th class="p-1">Return Amount</th>
+                                <th class="p-1">Deduction Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-warning">
+                            <tr>
+                                <td class="p-1">{{ $leadInfo->returnInfo->return_reason }}</td>
+                                <td class="p-1"><span
+                                        class="badge badge-light">{{ $leadInfo->returnInfo->return_status }}</span></td>
+                                <td class="p-1">
+                                    {{ number_format((float) $salesReturnAmount, 2, '.', ',') }}
+                                </td>
+                                <td class="p-1">
+                                    {{ number_format((float) 0, 2, '.', ',') }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                @endif --}}
+
             </div>
             <div class="col-md-12">
                 <h6 class="text-center"><kbd>Transaction List</kbd></h6>

@@ -72,4 +72,8 @@ class Lead extends Model
     {
         return $this->hasMany(SalesLog::class, 'lead_id', 'id');
     }
+
+    // public function returnInfo(){
+    //     return $this->hasOne(ReturnRequest::class, 'lead_id', 'id');
+    // }
 }

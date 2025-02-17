@@ -62,6 +62,12 @@
             <center>
                 <h5><kbd>Lead ID: {{ $leadInfo->id }}</kbd></h5>
             </center>
+            @if ($leadInfo->is_lost == 1)
+                <div class="bg-danger mb-3">
+                    <h6 class="text-white text-center p-1">Lost Category: {{ $leadInfo->lost_reason }}</h6>
+                    <p class="text-center text-white p-1">Lost Reason: {{ $leadInfo->lost_description }}</p>
+                </div>
+            @endif
             <br><br>
             <div class="col-md-5 col-sm-5 mb-3" style="background:rgb(240, 240, 240)">
                 <h6 class="text-center"><kbd>Lead Information</kbd></h6>
@@ -127,14 +133,14 @@
                         <tbody>
                             <?php $totalDiscountAmt = 0;
                             $totalNetPrice = 0;
-                            // $salesReturnAmount = 0; ?>
+                            $salesReturnAmount = 0; ?>
                             @foreach ($pumpInfo as $pumps)
                                 <?php
                                 $totalDiscountAmt = $totalDiscountAmt + $pumps->discount_price;
                                 $totalNetPrice = $totalNetPrice + $pumps->net_price;
-                                // if ($pumps->returnItemInfo) {
-                                //     $salesReturnAmount = $salesReturnAmount + $pumps->returnItemInfo->return_amount;
-                                // }
+                                if ($pumps->returnItemInfo) {
+                                    $salesReturnAmount = $salesReturnAmount + $pumps->returnItemInfo->return_amount;
+                                }
                                 if ($pumps->spare_parts == 0) {
                                     $brandName = $pumps->productInfo->brand_name;
                                     $matName = $pumps->productInfo->mat_name;
@@ -146,10 +152,10 @@
                                 <tr>
                                     <td class="p-1">{{ $brandName }}</td>
                                     <td class="p-1">{{ $matName }}
-                                        {{-- @if ($pumps->returnItemInfo)
+                                        @if ($pumps->returnItemInfo)
                                             <small class="badge badge-danger">Return Oty
                                                 {{ $pumps->returnItemInfo->return_quantity }}</small>
-                                        @endif --}}
+                                        @endif
                                     </td>
                                     <td class="p-1 text-end">
                                         {{ number_format((float) $pumps->unit_price, 2, '.', ',') }}
@@ -216,7 +222,7 @@
                     </tbody>
                 </table>
 
-                {{-- @if ($leadInfo->returnInfo)
+                @if ($leadInfo->returnInfo)
                     <h6 class="text-center"><kbd>Sales Return Summary</kbd></h6>
                     <table class="table table-bordered fs-08rem log-table text-center">
                         <thead class="table-warning text-center">
@@ -231,7 +237,8 @@
                             <tr>
                                 <td class="p-1">{{ $leadInfo->returnInfo->return_reason }}</td>
                                 <td class="p-1"><span
-                                        class="badge badge-light">{{ $leadInfo->returnInfo->return_status }}</span></td>
+                                        class="badge badge-light">{{ $leadInfo->returnInfo->return_status }}</span>
+                                </td>
                                 <td class="p-1">
                                     {{ number_format((float) $salesReturnAmount, 2, '.', ',') }}
                                 </td>
@@ -241,7 +248,7 @@
                             </tr>
                         </tbody>
                     </table>
-                @endif --}}
+                @endif
 
             </div>
             <div class="col-md-12">
@@ -273,6 +280,8 @@
                                 }
                                 if ($item->transaction_type == 'vat') {
                                     $type = 'VAT Amount';
+                                } else {
+                                    $type = $item->transaction_type;
                                 }
                                 if ($item->transaction_file) {
                                     $type .=

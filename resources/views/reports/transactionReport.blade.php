@@ -145,6 +145,7 @@
                         <td class="p-1 text-center">Receive TAX Amount</td>
                         <td class="p-1 text-center">Fraction Adjust</td>
                         <td class="p-1 text-center">Excess Receive</td>
+                        <td class="p-1 text-center">Sales Return</td>
                         <td class="p-1 text-center">Total Outstanding Balance</td>
                     </tr>
                 </thead>
@@ -159,7 +160,8 @@
                             $grandTotalOutstanding = $grandTotalOutstanding + $outStandingTotal;
                         @endphp
                         <tr>
-                            <td class="p-1"><small class="badge badge-success">Lead ID: {{ $item->id }}</small></td>
+                            <td class="p-1"><small class="badge badge-success">Lead ID: {{ $item->id }}</small>
+                            </td>
                             <td class="p-1">{{ $item->customer_name }}</td>
                             <td class="p-1 text-center">{{ $item->sap_id }}</td>
                             <td class="p-1 text-center">{{ $item->quotation_po }}</td>
@@ -175,13 +177,23 @@
                                 {{ number_format((float) $outStandingWithoutVatTax, 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $item->vatAmount, 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $item->taxAmount, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end">{{ number_format((float) $item->fractionAmount, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end">{{ number_format((float) $item->fractionAmount, 2, '.', ',') }}
+                            </td>
                             <td class="p-1 text-end">{{ number_format((float) $item->excessAmount, 2, '.', ',') }}</td>
+                            @if ($item->return_status)
+                                <td class="p-1 text-end"><small
+                                        class="badge badge-primary">{{ $item->return_status }}</small>
+                                    <br><br>
+                                    <span class="text-end">{{ number_format((float) $item->returnAmount, 2, '.', ',') }}</span>
+                                </td>
+                            @else
+                                <td class="p-1 text-center">N/A</td>
+                            @endif
                             <td class="p-1 text-end">{{ number_format((float) $outStandingTotal, 2, '.', ',') }}</td>
                         </tr>
                     @endforeach
                     <tr style="background-color: #c49e77">
-                        <td colspan="15" class="p-1 text-center fw-bold">Grand Total</td>
+                        <td colspan="16" class="p-1 text-center fw-bold">Grand Total</td>
                         <td class="p-1 text-end fw-bold">
                             {{ number_format((float) $grandTotalOutstanding, 2, '.', ',') }}</td>
                     </tr>

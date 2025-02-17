@@ -135,7 +135,7 @@ class ReportController extends Controller
             } else {
                 $customerCond = ' AND customers.id = "' . $customerId . '"';
             }
-            
+
             $filterDate = date('Y-m-d', strtotime($request->filterDate));
             $data['reportData'] = $this->outStandingNetDueQuery($filterDate, $userCond, $customerCond);
 
@@ -207,6 +207,7 @@ class ReportController extends Controller
                 AND leads.is_lost != 1 
                 AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
                 AND transactions.is_verified = 1
+                AND transactions.transaction_type="base"
             GROUP BY 
                 leads.customer_id
         ) AS transactions ON transactions.customer_id = customers.id 
@@ -281,6 +282,7 @@ class ReportController extends Controller
                 AND leads.is_lost != 1 
                 AND ' . $dateCond . '
                 AND transactions.is_verified = 1
+                AND transactions.transaction_type="base"
             GROUP BY 
                 leads.customer_id
         ) AS transactions ON transactions.customer_id = customers.id 
@@ -349,7 +351,11 @@ class ReportController extends Controller
                                     COALESCE(sales.Q1_Sales, 0) AS Q1_Sales,
                                     COALESCE(sales.Q2_Sales, 0) AS Q2_Sales,
                                     COALESCE(sales.Q3_Sales, 0) AS Q3_Sales,
-                                    COALESCE(sales.Q4_Sales, 0) AS Q4_Sales
+                                    COALESCE(sales.Q4_Sales, 0) AS Q4_Sales,
+                                    COALESCE(return_sales.Q1_Return, 0) AS Q1_Return,
+                                    COALESCE(return_sales.Q2_Return, 0) AS Q2_Return,
+                                    COALESCE(return_sales.Q3_Return, 0) AS Q3_Return,
+                                    COALESCE(return_sales.Q4_Return, 0) AS Q4_Return 
                                 FROM 
                                     users u
                                 LEFT JOIN (
@@ -377,6 +383,32 @@ class ReportController extends Controller
                                     GROUP BY 
                                         leads.created_by
                                 ) sales ON sales.created_by = u.id
+                                LEFT JOIN (
+                                    SELECT 
+                                        leads.created_by,
+                                        SUM(CASE 
+                                            WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9) THEN return_items.return_amount 
+                                        END) AS Q1_Return,
+                                        SUM(CASE 
+                                            WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (10, 11, 12) THEN return_items.return_amount 
+                                        END) AS Q2_Return,
+                                        SUM(CASE 
+                                            WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3) THEN return_items.return_amount 
+                                        END) AS Q3_Return,
+                                        SUM(CASE 
+                                            WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (4, 5, 6) THEN return_items.return_amount 
+                                        END) AS Q4_Return
+                                    FROM 
+                                        return_requests
+                                    INNER JOIN leads ON leads.id = return_requests.lead_id
+                                    INNER JOIN return_items ON return_items.lead_id = return_requests.lead_id
+                                    WHERE 
+                                        ((EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3, 4, 5, 6) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . ($financialYear + 1) . ')
+                                        OR (EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9, 10, 11, 12) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . '))
+                                        AND return_requests.return_status = "approved"
+                                    GROUP BY 
+                                        leads.created_by
+                                ) return_sales ON return_sales.created_by = u.id
                                 INNER JOIN (
                                     SELECT 
                                         ST.user_id,
@@ -445,7 +477,8 @@ class ReportController extends Controller
             $data['reportData'] = DB::select('SELECT 
                                         leads.id, 
                                         leads.invoice_date, 
-                                        leads.sap_invoice, 
+                                        leads.sap_invoice,
+                                        return_requests.return_status,
                                         customers.customer_name, 
                                         customers.sap_id, 
                                         quotations.quotation_po, 
@@ -456,8 +489,10 @@ class ReportController extends Controller
                                         IFNULL(transaction_sums.otherAmount, 0) AS otherAmount,
                                         IFNULL(transaction_sums.fractionAmount, 0) AS fractionAmount,
                                         IFNULL(transaction_sums.excessAmount, 0) AS excessAmount,
-                                        IFNULL(pump_totals.invoice_amount, 0) AS invoice_amount
+                                        IFNULL(pump_totals.invoice_amount, 0) AS invoice_amount,
+                                        IFNULL(return_sales.return_amount, 0) AS returnAmount
                                     FROM leads
+                                    LEFT JOIN return_requests ON return_requests.lead_id = leads.id
                                     INNER JOIN customers ON customers.id = leads.customer_id
                                     INNER JOIN quotations ON quotations.lead_id = leads.id
                                     LEFT JOIN (
@@ -477,6 +512,11 @@ class ReportController extends Controller
                                         WHERE is_verified = 1 AND is_return = 0
                                         GROUP BY lead_id
                                     ) AS transaction_sums ON transaction_sums.lead_id = leads.id
+                                    LEFT JOIN (
+                                        SELECT lead_id, SUM(return_items.return_amount) AS return_amount
+                                        FROM return_items
+                                        GROUP BY lead_id
+                                    ) AS return_sales ON return_sales.lead_id = leads.id
                                     WHERE quotations.is_accept = 1 AND leads.is_lost != 1
                                     AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . '' . $customerCond . ' 
                                     GROUP BY leads.id ORDER BY leads.invoice_date ASC');

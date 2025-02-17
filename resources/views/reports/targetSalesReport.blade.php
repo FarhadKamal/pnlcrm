@@ -124,7 +124,8 @@
                         <td colspan="18" class="p-1 text-center">PNL Holdings Limited - Target vs Sales Report</td>
                     </tr>
                     <tr>
-                        <td colspan="18" class="p-1 text-center">Financial Year: {{ (string) $reportYear }} - {{ (string) ($reportYear+1) }}</td>
+                        <td colspan="18" class="p-1 text-center">Financial Year: {{ (string) $reportYear }} -
+                            {{ (string) ($reportYear + 1) }}</td>
                     </tr>
                     <tr class="fixed-header">
                         <td rowspan="2" class="p-1 text-center" style="align-content: start;">BD Code</td>
@@ -190,22 +191,30 @@
                             <td class="p-1 text-center">{{ $item->assign_to }}</td>
                             <td class="p-1">{{ $item->user_name }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $item->Q1_Target, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end">{{ number_format((float) $item->Q1_Sales, 2, '.', ',') }}</td>
+                            {{-- <td class="p-1 text-end">{{ number_format((float) $item->Q1_Sales, 2, '.', ',') }}</td> --}}
+                            <td class="p-1 text-end">
+                                {{ number_format((float) ($item->Q1_Sales - $item->Q1_Return), 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $userAchieveQ1, 2, '.', ',') }}%</td>
                             <td class="p-1 text-end">{{ number_format((float) $userGapQ1, 2, '.', ',') }}</td>
 
                             <td class="p-1 text-end">{{ number_format((float) $item->Q2_Target, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end">{{ number_format((float) $item->Q2_Sales, 2, '.', ',') }}</td>
+                            {{-- <td class="p-1 text-end">{{ number_format((float) $item->Q2_Sales, 2, '.', ',') }}</td> --}}
+                            <td class="p-1 text-end">
+                                {{ number_format((float) ($item->Q2_Sales - $item->Q2_Return), 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $userAchieveQ2, 2, '.', ',') }}%</td>
                             <td class="p-1 text-end">{{ number_format((float) $userGapQ2, 2, '.', ',') }}</td>
 
                             <td class="p-1 text-end">{{ number_format((float) $item->Q3_Target, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end">{{ number_format((float) $item->Q3_Sales, 2, '.', ',') }}</td>
+                            {{-- <td class="p-1 text-end">{{ number_format((float) $item->Q3_Sales, 2, '.', ',') }}</td> --}}
+                            <td class="p-1 text-end">
+                                {{ number_format((float) ($item->Q3_Sales - $item->Q3_Return), 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $userAchieveQ3, 2, '.', ',') }}%</td>
                             <td class="p-1 text-end">{{ number_format((float) $userGapQ3, 2, '.', ',') }}</td>
 
                             <td class="p-1 text-end">{{ number_format((float) $item->Q4_Target, 2, '.', ',') }}</td>
-                            <td class="p-1 text-end">{{ number_format((float) $item->Q4_Sales, 2, '.', ',') }}</td>
+                            {{-- <td class="p-1 text-end">{{ number_format((float) $item->Q4_Sales, 2, '.', ',') }}</td> --}}
+                            <td class="p-1 text-end">
+                                {{ number_format((float) ($item->Q4_Sales - $item->Q4_Return), 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $userAchieveQ4, 2, '.', ',') }}%</td>
                             <td class="p-1 text-end">{{ number_format((float) $userGapQ4, 2, '.', ',') }}</td>
                         </tr>

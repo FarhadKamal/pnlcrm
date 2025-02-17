@@ -30,7 +30,7 @@ class PumpChoice extends Model
         return $this->hasOne(SpareItems::class, 'id', 'product_id');
     }
 
-    // public function returnItemInfo(){
-    //     return $this->hasOne(ReturnItem::class, 'pump_choice_id', 'id');
-    // }
+    public function returnItemInfo(){
+        return $this->hasOne(ReturnItem::class, 'pump_choice_id', 'id');
+    }
 }

@@ -335,7 +335,7 @@
                                     <tbody id="selectedPumpsTbody">
                                         @foreach ($selectedPumpList as $seletedItem)
                                             <?php
-                                            if ($seletedItem->discount_percentage > $seletedItem->productInfo->TradDiscontInfo->trade_discount + 3) {
+                                            if (isset($seletedItem->productInfo->TradDiscontInfo->trade_discount) && $seletedItem->discount_percentage > $seletedItem->productInfo->TradDiscontInfo->trade_discount + 3) {
                                                 $needDiscountRemarks = true;
                                             }
                                             ?>

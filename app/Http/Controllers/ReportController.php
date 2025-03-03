@@ -487,6 +487,7 @@ class ReportController extends Controller
                                         IFNULL(transaction_sums.vatAmount, 0) AS vatAmount,
                                         IFNULL(transaction_sums.taxAmount, 0) AS taxAmount,
                                         IFNULL(transaction_sums.otherAmount, 0) AS otherAmount,
+                                        IFNULL(transaction_sums.advanceAmount, 0) AS advanceAmount,
                                         IFNULL(transaction_sums.fractionAmount, 0) AS fractionAmount,
                                         IFNULL(transaction_sums.excessAmount, 0) AS excessAmount,
                                         IFNULL(pump_totals.invoice_amount, 0) AS invoice_amount,
@@ -506,6 +507,7 @@ class ReportController extends Controller
                                             SUM(CASE WHEN transaction_type = "base" AND transaction_by= "VAT" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS vatAmount,
                                             SUM(CASE WHEN transaction_type = "base" AND transaction_by= "TAX" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS taxAmount,
                                             SUM(CASE WHEN transaction_type = "" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS otherAmount,
+                                            SUM(CASE WHEN transaction_type = "base" AND transaction_by= "Advance Adjustment" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS advanceAmount,
                                             SUM(CASE WHEN transaction_type = "base" AND transaction_by= "Fraction Adjustment" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS fractionAmount,
                                             SUM(CASE WHEN transaction_type = "Excess Payment" AND is_verified = 1 AND is_return = 0 THEN pay_amount ELSE 0 END) AS excessAmount
                                         FROM transactions

@@ -369,7 +369,7 @@
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="text-end colText" style="text-align: right;">
+                                                        <p class="text-end colText me-2" style="text-align: right;">
                                                             {{ number_format((float) $itemPump->unit_price, 2, '.', ',') }}
                                                         </p>
                                                     </td>
@@ -377,12 +377,12 @@
                                                         <p class="colText text-center">{{ $itemPump->qty }}</p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="colText text-end" style="text-align: right;">
+                                                        <p class="colText text-end me-2" style="text-align: right;">
                                                             {{ number_format((float) $itemPump->discount_price, 2, '.', ',') }}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="colText text-end" style="text-align: right;">
+                                                        <p class="colText text-end me-2" style="text-align: right;">
                                                             {{ number_format((float) $itemPump->net_price, 2, '.', ',') }}
                                                         </p>
                                                     </td>
@@ -397,7 +397,7 @@
                                                 <p class="colText boldText text-center">Total Payable</p>
                                             </td>
                                             <td class="table1RowCol1">
-                                                <p class="colText boldText text-end">
+                                                <p class="colText boldText text-end me-2">
                                                     {{ number_format((float) $totalNetPay, 2, '.', ',') }}
                                                 </p>
                                             </td>

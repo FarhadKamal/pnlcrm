@@ -405,6 +405,16 @@ class DealController extends Controller
         );
         SalesLog::create($log_data);
 
+        $dealDiscountRemarks = $request->dealDiscountRemarks;
+        $log_data = array(
+            'lead_id' => $leadId,
+            'log_stage' => 'DEAL',
+            'log_task' => 'Discount Remarks: ' . $dealDiscountRemarks,
+            'log_by' => Auth()->user()->id,
+            'log_next' => $logNext
+        );
+        SalesLog::create($log_data);
+
         return redirect()->route('home');
     }
 

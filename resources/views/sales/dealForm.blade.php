@@ -35,10 +35,12 @@
     </center>
     <hr>
     <div id="fullDealForm">
+        <?php
+        $needDiscountRemarks = false;
+        ?>
         @if (count($reqList) > 0)
             <?php $modalNo = 0;
             $showFlag = true;
-            $needDiscountRemarks = false;
             ?>
             @foreach ($reqList as $item)
                 <div class="row justify-content-evenly requirementSlectionDiv mb-2 mt-2">

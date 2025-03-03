@@ -37,7 +37,9 @@
     <div id="fullDealForm">
         @if (count($reqList) > 0)
             <?php $modalNo = 0;
-            $showFlag = true; ?>
+            $showFlag = true;
+            $needDiscountRemarks = false;
+            ?>
             @foreach ($reqList as $item)
                 <div class="row justify-content-evenly requirementSlectionDiv mb-2 mt-2">
                     <div class="col-md-4 bg-white rounded shadow p-1">
@@ -330,6 +332,11 @@
                                     </thead>
                                     <tbody id="selectedPumpsTbody">
                                         @foreach ($selectedPumpList as $seletedItem)
+                                            <?php
+                                            if ($seletedItem->discount_percentage > $seletedItem->productInfo->TradDiscontInfo->trade_discount + 3) {
+                                                $needDiscountRemarks = true;
+                                            }
+                                            ?>
                                             @if ($seletedItem->req_id == $item->id)
                                                 <tr>
                                                     <td class="d-none"><input name='spare[]'
@@ -583,33 +590,41 @@
                 </div>
             </div>
         @endif
-
-
     </div>
-    <center><button class="btn btn-sm btn-darkblue p-1 mt-3" onclick="addNewRequirement()">Add Another
-            Requirement</button></center>
-    <form action="{{ route('dealFormSubmission') }}" method="POST" id="dealSubmitForm" class="container row">
+
+    <center>
+        <button class="btn btn-sm btn-darkblue p-1 mt-3" onclick="addNewRequirement()">Add Another
+            Requirement</button>
+    </center>
+
+    <form action="{{ route('dealFormSubmission') }}" method="POST" id="dealSubmitForm" class="container row mt-5">
         @csrf
         <input type="hidden" name="lead_id" value="{{ $leadId }}">
         <div class="col-md-6">
+            <label for="">Discount Remarks</label>
+            <input type="text" class="form-control" id="dealDiscountRemarks" name="dealDiscountRemarks">
+        </div>
+        <div class="col-md-3">
             <label for="">Payment Type</label>
-            <select name="dealPaymentType" id="dealPaymentType" class="form-select" style="width: 50%" required>
+            <select name="dealPaymentType" id="dealPaymentType" class="form-select" style="width: 100%" required>
                 <option value="" selected disabled>--Select One--</option>
                 <option value="Credit">Credit</option>
                 <option value="Cash">Cash</option>
             </select>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <label for="">Select Delivery Location</label>
-            <select name="deliveryLocation" id="deliveryLocation" class="form-select" style="width: 50%" required>
+            <select name="deliveryLocation" id="deliveryLocation" class="form-select" style="width: 100%" required>
                 <option value="" selected disabled>--Select One--</option>
                 <option value="CTG Pedrollo Plaza">CTG Pedrollo Plaza</option>
                 <option value="CTG Shagorika">CTG Shagorika Warehouse</option>
                 <option value="Dhaka Segunbagicha">Dhaka Segunbagicha</option>
             </select>
         </div>
-        <center><button class="btn btn-sm btn-success p-1 mt-3" onclick="saveReqPump(event)">Save and Create
-                Quotation</button></center>
+        <center>
+            <button class="btn btn-sm btn-success p-1 mt-3" onclick="saveReqPump(event)">Save and Create
+                Quotation</button>
+        </center>
     </form>
 </div>
 
@@ -805,6 +820,22 @@
                             text: "No Item Selection is saved for one of the requirement",
                             showConfirmButton: false,
                             timer: 5000
+                        });
+                        return;
+                    }
+                }
+                let needDiscountRemarks = '<?php echo $needDiscountRemarks; ?>';
+                if (needDiscountRemarks) {
+                    let dealDiscountRemarks = $('#dealDiscountRemarks').val().trim();
+                    if (dealDiscountRemarks == '' || dealDiscountRemarks == null) {
+                        found = false;
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Discount Remarks!',
+                            text: "Please mention your discount remarks",
+                            showConfirmButton: false,
+                            timer: 3000
                         });
                         return;
                     }

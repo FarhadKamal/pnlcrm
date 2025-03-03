@@ -140,6 +140,7 @@
                         <td class="p-1 text-center">Invoice Amount</td>
                         <td class="p-1 text-center">Receive Base Amount</td>
                         <td class="p-1 text-center">Receive Other Amount</td>
+                        <td class="p-1 text-center">Advance Adjustment</td>
                         <td class="p-1 text-center">Outstanding Balance</td>
                         <td class="p-1 text-center">Receive VAT Amount</td>
                         <td class="p-1 text-center">Receive TAX Amount</td>
@@ -155,7 +156,7 @@
                     @endphp
                     @foreach ($reportData as $item)
                         @php
-                            $outStandingWithoutVatTax = $item->invoice_amount - $item->baseAmount - $item->otherAmount;
+                            $outStandingWithoutVatTax = $item->invoice_amount - $item->baseAmount - $item->otherAmount - $item->advanceAmount;
                             $outStandingTotal = $outStandingWithoutVatTax - ($item->vatAmount + $item->taxAmount);
                             $grandTotalOutstanding = $grandTotalOutstanding + $outStandingTotal;
                         @endphp
@@ -173,6 +174,7 @@
                             </td>
                             <td class="p-1 text-end">{{ number_format((float) $item->baseAmount, 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $item->otherAmount, 2, '.', ',') }}</td>
+                            <td class="p-1 text-end">{{ number_format((float) $item->advanceAmount, 2, '.', ',') }}</td>
                             <td class="p-1 text-end">
                                 {{ number_format((float) $outStandingWithoutVatTax, 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $item->vatAmount, 2, '.', ',') }}</td>
@@ -193,7 +195,7 @@
                         </tr>
                     @endforeach
                     <tr style="background-color: #c49e77">
-                        <td colspan="16" class="p-1 text-center fw-bold">Grand Total</td>
+                        <td colspan="17" class="p-1 text-center fw-bold">Grand Total</td>
                         <td class="p-1 text-end fw-bold">
                             {{ number_format((float) $grandTotalOutstanding, 2, '.', ',') }}</td>
                     </tr>

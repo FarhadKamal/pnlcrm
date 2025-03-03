@@ -197,28 +197,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="p-1">{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</td>
-                            <?php $totalPaid = 0; ?>
-                            @foreach ($transactionInfo as $item)
-                                <?php
-                                if ($item->is_verified == 1 && ($item->transaction_type == 'base' || $item->transaction_type == '')) {
-                                    $totalPaid = $totalPaid + $item->pay_amount;
-                                }
-                                ?>
-                            @endforeach
-                            <td class="p-1">{{ number_format((float) $totalPaid, 2, '.', ',') }}</td>
-                            @if ($totalNetPrice - $totalPaid > 0)
-                                <td class="p-1 bg-danger text-white fw-bold">
-                                    {{ number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') }}
-                                </td>
-                            @else
-                                <td class="p-1 bg-success text-white fw-bold">
-                                    {{ number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') }}
-                                </td>
-                            @endif
+                        @if (count($pumpInfo) > 0)
+                            <tr>
+                                <td class="p-1">{{ number_format((float) $totalNetPrice, 2, '.', ',') }}</td>
+                                <?php $totalPaid = 0; ?>
+                                @foreach ($transactionInfo as $item)
+                                    <?php
+                                    if ($item->is_verified == 1 && ($item->transaction_type == 'base' || $item->transaction_type == '')) {
+                                        $totalPaid = $totalPaid + $item->pay_amount;
+                                    }
+                                    ?>
+                                @endforeach
+                                <td class="p-1">{{ number_format((float) $totalPaid, 2, '.', ',') }}</td>
+                                @if ($totalNetPrice - $totalPaid > 0)
+                                    <td class="p-1 bg-danger text-white fw-bold">
+                                        {{ number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') }}
+                                    </td>
+                                @else
+                                    <td class="p-1 bg-success text-white fw-bold">
+                                        {{ number_format((float) $totalNetPrice - $totalPaid, 2, '.', ',') }}
+                                    </td>
+                                @endif
 
-                        </tr>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
 

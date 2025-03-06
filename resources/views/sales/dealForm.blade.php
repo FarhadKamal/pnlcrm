@@ -485,6 +485,7 @@
                                     <option value="3.00">3.00</option>
                                     <option value="2.50">2.50</option>
                                     <option value="4.00">4.00</option>
+                                    <option value="5.00">5.00</option>
                                     <option value="6.00">6.00</option>
                                 </select>
                             </div>

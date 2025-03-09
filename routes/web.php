@@ -66,7 +66,11 @@ Route::post('dealFormSubmission', [DealController::class, 'submitTheDeal'])->nam
 
 Route::get('quotationCheck/{leadId}', [QuotationController::class, 'viewQuotation'])->name('quotationCheck')->middleware('auth');
 Route::post('preQuotationApprove', [QuotationController::class, 'preQuotationApprove'])->name('preQuotationApprove')->middleware('auth');
+Route::post('preQuotationReturn', [QuotationController::class, 'preQuotationReturn'])->name('preQuotationReturn')->middleware('auth');
+
 Route::post('topQuotationApprove', [QuotationController::class, 'topQuotationApprove'])->name('topQuotationApprove')->middleware('auth');
+Route::post('topQuotationReturn', [QuotationController::class, 'topQuotationReturn'])->name('topQuotationReturn')->middleware('auth');
+
 Route::get('quotationReferenceCheck', [QuotationController::class, 'quotationReferenceCheck'])->name('quotationReferenceCheck')->middleware('auth');
 Route::post('submitQuotation', [QuotationController::class, 'submitQuotation'])->name('submitQuotation')->middleware('auth');
 Route::get('quotationFeedback/{leadId}', [QuotationController::class, 'quotationFeedbackForm'])->name('quotationFeedback')->middleware('auth');

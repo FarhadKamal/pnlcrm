@@ -15,6 +15,12 @@
     @if ($leadInfo->current_subStage == 'APPROVE')
         {{-- COO Aproval  --}}
         <div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(0,84,166, 0.2)">
+            <?php
+            $discountRemarksArr = explode(':', $discountRemarks->log_task);
+            ?>
+            @if ($discountRemarksArr[1] != ' ')
+                <p class="mt-3 mb-3"><span class="">&#8226;</span> {{ $discountRemarks->log_task }}</p>
+            @endif
             <form action="{{ route('preQuotationApprove') }}" method="POST">
                 @csrf
                 <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
@@ -80,11 +86,27 @@
                 <center><button class="btn btn-sm btn-darkblue">Submit Approval</button></center>
             </form>
         </div>
+
+        <div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(166, 0, 0, 0.2)">
+            <form action="{{ route('preQuotationReturn') }}" method="POST">
+                @csrf
+                <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
+                <label for="">Return Remarks</label>
+                <input type="text" name="preReturnRemarks" id="preReturnRemarks" class="form-control" required>
+                <center><button class="btn btn-sm btn-danger mt-3">Return</button></center>
+            </form>
+        </div>
     @endif
 
     @if ($leadInfo->current_subStage == 'MANAGEMENT')
         {{-- Top Management Approval  --}}
         <div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(0,84,166, 0.2)">
+            <?php
+            $discountRemarksArr = explode(':', $discountRemarks->log_task);
+            ?>
+            @if ($discountRemarksArr[1] != ' ')
+                <p class="mt-3 mb-3"><span class="">&#8226;</span> {{ $discountRemarks->log_task }}</p>
+            @endif
             <form action="{{ route('topQuotationApprove') }}" method="POST">
                 @csrf
                 <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
@@ -140,6 +162,16 @@
                     </table>
                 @endif
                 <center><button class="btn btn-sm btn-darkblue">Submit Approval</button></center>
+            </form>
+        </div>
+
+        <div class="container mt-5 mb-5 p-4 shadow-4 border border-3" style="background-color: rgba(166, 0, 0, 0.2)">
+            <form action="{{ route('topQuotationReturn') }}" method="POST">
+                @csrf
+                <input type="hidden" name="lead_id" value="{{ $leadInfo->id }}" required>
+                <label for="">Return Remarks</label>
+                <input type="text" name="topReturnRemarks" id="topReturnRemarks" class="form-control" required>
+                <center><button class="btn btn-sm btn-danger mt-3">Return</button></center>
             </form>
         </div>
     @endif

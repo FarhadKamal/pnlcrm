@@ -93,6 +93,7 @@ class QuotationController extends Controller
         $data['desgName'] = Designation::find(Auth()->user()->user_desg);
         $data['deptName'] = Department::find(Auth()->user()->user_dept);
         $data['subjectText'] = $subjectText;
+        $data['discountRemarks'] = SalesLog::where('log_task', 'like', '%Discount Remarks%')->orderBy('id', 'desc')->first();
 
         if ($leadInfo->current_stage == 'QUOTATION' && $leadInfo->current_subStage == 'SUBMIT') {
             $quotationInfo = Quotation::where(['lead_id' => $leadId])->get();
@@ -157,6 +158,8 @@ class QuotationController extends Controller
         $customerName = $leadInfo->clientInfo->customer_name;
 
         if ($need_top_approval == 1) {
+            $discountRemarks = SalesLog::where('log_task', 'like', '%Discount Remarks%')->orderBy('id', 'desc')->first();
+            $discountRemarks = $discountRemarks->log_task;
             $dealApproveUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
@@ -167,10 +170,10 @@ class QuotationController extends Controller
                 foreach ($dealApproveUsersEmail as $email) {
                     $assignEmail = $email->user_email;
                     $assignName = $email->user_name;
-                    Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL, $discountRemarks) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Approval');
                         $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                        $message->setBody('<p>Dear Sir, The deal for the customer ' . $customerName . ' is waiting for Managing Director approval. Please approve the deal.<br><a href="' . $leadURL . '">CLICK HERE</a> for approve the lead.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        $message->setBody('<p>Dear Sir, The deal for the customer ' . $customerName . ' is waiting for Managing Director approval. Please approve the deal.<br><br>'.$discountRemarks.'<br><br><a href="' . $leadURL . '">CLICK HERE</a> for approve the lead.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
             }
@@ -218,6 +221,42 @@ class QuotationController extends Controller
         return redirect()->route('home');
     }
 
+    public function preQuotationReturn(Request $request){
+        $lead_id = $request->lead_id;
+        $leadInfo = Lead::find($lead_id);
+        $leadInfo->need_discount_approval = 0;
+        $leadInfo->need_top_approval = 0;
+        $leadInfo->current_stage = 'DEAL';
+        $leadInfo->current_subStage = 'FORM';
+        $customerName = $leadInfo->clientInfo->customer_name;
+        $leadInfo->save();
+        $preReturnRemarks = $request->preReturnRemarks;
+
+        $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+        $domainName = URL::to('/');
+        $leadURL = $domainName . '/dealPage/' . $lead_id;
+        foreach ($assignedUsersEmail as $email) {
+            $assignEmail = $email->user_email;
+            $assignName = $email->user_name;
+            Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL, $preReturnRemarks) {
+                $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Returned');
+                $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal for the customer ' . $customerName . ' is returned.<br><br>Return Remarks: '.$preReturnRemarks.'<br><br> Please <a href="' . $leadURL . '">CLICK HERE</a> to re deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+            });
+        }
+
+        $log_data = array(
+            'lead_id' => $lead_id,
+            'log_stage' => 'QUOTATION',
+            'log_task' => 'Pre Return: ' . $request->preReturnRemarks,
+            'log_by' => Auth()->user()->id,
+            'log_next' => 'Re-Deal'
+        );
+        SalesLog::create($log_data);
+        return redirect()->route('home');
+
+    }
+
     public function topQuotationApprove(Request $request)
     {
         $lead_id = $request->lead_id;
@@ -263,6 +302,42 @@ class QuotationController extends Controller
         );
         SalesLog::create($log_data);
 
+        return redirect()->route('home');
+    }
+
+    public function topQuotationReturn(Request $request)
+    {
+        $lead_id = $request->lead_id;
+        $leadInfo = Lead::find($lead_id);
+        $leadInfo->need_discount_approval = 0;
+        $leadInfo->need_top_approval = 0;
+        $leadInfo->current_stage = 'DEAL';
+        $leadInfo->current_subStage = 'FORM';
+        $customerName = $leadInfo->clientInfo->customer_name;
+        $leadInfo->save();
+        $topReturnRemarks = $request->topReturnRemarks;
+        
+        $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $lead_id . '');
+        $domainName = URL::to('/');
+        $leadURL = $domainName . '/dealPage/' . $lead_id;
+        foreach ($assignedUsersEmail as $email) {
+            $assignEmail = $email->user_email;
+            $assignName = $email->user_name;
+            Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL, $topReturnRemarks) {
+                $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Return From Managment');
+                $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
+                $message->setBody('<h3>Greetings From PNL Holdings Limited!</h3><p>Dear ' . $assignName . ', a submitted deal for the customer ' . $customerName . ' is return by the top managment.<br><br>Return Remarks: '.$topReturnRemarks.'<br><br> Please <a href="' . $leadURL . '">CLICK HERE</a> to re deal.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+            });
+        }
+
+        $log_data = array(
+            'lead_id' => $lead_id,
+            'log_stage' => 'QUOTATION',
+            'log_task' => 'Management Return: ' . $request->topReturnRemarks,
+            'log_by' => Auth()->user()->id,
+            'log_next' => 'Re-Deal'
+        );
+        SalesLog::create($log_data);
         return redirect()->route('home');
     }
 

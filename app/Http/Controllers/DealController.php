@@ -352,6 +352,8 @@ class DealController extends Controller
         $customerName = $leadInfo->clientInfo->customer_name;
 
         if ($need_credit_approval == 1 || $need_discount_approval == 1) {
+            $discountRemarks = SalesLog::where('log_task', 'like', '%Discount Remarks%')->orderBy('id', 'desc')->first();
+            $discountRemarks = $discountRemarks->log_task;
             $dealApproveUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM permissions
             INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
             INNER JOIN users ON users.id=user_permissions.user_id
@@ -362,10 +364,10 @@ class DealController extends Controller
                 foreach ($dealApproveUsersEmail as $email) {
                     $assignEmail = $email->user_email;
                     $assignName = $email->user_name;
-                    Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL) {
+                    Mail::send([], [], function ($message) use ($assignEmail, $assignName, $customerName, $leadURL, $discountRemarks) {
                         $message->to($assignEmail, $assignName)->subject('PNL Holdings Ltd. - CRM Deal Submitted');
                         $message->from('sales@pnlholdings.com', 'PNL Holdings Limited');
-                        $message->setBody('<p>Dear Sir, The deal for the customer ' . $customerName . ' is waiting for your approval. Please approve the deal.<br><a href="' . $leadURL . '">CLICK HERE</a> for approve the lead.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
+                        $message->setBody('<p>Dear Sir, The deal for the customer ' . $customerName . ' is waiting for your approval. Please approve the deal.<br><br>'.$discountRemarks.'<br><br><a href="' . $leadURL . '">CLICK HERE</a> for approve the lead.</p><p>Regards,<br>PNL Holdings Limited</p>', 'text/html');
                     });
                 }
             }

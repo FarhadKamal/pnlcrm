@@ -187,6 +187,8 @@
                                             <?= $item->delivery_pipe_dia == '2.50' ? 'selected' : '' ?>>2.50</option>
                                         <option value="4.00"
                                             <?= $item->delivery_pipe_dia == '4.00' ? 'selected' : '' ?>>4.00</option>
+                                            <option value="5.00"
+                                            <?= $item->delivery_pipe_dia == '5.00' ? 'selected' : '' ?>>5.00</option>
                                         <option value="6.00"
                                             <?= $item->delivery_pipe_dia == '6.00' ? 'selected' : '' ?>>6.00</option>
                                     </select>
@@ -604,7 +606,7 @@
         @csrf
         <input type="hidden" name="lead_id" value="{{ $leadId }}">
         <div class="col-md-6">
-            <label for="">Discount Remarks</label>
+            <label for="">Special discount remarks to Management</label>
             <input type="text" class="form-control" id="dealDiscountRemarks" name="dealDiscountRemarks">
         </div>
         <div class="col-md-3">

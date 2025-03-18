@@ -267,7 +267,9 @@
                 });
                 totalNetPrice = Number(totalNetPrice).toFixed(2);
                 sapNetPrice = Number(sapNetPrice).toFixed(2);
-                if (totalNetPrice == sapNetPrice) {
+                let difference = Math.abs(totalNetPrice - sapNetPrice).toFixed(2);
+                // console.log(difference);
+                if (difference <= 0.01) {
                     return true;
                 } else {
                     Swal.fire({

@@ -373,13 +373,15 @@
                                                 if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->productInfo->brand_name == 'BGFlow') {
                                                     $bgFlowDrainageTermFlag = 1;
                                                 }
-                                                if ($itemPump->productInfo->brand_name == 'PEDROLLO') {
-                                                    $itemPump->productInfo->brand_name = 'Pedrollo';
-                                                }
-                                                if ($itemPump->productInfo->brand_name == 'MAXWELL') {
-                                                    $itemPump->productInfo->brand_name = 'Maxwell';
-                                                }
+                                                
                                                 if ($itemPump->spare_parts == 0) {
+                                                    if ($itemPump->productInfo->brand_name == 'PEDROLLO') {
+                                                        $itemPump->productInfo->brand_name = 'Pedrollo';
+                                                    }
+                                                    if ($itemPump->productInfo->brand_name == 'MAXWELL') {
+                                                        $itemPump->productInfo->brand_name = 'Maxwell';
+                                                    }
+                                                
                                                     if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
                                                         $country = $itemPump->productInfo->country_name;
                                                         $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' Pump</b> (' . $country . '). <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <br><b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head(M):</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head . '. <b>Suction Dia:</b> ' . $itemPump->productInfo->suction_dia . ' Inch. ' . '<b>Delivery Dia:</b> ' . $itemPump->productInfo->delivery_dia . ' Inch.';
@@ -388,6 +390,12 @@
                                                         $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->productInfo->mat_name;
                                                     }
                                                 } else {
+                                                    if ($itemPump->spareInfo->brand_name == 'PEDROLLO') {
+                                                        $itemPump->spareInfo->brand_name = 'Pedrollo';
+                                                    }
+                                                    if ($itemPump->spareInfo->brand_name == 'MAXWELL') {
+                                                        $itemPump->spareInfo->brand_name = 'Maxwell';
+                                                    }
                                                     $country = $itemPump->spareInfo->country_name;
                                                     $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b> ' . $itemPump->spareInfo->mat_name;
                                                 }
@@ -717,7 +725,8 @@
         </tr>
     </table>
 
-    <div style="display: flex; flex-direction:row; justify-content: space-between;width: 100%;margin-top:2%;align-items: center;">
+    <div
+        style="display: flex; flex-direction:row; justify-content: space-between;width: 100%;margin-top:2%;align-items: center;">
         <img src="{{ asset('images/system/com/pedrollo.png') }}" alt="" style="width: auto; height:15px">
         <img src="{{ asset('images/system/com/BGFlow.jpg') }}" alt="" style="width: auto; height:15px">
         <img src="{{ asset('images/system/com/panelli.jpg') }}" alt="" style="width: auto; height:15px">

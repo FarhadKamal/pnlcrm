@@ -287,17 +287,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" charset="utf-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-
 <script>
     function sentQuotation() {
         var blob;
         window.jsPDF = window.jspdf.jsPDF;
         var docPDF = new jsPDF();
-        docPDF.setFont("Arial", "sans-serif");
+        // docPDF.setFont("helvetica");
 
         var elementHTML = document.querySelector("#section-to-print");
+        
+        var imageUrl = "https://i.imgur.com/g5UQypc.png";
+        
         docPDF.html(elementHTML, {
             callback: function(docPDF) {
+
+                // Add footer to every page
+                const totalPages = docPDF.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    docPDF.setPage(i); // Set to current page
+                    const pageWidth = docPDF.internal.pageSize.width;
+                    const pageHeight = docPDF.internal.pageSize.height;
+                    const bottomMargin = 6;
+                    const imageHeight = 25;
+                    const yPosition = pageHeight - bottomMargin - imageHeight;
+                    docPDF.addImage(imageUrl, 'png', 15, yPosition, (pageWidth-20), imageHeight);
+                }
+
                 // docPDF.save();
                 blob = docPDF.output('blob');
                 let leadId = $('#QleadId').val();
@@ -365,12 +380,12 @@
                 });
 
             },
-            margin: [1, 1, 1, 1],
+            margin: [1, 1, 1, 5],
             autoPaging: true,
             x: 5,
             y: 2,
-            width: 195, //target width in the PDF document
-            windowWidth: 675 //window width in CSS pixels
+            width: 160, //target width in the PDF document
+            windowWidth: 675, //window width in CSS pixels
         });
     }
 </script>

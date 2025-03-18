@@ -1,9 +1,18 @@
-<br>
-<button onclick="window.print()" class="btn btn-sm btn-darkblue printBtn float-end mt-2 me-2">Print Quotation</button>
 <div class="quotDiv" id="section-to-print">
     <style>
-        body {
+        /* body {
             font-family: 'Helvetica';
+        } */
+
+        #section-to-print {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            width: 794px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
         .quotDiv {
@@ -75,8 +84,8 @@
         }
 
         .quotDiv .container1 {
-            display: flex;
-            justify-content: space-between;
+            /* display: flex; */
+            /* justify-content: space-between; */
             align-items: center;
             margin: 0;
             padding: 0;
@@ -105,7 +114,6 @@
             font-weight: bold;
             margin: 0;
             padding: 0;
-            font-size: 14px;
         }
 
         .quotDiv .verticalGap {
@@ -133,9 +141,8 @@
             border-bottom-width: 1pt;
             border-right-style: solid;
             border-right-width: 1pt;
-            line-height: 19px;
+            line-height: 16px;
             word-spacing: 0px;
-            font-size: 12px;
         }
 
         .quotDiv .table1RowCol2 {
@@ -154,7 +161,8 @@
         }
 
         .quotDiv .colText {
-            margin-left: 10px;
+            /* margin-left: 10px; */
+            font-size: 12px;
         }
 
         .quotDiv .tableRow {
@@ -166,17 +174,30 @@
         .quotDiv .footerContainer {
             /* font-family: Arial, sans-serif; */
             font-size: .7rem;
-            margin-top: 15px;
-            width: 100%;
+            /* margin-top: 15px; */
+            /* width: 100%; */
+        }
+
+        .headerContainer {
+            /* width: 100%; */
+            text-align: right;
+            margin-top: 2vh;
         }
 
         @page {
-            size: auto;
+            /* size: auto; */
             size: A4;
-            margin: 5mm;
+            margin-left: 15mm;
+            margin-right: 10mm;
+            margin-bottom: 10mm;
+            margin-top: 10mm;
         }
 
         @media print {
+
+            .quotDiv {
+                /* margin-left: 4rem; */
+            }
 
             .pagebreak {
                 /* page-break-before: always; */
@@ -186,7 +207,17 @@
             .headerContainer {
                 position: fixed;
                 top: 0;
-                width: 100%;
+                right: 0;
+                /* width: 100%; */
+                text-align: right;
+                margin-top: 0;
+            }
+
+            .quotDiv .colText {
+                /* width: max-content; */
+                width: fit-content;
+                font-size: 13px;
+                margin-left: 5px;
             }
 
             .quotDiv .pagebreakAvoid {
@@ -199,105 +230,111 @@
                 width: 100%;
             }
 
-            body * {
+            /* body * {
                 visibility: hidden;
-            }
+            } */
 
             #section-to-print,
             #section-to-print * {
                 /* visibility: visible; */
             }
 
-            #quotationLayoutTable * {
+            /* #quotationLayoutTable * {
                 visibility: visible;
-            }
+            } */
 
             #section-to-print .quotContainer {
                 margin-top: -90px;
             }
+
+            .text-end {
+                float: right;
+            }
         }
     </style>
+
     <div class="headerContainer">
         <img style="padding:0;margin:0;" src="{{ asset('images/system/logo.png') }}" alt="" height="50">
+        <h6 style="font-weight: 600; margin-top:1%">PNL HOLDINGS LIMITED</h6>
     </div>
 
-    <table style="width: 100%" id="quotationLayoutTable">
+    <table style="width: 100%;" id="quotationLayoutTable">
         <thead>
             <tr>
                 <td>
-                    <div style="height: 80px"></div>
                 </td>
             </tr>
         </thead>
-        <tbody class="quotContainer">
+        <tbody class="quotContainer" style="margin-top: -4.5vh">
             <tr>
                 <td>
                     @if ($leadInfo->current_stage == 'QUOTATION' && $leadInfo->current_subStage == 'SUBMIT')
-                        <div class="container1">
-                            <h2><b id="quotationRef"></b></h2>
-                            <h2>Date: <?= date('jS F Y') ?></h2>
+                        <div class="container1" style="margin-top: -4vh">
+                            <p class="colText"><span id="quotationRef"></span></p>
+                            <p class="colText">Date: <?= date('jS F Y') ?></p>
                         </div>
                     @endif
-
+                    <br>
                     <div>
-                        <p> To</p>
-                        <p class="boldText">{{ $leadInfo['clientInfo']->customer_name }}</p>
-                        <p>{{ $leadInfo['clientInfo']->address }}, {{ $leadInfo['clientInfo']->district }}</p>
-                        <p class="boldText">Attention</span></p>
-                        <p><span>Name: </span>{{ $leadInfo->lead_person }}</p>
-                        <p><span>Phone: </span>{{ $leadInfo->lead_phone }}</p>
+                        <p class=" colText">{{ $leadInfo['clientInfo']->customer_name }}</p>
+                        <p class="colText">{{ $leadInfo['clientInfo']->address }},
+                            {{ $leadInfo['clientInfo']->district }}</p>
+                        <p class=" colText">Attention</span></p>
+                        <p class="colText"><span>Name: </span>{{ $leadInfo->lead_person }}</p>
+                        <p class="colText"><span>Phone: </span>{{ $leadInfo->lead_phone }}</p>
                         @if ($leadInfo->lead_email)
-                            <p><span>Email: </span>{{ $leadInfo->lead_email }}</p>
+                            <p class="colText"><span>Email: </span>{{ $leadInfo->lead_email }}</p>
                         @endif
-
-                        <p>Subject :<span class="boldText"><u>Price Quotation for the supply of electric water pump.</u></span>
+                        <br>
+                       
+                        <p class="colText">Subject: <span class="">Price Quotation</span>
                         </p>
 
-                        <p class="boldText" style="margin-top: 2%">Greetings,</p>
-                        <p>Thank you for your enquiry and interest to purchase product from us. We are pleased to submit our price offer below along with other required details:</p>
+                       
+                        <p class=" colText" style="margin-top: 2%;">Dear Concern,</p>
+                        <p class="colText">Thank you for your inquiry and interest to purchase product from our company.
+                            We are pleased
+                            to submit
+                            our price quotation below along with other required details:</p>
                     </div>
 
                     <div>
                         <?php
                         $allSurfaceTermFlag = 0;
                         $allSubmersibleTermFlag = 0;
-                        $pedDrainageTermFlag = 0;
+                        $pedHCPDrainageTermFlag = 0;
+                        $bgFlowDrainageTermFlag = 0;
                         ?>
                         @foreach ($reqInfo as $itemReq)
-                            <div class="pagebreakAvoid">
-                                {{-- <p class="boldText" style="margin-top: 2%;">Your Requirement:</p>
-                                <p>Type: {{ $itemReq->type_of_use }}</p> --}}
+                            <div class="pagebreakAvoid colText">
                                 <table cellspacing="0" style="margin-top: 2%;">
-                                    <tr class="tableRow">
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Brand</p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Model</p>
-                                        </td>
-                                        {{-- <td class="table1RowCol1">
-                                    <p class="colText boldText text-center">Phase</p>
-                                </td> --}}
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Power</p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Head</p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Unit Price <br> (Taka) </p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Qty.</p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Less Discount <br> (Taka) </p>
-                                        </td>
-                                        <td class="table1RowCol1">
-                                            <p class="colText boldText text-center">Total Price <br> (Taka) </p>
-                                        </td>
-                                    </tr>
+                                    <thead>
+                                        <tr class="tableRow">
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Sl.</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class=" boldText text-center">Product Description</p>
+                                            </td>
+                                         
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">MRP (Unit)</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Offer Price (Unit)</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Qty.</p>
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText boldText text-center">Total Price</p>
+                                            </td>
+                           
+                                        </tr>
+                                    </thead>
                                     <tbody>
+                                        <?php $sl = 1;
+                                        $totalNetPay = 0; ?>
                                         @foreach ($pumpInfo as $itemPump)
                                             @if ($itemPump->req_id == $itemReq->id)
                                                 <?php
@@ -307,152 +344,204 @@
                                                 if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Submersible') {
                                                     $allSubmersibleTermFlag = 1;
                                                 }
-                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->brand_name == 'Pedrollo') {
-                                                    $pedDrainageTermFlag = 1;
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && ($itemPump->productInfo->brand_name == 'PEDROLLO' || $itemPump->productInfo->brand_name == 'HCP')) {
+                                                    $pedHCPDrainageTermFlag = 1;
                                                 }
-                                                
+                                                if ($itemPump->spare_parts == 0 && $itemPump->productInfo->pump_type == 'Drainage' && $itemPump->productInfo->brand_name == 'BGFlow') {
+                                                    $bgFlowDrainageTermFlag = 1;
+                                                }
+                                                if ($itemPump->productInfo->brand_name == 'PEDROLLO') {
+                                                    $itemPump->productInfo->brand_name = 'Pedrollo';
+                                                }
+                                                if ($itemPump->productInfo->brand_name == 'MAXWELL') {
+                                                    $itemPump->productInfo->brand_name = 'Maxwell';
+                                                }
                                                 if ($itemPump->spare_parts == 0) {
-                                                    $brandName = $itemPump->productInfo->brand_name;
-                                                    $productName = $itemPump->productInfo->mat_name;
-                                                    $power = 'HP: ' . $itemPump->productInfo->hp . ', KW: ' . $itemPump->productInfo->kw;
-                                                    $head = 'Min ' . $itemPump->productInfo->min_head . ' - Max ' . $itemPump->productInfo->max_head;
-                                                    if ($brandName == 'MAXWELL' || $brandName == 'ITAP') {
-                                                        $power = 'N/A';
-                                                        $head = 'N/A';
+                                                    if ($itemPump->productInfo->pump_type != 'ITAP' && $itemPump->productInfo->pump_type != 'MAXWELL') {
+                                                        $country = $itemPump->productInfo->country_name;
+                                                        $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' ' . $itemPump->productInfo->pump_type . ' Pump</b> (' . $country . '). <b>Model:</b> ' . $itemPump->productInfo->mat_name . '(' . $itemPump->productInfo->phase . ').  <br><b>Power:</b> ' . $itemPump->productInfo->kw . 'KW/' . $itemPump->productInfo->hp . 'HP. <b>Head(M):</b> ' . $itemPump->productInfo->max_head . '-' . $itemPump->productInfo->min_head . '. <b>Suction Dia:</b> ' . $itemPump->productInfo->suction_dia . ' Inch. ' . '<b>Delivery Dia:</b> ' . $itemPump->productInfo->delivery_dia . ' Inch.';
+                                                    } else {
+                                                        $country = $itemPump->productInfo->country_name;
+                                                        $productDesc = '<b>' . $itemPump->productInfo->brand_name . ' </b> (' . $country . ') ' . $itemPump->productInfo->mat_name;
                                                     }
                                                 } else {
-                                                    $brandName = $itemPump->spareInfo->brand_name;
-                                                    $productName = $itemPump->spareInfo->mat_name;
-                                                    $power = 'N/A';
-                                                    $head = 'N/A';
+                                                    $country = $itemPump->spareInfo->country_name;
+                                                    $productDesc = '<b>' . $itemPump->spareInfo->brand_name . ' </b> ' . $itemPump->spareInfo->mat_name;
                                                 }
+                                                
+                                                $totalNetPay = $totalNetPay + $itemPump->net_price;
                                                 ?>
                                                 <tr class="tableRow">
                                                     <td class="table1RowCol1">
-                                                        <p class="colText">{{ $brandName }}
+                                                        <p class="colText text-center">{{ $sl }}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="">{{ $productName }}
-
-                                                        </p>
-                                                    </td>
-                                                    {{-- <td class="table1RowCol1">
-                                                <p class="colText text-center">{{ $itemPump['productInfo']->phase }}
-                                                </p>
-                                            </td> --}}
-                                                    <td class="table1RowCol1">
-                                                        <p class="text-center colText">
-                                                            {{ $power }}
+                                                        <p class="colText"
+                                                            style="width: max-content; letter-spacing:0.7px;">
+                                                            {!! $productDesc !!}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="text-center colText">
-                                                            {{ $head }}
-                                                        </p>
-                                                    </td>
-                                                    <td class="table1RowCol1">
-                                                        <p class="text-end colText">
+                                                        <p class="text-end colText me-2" style="text-align: right;">
                                                             {{ number_format((float) $itemPump->unit_price, 2, '.', ',') }}
                                                         </p>
                                                     </td>
+                                                    <?php
+                                                    $offerSinglePrice = $itemPump->unit_price - $itemPump->unit_price * ($itemPump->discount_percentage / 100);
+                                                    ?>
                                                     <td class="table1RowCol1">
-                                                        <p class="colText text-center">{{ $itemPump->qty }}</p>
-                                                    </td>
-                                                    <td class="table1RowCol1">
-                                                        <p class="colText text-end">
-                                                            {{ number_format((float) $itemPump->discount_price, 2, '.', ',') }}
+                                                        <p class="text-end colText me-2" style="text-align: right;">
+                                                            {{ number_format((float) $offerSinglePrice, 2, '.', ',') }}
                                                         </p>
                                                     </td>
                                                     <td class="table1RowCol1">
-                                                        <p class="colText text-end">
-                                                            {{ number_format((float) $itemPump->net_price, 2, '.', ',') }}
+                                                        <center>
+                                                            <p class="colText">{{ $itemPump->qty }}</p>
+                                                        </center>
+                                                    </td>
+                                                    <?php
+                                                    $totalSinglePrice = $offerSinglePrice * $itemPump->qty;
+                                                    ?>
+                                                    <td class="table1RowCol1">
+                                                        <p class="text-end colText me-2" style="text-align: right;">
+                                                            {{ number_format((float) $totalSinglePrice, 2, '.', ',') }}
                                                         </p>
                                                     </td>
+                                        
                                                 </tr>
+                                                <?php $sl++; ?>
                                             @endif
                                         @endforeach
                                     </tbody>
+                                    <tfoot>
+                                     
+                                        <?php
+                                        function numberToWordsBD($number)
+                                        {
+                                            $f = new NumberFormatter('en', NumberFormatter::SPELLOUT);
+                                            $units = [
+                                                1 => 'Thousand',
+                                                10 => 'Lakh',
+                                                100 => 'Crore',
+                                            ];
+                                        
+                                            $words = '';
+                                            $unit = 1;
+                                        
+                                            if ($number < 1000) {
+                                                $words = $number . ' ';
+                                            } else {
+                                                // For crore
+                                                if ($number >= 10000000) {
+                                                    $crore = floor($number / 10000000);
+                                                    $words .= $crore . ' Crore ';
+                                                    $words .= ucwords($f->format($crore)) . ' Crore ';
+                                                    $number %= 10000000;
+                                                }
+                                                // For lakh
+                                                if ($number >= 100000) {
+                                                    $lakh = floor($number / 100000);
+                                                    // $words .= $lakh . ' Lakh ';
+                                                    $words .= ucwords($f->format($lakh)) . ' Lakh ';
+                                                    $number %= 100000;
+                                                }
+                                                // For thousand
+                                                if ($number >= 1000) {
+                                                    $thousand = floor($number / 1000);
+                                                    // $words .= $thousand . ' Thousand ';
+                                                    $words .= ucwords($f->format($thousand)) . ' Thousand ';
+                                                    $number %= 1000;
+                                                }
+                                                // For the remaining number (less than 1000)
+                                                if ($number > 0) {
+                                                    // $words .= $number . ' ';
+                                                    $words .= ucwords($f->format($number)) . ' ';
+                                                }
+                                            }
+                                        
+                                            return trim($words);
+                                        }
+                                        ?>
+                                        <tr class="tableRow">
+                                            <td class="table1RowCol1" colspan="5">
+                                              
+                                            </td>
+                                            <td class="table1RowCol1">
+                                                <p class="colText text-end me-2">
+                                                    {{ number_format((float) $totalNetPay, 2, '.', ',') }}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
+                                <p class="colText" style="letter-spacing: 1px;">In Words:
+                                    {{ numberToWordsBD($totalNetPay) }} Taka Only</p>
                             </div>
                         @endforeach
                     </div>
 
                     <div class="pagebreakAvoid">
-                        <p class="boldText" style="margin-top: 2%;">Terms & Condition:</p>
-                        @if ($leadInfo->payment_type == 'Cash')
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i></i> Payment
-                                shall be
-                                made
-                                <b>Cash Advance/Pay Order</b> and Purchase Order in favor of <b>PNL Holdings
-                                    Limited</b>.
-                            </p>
-                        @else
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i></i> Payment
-                                shall be
-                                made
-                                through crossed cheque
-                                within <b>30 days</b> and Purchase Order in favor of <b>PNL
-                                    Holdings Limited</b>.</p>
-                        @endif
-
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Provide your
-                            concern
-                            <b>Factory address & BIN
-                                number</b> for issue the <b>Vat Challan (Mushak-6.3)</b>.
+                        <p style="margin-top: 1%;"></p>
+                        <p class="colText"><b>Purchase Order</b> <br>&nbsp;&nbsp;<span
+                                style="font-size:16px;vertical-align: bottom;">&#9633;</span> Purchase Order in
+                            favor of <b>PNL Holdings Limited</b> and to be sent by mail at sales@pnlholdings.com.</p>
+                        <p class="colText"><b>Delivery</b>
+                            <br>
+                            &nbsp;&nbsp;<span style="font-size:16px;vertical-align: bottom;">&#9633;</span> Delivery
+                            after 5 days from the date of your confirmed
+                            Purchase Order subject to stock availability.
+                            <br>
+                            &nbsp;&nbsp;<span style="font-size:16px;vertical-align: bottom;">&#9633;</span> Delivery
+                            from {{ $leadInfo->delivery_from }}.
                         </p>
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery after
-                            5 days
-                            from
-                            the date of your
-                            confirmed Purchase Order subject to available in our
-                            stock.</p>
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Delivery from
-                            Pedrollo
-                            Plaza, 5, Jubilee road,
-                            Chittagong.</p>
-
-                        @if ($allSurfaceTermFlag == 1)
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 3 (Three)
-                                Years’
-                                Service
-                                Warranty for Surface Pump.
-                            </p>
-                        @endif
-                        @if ($allSubmersibleTermFlag == 1)
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two)
-                                Years’
-                                Service
-                                Warranty for Submersible Pump.
-                            </p>
-                        @endif
-                        @if ($pedDrainageTermFlag == 1)
-                            <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> 2 (Two)
-                                Years’
-                                Service
-                                Warranty for Pedrollo Drainage Pump.
-                            </p>
-                        @endif
-                        <p class=""><i class="fa-regular fa-circle-dot" style="font-size:8px"></i> Price offer
-                            validity 7
-                            days
-                            from the date
-                            hereof.</p>
-
+                        <p class="colText"><b>Payment Mode</b> <br>&nbsp;&nbsp;<span
+                                style="font-size:16px;vertical-align: bottom;">&#9633;</span> A/C Payee
+                            Cheque / Pay Order in favor of <b>PNL Holdings Limited</b>.</p>
+                        <p class="colText"><b>VAT & TAX</b> <br>&nbsp;&nbsp;<span
+                                style="font-size:16px;vertical-align: bottom;">&#9633;</span> Included in our offer
+                            price.</p>
+                        <p class="colText"><b>Warranty</b>
+                            @if ($allSurfaceTermFlag == 1)
+                                <br>&nbsp;&nbsp;<span style="font-size:16px;vertical-align: bottom;">&#9633;</span>
+                                03 (Three) Years’ Surface Pump Service Warranty as
+                                per our company policy.
+                            @endif
+                            @if ($allSubmersibleTermFlag == 1)
+                                <br>&nbsp;&nbsp;<span style="font-size:16px;vertical-align: bottom;">&#9633;</span>
+                                02 (Two) Years’ Submersible Pump Service Warranty
+                                as per our company policy.
+                            @endif
+                            @if ($pedHCPDrainageTermFlag == 1)
+                                <br>&nbsp;&nbsp;<span style="font-size:16px;vertical-align: bottom;">&#9633;</span> 2
+                                (Two) Years’ Drainage Pump (Pedrollo/HCP)
+                                Service Warranty as per our company policy.
+                            @endif
+                            @if ($bgFlowDrainageTermFlag == 1)
+                                <br>&nbsp;&nbsp;<span style="font-size:16px;vertical-align: bottom;">&#9633;</span> 1
+                                (One) Years’ Drainage Pump (BGFlow) Service
+                                Warranty as per our company policy.
+                            @endif
+                        </p>
+                        <p class="colText"><b>Price Validity</b> <br>&nbsp;&nbsp;<span
+                                style="font-size:16px;vertical-align: bottom;">&#9633;</span> Price offer
+                            validity 7 days from the date hereof.</p>
+                        <br>
+                        <p class="colText"><b>Note:</b> All electrical works will be done by purchaser. <b>PNL Holdings
+                                Limited</b> will not be liable for any electrical works or power line.</p>
                     </div>
                     @if ($leadInfo->current_stage == 'QUOTATION' && $leadInfo->current_subStage == 'SUBMIT')
-                        <div style="margin-top: 2%" class="pagebreakAvoid">
-                            <p class="colText boldText">Contact Person: {{ Auth()->user()->user_name }}</p>
-                            <p class="colText boldText">{{ $desgName->desg_name }}, {{ $deptName->dept_name }}, Cell
-                                No:
-                                {{ Auth()->user()->user_phone }}, E-mail: {{ Auth()->user()->user_email }}</p>
-                            <br>
-                            <p>Thanking You,</p>
+                        <div style="margin-top: 1%" class="pagebreakAvoid colText">
+                            <p style="font-size: 11px"><span class="boldText">Contact Person:</span>
+                                {{ Auth()->user()->user_name }},
+                                {{ $desgName->desg_name }}</p>
+
+                            <p style="font-size:11px">Thanking You,</p>
                             <img src="{{ asset('images/system/quotationSign.png') }}" width="120" alt="">
-                            <p>Md. Afzal Hamid</p>
-                            <p>Chief Operating Officer</p>
-                            <p>PNL Holdings Limited</p>
-                            <p>E-mail: afzal@pnlholdings.com</p>
+                            <p class="">Md. Afzal Hamid</p>
+                            <p style="font-size:11px">Chief Operating Officer</p>
+                            <p style="font-size:11px">PNL Holdings Limited</p>
+                            <p style="font-size:11px">E-mail: afzal@pnlholdings.com</p>
                         </div>
                     @endif
                 </td>
@@ -461,44 +550,86 @@
         <tfoot>
             <tr>
                 <td>
-                    <div style="height: 100px"></div>
+                    <div style="height: 10px"></div>
                 </td>
             </tr>
         </tfoot>
     </table>
     <div class="footerContainer">
-        <p class="text-primary fw-bold">PNL HOLDINGS LIMITED, Head Office: Pedrollo Plaza, 5 Jubilee Road,
-            Chattogram-400. Phone: +88 031 621531-35</p>
-        <p class="text-primary fw-bold">Dhaka Office: Pedrollo House, 12 Topkhana Road, Segunbagicha, Dhaka-1000.
-            Phone: ++88 02 9571210</p>
-        <p class="text-primary fw-bold" style="display:inline; font-size:11px">
-            <i class="fas fa-envelope"></i>&nbsp;sales@pnlholdings.com&nbsp;<i
-                class="fas fa-globe"></i>&nbsp;www.pnlholdings.com&nbsp;<i
-                class="fa-brands fa-facebook"></i>&nbsp;facebook.com/thinkPNL&nbsp;<i
-                class="fa-brands fa-linkedin"></i>&nbsp;pnl-holdings-limited&nbsp;<i
-                class="fa-solid fa-headset"></i>&nbsp;16308 (9:00 AM - 9:00 PM)
-        </p>
+        <p class="text-primary fw-bold" style="font-size:11px">Head Office: Pedrollo Plaza, 05
+            Jubilee Road,
+            Chattogram-4000. Dhaka Office: Pedrollo House, 12 Topkhana Road,
+            Segunbagicha, Dhaka-1000.</p>
+        <table style="width: 100%">
+            <tr>
+                <td style="color:#1154cc;font-size:10px"><img src="{{ asset('images/system/email.png') }}"
+                        alt="" width="12">&nbsp;sales@pnlholdings.com
+                    <img src="{{ asset('images/system/web.png') }}" alt=""
+                        width="12">&nbsp;www.pnlholdings.com
+                    <img src="{{ asset('images/system/facebook.png') }}" alt=""
+                        width="12">&nbsp;facebook.com/thinkPNL
+                    <img src="{{ asset('images/system/linkedin.png') }}" alt=""
+                        width="12">&nbsp;pnl-holdings-limited
+                    <img src="{{ asset('images/system/call.png') }}" alt="" width="12">&nbsp;16308 (9:00
+                    AM - 9:00 PM)
+                </td>
+            </tr>
+        </table>
 
-        <div
-            style="display: flex; justify-content:space-evenly; align-items: center; margin-top:1px; padding-top:0px;">
-            <div class="col-md-2">
-                <img src="{{ asset('images/system/pedrollo.svg') }}" alt="" width="100">
-            </div>
-            <div class="col-md-2">
-                <img src="{{ asset('images/system/BGFlow.svg') }}" alt="" width="100">
-            </div>
-            <div class="col-md-2">
-                <img src="{{ asset('images/system/panelli.svg') }}" alt=""width="120">
-            </div>
-            <div class="col-md-2">
-                <img src="{{ asset('images/system/hcp.svg') }}" alt=""width="60">
-            </div>
-            <div class="col-md-2">
-                <img src="{{ asset('images/system/maxwell.svg') }}" alt="" width="60">
-            </div>
-            <div class="col-md-2">
-                <img src="{{ asset('images/system/itap.svg') }}" alt="" width="80">
-            </div>
-        </div>
+        <table style="width: 100%;margin-top:1%">
+            <tr>
+                <td><img src="{{ asset('images/system/com/pedrollo.png') }}" alt="" width="80"></td>
+                <td><img src="{{ asset('images/system/com/BGFlow.jpg') }}" alt="" width="80"></td>
+                <td><img src="{{ asset('images/system/com/panelli.jpg') }}" alt="" width="100"></td>
+                <td><img src="{{ asset('images/system/com/hcp.png') }}" alt="" width="50"></td>
+                <td><img src="{{ asset('images/system/com/maxwell.jpg') }}" alt="" width="50"></td>
+                <td><img src="{{ asset('images/system/com/itap.png') }}" alt="" width="70"></td>
+                <td><img src="{{ asset('images/system/com/firenza.png') }}" alt="" width="80"></td>
+            </tr>
+        </table>
     </div>
 </div>
+
+
+<script>
+    function printWithLogo() {
+        showHeaderFooter();
+        document.querySelector('#quotationPageTop').style.visibility = "hidden";
+        document.querySelector('#quotationPageBottom').style.visibility = "hidden";
+        document.querySelector('#navbarButtonsSidebar').style.visibility = "hidden";
+        document.querySelector('#mainNavbar').style.visibility = "hidden";
+        window.print();
+    }
+
+    function printWithoutLogo() {
+        hideHeaderFooter();
+        document.querySelector('#quotationPageTop').style.visibility = "hidden";
+        document.querySelector('#quotationPageBottom').style.visibility = "hidden";
+        document.querySelector('#navbarButtonsSidebar').style.visibility = "hidden";
+        document.querySelector('#mainNavbar').style.visibility = "hidden";
+        window.print();
+    }
+
+    function showHeaderFooter() {
+        let header = document.querySelector('.headerContainer');
+        let footer = document.querySelector('.footerContainer');
+        header.style.visibility = "visible";
+        footer.style.visibility = "visible";
+    }
+
+    function hideHeaderFooter() {
+        let header = document.querySelector('.headerContainer');
+        let footer = document.querySelector('.footerContainer');
+        header.style.visibility = "hidden";
+        footer.style.visibility = "hidden";
+    }
+
+    // Ensure header and footer are always visible after print dialog
+    window.onafterprint = function() {
+        showHeaderFooter();
+        document.querySelector('#quotationPageTop').style.visibility = "visible";
+        document.querySelector('#quotationPageBottom').style.visibility = "visible";
+        document.querySelector('#navbarButtonsSidebar').style.visibility = "visible";
+        document.querySelector('#mainNavbar').style.visibility = "visible";
+    };
+</script>

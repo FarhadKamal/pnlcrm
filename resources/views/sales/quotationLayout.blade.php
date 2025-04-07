@@ -417,7 +417,7 @@
                                     <tfoot>
                                      
                                         <?php
-                                        function numberToWordsBD($number)
+                                        function numberToWordsBD2($number)
                                         {
                                             $f = new NumberFormatter('en', NumberFormatter::SPELLOUT);
                                             $units = [
@@ -476,7 +476,7 @@
                                     </tfoot>
                                 </table>
                                 <p class="colText" style="letter-spacing: 1px;">In Words:
-                                    {{ numberToWordsBD($totalNetPay) }} Taka Only</p>
+                                    {{ numberToWordsBD2($totalNetPay) }} Taka Only</p>
                             </div>
                         @endforeach
                     </div>

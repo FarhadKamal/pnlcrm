@@ -469,50 +469,52 @@
                                             </td>
                                         </tr> --}}
                                         <?php
-                                        function numberToWordsBD($number)
-                                        {
-                                            $f = new NumberFormatter('en', NumberFormatter::SPELLOUT);
-                                            $units = [
-                                                1 => 'Thousand',
-                                                10 => 'Lakh',
-                                                100 => 'Crore',
-                                            ];
+                                        if (!function_exists('numberToWordsBD')) {
+                                            function numberToWordsBD($number)
+                                            {
+                                                $f = new NumberFormatter('en', NumberFormatter::SPELLOUT);
+                                                $units = [
+                                                    1 => 'Thousand',
+                                                    10 => 'Lakh',
+                                                    100 => 'Crore',
+                                                ];
                                         
-                                            $words = '';
-                                            $unit = 1;
+                                                $words = '';
+                                                $unit = 1;
                                         
-                                            if ($number < 1000) {
-                                                $words = $number . ' ';
-                                            } else {
-                                                // For crore
-                                                if ($number >= 10000000) {
-                                                    $crore = floor($number / 10000000);
-                                                    $words .= $crore . ' Crore ';
-                                                    $words .= ucwords($f->format($crore)) . ' Crore ';
-                                                    $number %= 10000000;
+                                                if ($number < 1000) {
+                                                    $words = $number . ' ';
+                                                } else {
+                                                    // For crore
+                                                    if ($number >= 10000000) {
+                                                        $crore = floor($number / 10000000);
+                                                        $words .= $crore . ' Crore ';
+                                                        $words .= ucwords($f->format($crore)) . ' Crore ';
+                                                        $number %= 10000000;
+                                                    }
+                                                    // For lakh
+                                                    if ($number >= 100000) {
+                                                        $lakh = floor($number / 100000);
+                                                        // $words .= $lakh . ' Lakh ';
+                                                        $words .= ucwords($f->format($lakh)) . ' Lakh ';
+                                                        $number %= 100000;
+                                                    }
+                                                    // For thousand
+                                                    if ($number >= 1000) {
+                                                        $thousand = floor($number / 1000);
+                                                        // $words .= $thousand . ' Thousand ';
+                                                        $words .= ucwords($f->format($thousand)) . ' Thousand ';
+                                                        $number %= 1000;
+                                                    }
+                                                    // For the remaining number (less than 1000)
+                                                    if ($number > 0) {
+                                                        // $words .= $number . ' ';
+                                                        $words .= ucwords($f->format($number)) . ' ';
+                                                    }
                                                 }
-                                                // For lakh
-                                                if ($number >= 100000) {
-                                                    $lakh = floor($number / 100000);
-                                                    // $words .= $lakh . ' Lakh ';
-                                                    $words .= ucwords($f->format($lakh)) . ' Lakh ';
-                                                    $number %= 100000;
-                                                }
-                                                // For thousand
-                                                if ($number >= 1000) {
-                                                    $thousand = floor($number / 1000);
-                                                    // $words .= $thousand . ' Thousand ';
-                                                    $words .= ucwords($f->format($thousand)) . ' Thousand ';
-                                                    $number %= 1000;
-                                                }
-                                                // For the remaining number (less than 1000)
-                                                if ($number > 0) {
-                                                    // $words .= $number . ' ';
-                                                    $words .= ucwords($f->format($number)) . ' ';
-                                                }
+                                        
+                                                return trim($words);
                                             }
-                                        
-                                            return trim($words);
                                         }
                                         ?>
                                         <tr class="tableRow">

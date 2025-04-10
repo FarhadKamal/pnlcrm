@@ -150,6 +150,7 @@ class DeliveryController extends Controller
             $leadInfo = Lead::find($request->leadId);
             $leadInfo->sap_invoice = $request->invoiceID;
             $leadInfo->invoice_date = $today;
+            $leadInfo->invoice_sap_vatsum = $request->invoiceVatSum;
             $leadInfo->current_stage = 'DELIVERY';
             $leadInfo->current_subStage = 'READY';
             $leadInfo->invoice_by = Auth()->user()->id;

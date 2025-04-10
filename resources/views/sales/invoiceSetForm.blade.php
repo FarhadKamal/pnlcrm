@@ -118,6 +118,7 @@
             <form action="{{ route('invoiceSetInsertion') }}" method="POST" id="invoiceSetInsertionForm">
                 @csrf
                 <input type="hidden" name="leadId" value="{{ $leadInfo->id }}">
+                <input type="hidden" name="invoiceVatSum" id="invoiceVatSum">
                 <label for="" class="fs-08rem">SAP Invoice ID</label>
                 <input type="number" name="invoiceID" id="invoiceID" class="form-control fs-08rem p-1" min="0"
                     required>
@@ -228,6 +229,7 @@
             //Validate SAP Invoice
             if (data && data.length > 0) {
                 let sapNetPrice = 0;
+                let totalInvoiceVatSum = 0;
 
                 // Item Validation Start 
                 for (let i = 0; i < pumpInfo.length; i++) {
@@ -262,9 +264,14 @@
                 // Item Validation END 
 
                 // Net Amount Validation Start
+                // VatSum Process. This vat is predefined in SAP.
                 data.forEach(element => {
                     sapNetPrice = Number(sapNetPrice) + Number(element.GTotal);
+                    totalInvoiceVatSum = Number(totalInvoiceVatSum) + Number(element.VatSum);
                 });
+                totalInvoiceVatSum = Number(totalInvoiceVatSum).toFixed(2);
+                $('#invoiceVatSum').val(totalInvoiceVatSum);
+                
                 totalNetPrice = Number(totalNetPrice).toFixed(2);
                 sapNetPrice = Number(sapNetPrice).toFixed(2);
                 let difference = Math.abs(totalNetPrice - sapNetPrice).toFixed(2);

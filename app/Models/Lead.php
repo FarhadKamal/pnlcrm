@@ -35,6 +35,7 @@ class Lead extends Model
         'is_outstanding',
         'sap_invoice',
         'invoice_date',
+        'invoice_sap_vatsum',
         'invoice_by',
         'delivery_challan',
         'delivery_address',

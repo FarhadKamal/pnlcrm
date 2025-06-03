@@ -340,7 +340,7 @@ class ReportController extends Controller
     }
 
     //With SAP VatSum Sales
-    public function targetSalesReportQueryOld($userCond, $financialYear)
+    public function targetSalesReportQuery($userCond, $financialYear)
     {
         $fetchData = DB::select('SELECT 
                                     u.assign_to,
@@ -430,7 +430,7 @@ class ReportController extends Controller
     }
 
     //Sales without SAP VatSum
-    public function targetSalesReportQuery($userCond, $financialYear)
+    public function targetSalesReportQueryNew($userCond, $financialYear)
     {
         $fetchData = DB::select('
         SELECT 

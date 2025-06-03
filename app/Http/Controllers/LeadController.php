@@ -441,7 +441,7 @@ class LeadController extends Controller
         $userTag = Auth()->user()->assign_to;
         // $data['companyList'] = Customer::where(['assign_to'=>$userTag])->get();
         // $data['companyList'] = Customer::where('assign_to', 'like', "%{$userTag}%")->get();
-        $data['companyList'] = Customer::where(['assign_to' => $userTag])->get();
+        $data['companyList'] = Customer::where('assign_to', $userTag)->whereNotNull('sap_id')->get();
         $data['sourceList'] = LeadSource::where(['is_active' => 1])->get();
         return view('sales.leadForm', $data);
     }

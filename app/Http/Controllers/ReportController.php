@@ -329,7 +329,7 @@ class ReportController extends Controller
                 $userCond = ' WHERE u.id = ' . $userId . '';
             }
 
-            $data['reportData'] = $this->targetSalesReportQuery($userCond, $financialYear);
+            $data['reportData'] = $this->targetSalesReportQueryNew($userCond, $financialYear);
 
             $data['reportYear'] = $financialYear;
             $data['salesPersons'] = User::get();

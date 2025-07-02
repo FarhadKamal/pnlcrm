@@ -116,8 +116,15 @@
                 </div>
             </div>
             <div class="col-md-7">
+                @if ($leadInfo->sap_invoice)
+                    <button class="col-md-2 me-1 btn btn-sm btn-darkblue fs-07rem p-1" onclick="printInvoice()">Print
+                        Invoice</button>
+                    @include('sales.invoicePage')
+                @endif
+
                 <h6 class="text-center"><kbd>Deal Information</kbd></h6>
                 @if (count($pumpInfo) > 0)
+                    <br>
                     <table class="table table-bordered fs-08rem">
                         <thead class="table-primary text-center">
                             <tr>
@@ -377,7 +384,6 @@
         </div>
     @endif
 </div>
-
 {{-- <script>
     function checkActiveInput(e) {
         let activeId = e.id;
@@ -410,4 +416,22 @@
         templateResult: formatOption,
         templateSelection: formatOption
     });
+
+    function printInvoice() {
+        var printWindow = window.open('', '_blank');
+
+        // Check if the window opened successfully
+        if (printWindow) {
+            var printContents = document.getElementById("invoicePrint").innerHTML;
+            printWindow.document.write('<html><body>');
+            printWindow.document.write(printContents);
+            printWindow.document.write('</body></html>');
+
+            // Make sure to close the print window after printing
+            printWindow.document.close();
+            printWindow.print();
+        } else {
+            alert('Please allow pop-ups for this site to print');
+        }
+    }
 </script>

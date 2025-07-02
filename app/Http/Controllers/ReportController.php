@@ -339,6 +339,7 @@ class ReportController extends Controller
         }
     }
 
+    //With SAP VatSum Sales
     public function targetSalesReportQuery($userCond, $financialYear)
     {
         $fetchData = DB::select('SELECT 
@@ -427,6 +428,108 @@ class ReportController extends Controller
 
         return $fetchData;
     }
+
+    //Sales without SAP VatSum
+    public function targetSalesReportQueryNew($userCond, $financialYear)
+    {
+        $fetchData = DB::select('
+        SELECT 
+            u.assign_to,
+            u.user_name,
+            COALESCE(targets.Q1_Target, 0) AS Q1_Target,
+            COALESCE(targets.Q2_Target, 0) AS Q2_Target,
+            COALESCE(targets.Q3_Target, 0) AS Q3_Target,
+            COALESCE(targets.Q4_Target, 0) AS Q4_Target,
+            COALESCE(sales.Q1_Sales, 0) AS Q1_Sales,
+            COALESCE(sales.Q2_Sales, 0) AS Q2_Sales,
+            COALESCE(sales.Q3_Sales, 0) AS Q3_Sales,
+            COALESCE(sales.Q4_Sales, 0) AS Q4_Sales,
+            COALESCE(return_sales.Q1_Return, 0) AS Q1_Return,
+            COALESCE(return_sales.Q2_Return, 0) AS Q2_Return,
+            COALESCE(return_sales.Q3_Return, 0) AS Q3_Return,
+            COALESCE(return_sales.Q4_Return, 0) AS Q4_Return 
+        FROM 
+            users u
+        LEFT JOIN (
+            SELECT 
+                invoice_data.created_by,
+                SUM(CASE WHEN invoice_data.quarter = 1 THEN invoice_data.net_sales ELSE 0 END) AS Q1_Sales,
+                SUM(CASE WHEN invoice_data.quarter = 2 THEN invoice_data.net_sales ELSE 0 END) AS Q2_Sales,
+                SUM(CASE WHEN invoice_data.quarter = 3 THEN invoice_data.net_sales ELSE 0 END) AS Q3_Sales,
+                SUM(CASE WHEN invoice_data.quarter = 4 THEN invoice_data.net_sales ELSE 0 END) AS Q4_Sales
+            FROM (
+                SELECT 
+                    leads.id AS lead_id,
+                    leads.created_by,
+                    leads.invoice_date,
+                    EXTRACT(MONTH FROM leads.invoice_date) AS month,
+                    CASE 
+                        WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9) THEN 1
+                        WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (10, 11, 12) THEN 2
+                        WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3) THEN 3
+                        WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (4, 5, 6) THEN 4
+                    END AS quarter,
+                    SUM(pump_choices.net_price) AS total_net_price,
+                    leads.invoice_sap_vatsum,
+                    SUM(pump_choices.net_price) - COALESCE(leads.invoice_sap_vatsum, 0) AS net_sales
+                FROM 
+                    leads
+                INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
+                WHERE 
+                    (
+                        (EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3, 4, 5, 6) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . ($financialYear + 1) . ')
+                        OR 
+                        (EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9, 10, 11, 12) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . ')
+                    )
+                    AND leads.is_lost != 1
+                GROUP BY 
+                    leads.id, leads.created_by, leads.invoice_date, leads.invoice_sap_vatsum
+            ) invoice_data
+            GROUP BY 
+                invoice_data.created_by
+        ) sales ON sales.created_by = u.id
+
+        LEFT JOIN (
+            SELECT 
+                leads.created_by,
+                SUM(CASE WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9) THEN return_items.return_amount ELSE 0 END) AS Q1_Return,
+                SUM(CASE WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (10, 11, 12) THEN return_items.return_amount ELSE 0 END) AS Q2_Return,
+                SUM(CASE WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3) THEN return_items.return_amount ELSE 0 END) AS Q3_Return,
+                SUM(CASE WHEN EXTRACT(MONTH FROM leads.invoice_date) IN (4, 5, 6) THEN return_items.return_amount ELSE 0 END) AS Q4_Return
+            FROM 
+                return_requests
+            INNER JOIN leads ON leads.id = return_requests.lead_id
+            INNER JOIN return_items ON return_items.lead_id = return_requests.lead_id
+            WHERE 
+                (
+                    (EXTRACT(MONTH FROM leads.invoice_date) IN (1, 2, 3, 4, 5, 6) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . ($financialYear + 1) . ')
+                    OR 
+                    (EXTRACT(MONTH FROM leads.invoice_date) IN (7, 8, 9, 10, 11, 12) AND EXTRACT(YEAR FROM leads.invoice_date) = ' . $financialYear . ')
+                )
+                AND return_requests.return_status = "approved"
+            GROUP BY 
+                leads.created_by
+        ) return_sales ON return_sales.created_by = u.id
+
+        INNER JOIN (
+            SELECT 
+                ST.user_id,
+                SUM(ST.july + ST.august + ST.september) AS Q1_Target,
+                SUM(ST.october + ST.november + ST.december) AS Q2_Target,
+                SUM(ST.january + ST.february + ST.march) AS Q3_Target,
+                SUM(ST.april + ST.may + ST.june) AS Q4_Target
+            FROM 
+                sales_targets ST
+            WHERE 
+                ST.financial_year = ' . $financialYear . '
+            GROUP BY 
+                ST.user_id
+        ) targets ON targets.user_id = u.id
+        ' . $userCond . '');
+
+        return $fetchData;
+    }
+
 
     public function transactionReport()
     {

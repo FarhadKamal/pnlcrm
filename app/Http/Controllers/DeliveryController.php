@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Items;
 use App\Models\Lead;
 use App\Models\PumpChoice;
 use App\Models\Quotation;
 use App\Models\SalesLog;
+use App\Models\SpareItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 
 class DeliveryController extends Controller
 {
@@ -157,6 +160,40 @@ class DeliveryController extends Controller
             $customerName = $leadInfo->clientInfo->customer_name;
             $lead_id = $request->leadId;
             $leadInfo->save();
+
+          
+            // $response = Http::withHeaders([
+            //     'Accept' => 'application/json',
+            // ])->post(route('checkSAPInvoice'), [
+            //     'inputSAP' => $request->invoiceID
+            // ]);
+
+            // $invoiceInfoData = $response->json();
+
+            // if (isset($invoiceInfoData->status) && is_array($invoiceInfoData->status)) {
+            //     foreach ($invoiceInfoData->status as $item) {
+            //         $itemCode = $item->ItemCode ?? null;
+            //         $gTotal = $item->GTotal ?? null;
+            //         $vatSum = $item->VatSum ?? null;
+
+            //         if ($itemCode && $gTotal) {
+            //             $itemId = \App\Models\Items::where('new_code', $itemCode)->value('id');
+            //             if ($itemId) {
+            //                 PumpChoice::where('lead_id', $lead_id)
+            //                     ->where('product_id', $itemId)
+            //                     ->where('net_price', $gTotal)
+            //                     ->update(['sap_vatsum' => $vatSum]);
+            //             } else {
+            //                 $spareId = \App\Models\SpareItems::where('new_code', $itemCode)->value('id');
+            //                 PumpChoice::where('lead_id', $lead_id)
+            //                     ->where('product_id', $spareId)
+            //                     ->where('net_price', $gTotal)
+            //                     ->update(['sap_vatsum' => $vatSum]);
+            //             }
+            //         }
+            //     }
+            // }
+
 
             $assignedUsersEmail = DB::select('SELECT users.user_email, users.user_name FROM leads INNER JOIN customers ON customers.id = leads.customer_id INNER JOIN users ON users.assign_to=customers.assign_to WHERE leads.id=' . $leadInfo->id . '');
             $domainName = URL::to('/');

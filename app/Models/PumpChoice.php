@@ -18,6 +18,7 @@ class PumpChoice extends Model
         'discount_price',
         'discount_percentage',
         'net_price',
+        'sap_vatsum',
         'spare_parts'
     ];
 

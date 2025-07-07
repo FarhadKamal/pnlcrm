@@ -199,11 +199,11 @@
                             <td class="p-1 text-end">{{ number_format((float) $totalPrice, 2, '.', ',') }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $item->discount_price, 2, '.', ',') }}
                             </td>
-                            <td class="p-1 text-center">{{ $item->discount_percentage }}%</td>
+                            <td class="p-1 text-center">{{ $item->discount_percentage }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $totalTradeDiscount, 2, '.', ',') }}</td>
-                            <td class="p-1 text-center">{{ $item->trade_discount }}%</td>
+                            <td class="p-1 text-center">{{ $item->trade_discount }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $specialDiscount, 2, '.', ',') }}</td>
-                            <td class="p-1 text-center">{{ $specialDiscountPer }}%</td>
+                            <td class="p-1 text-center">{{ $specialDiscountPer }}</td>
                             <td class="p-1 text-end">{{ number_format((float) $netPrice, 2, '.', ',') }}</td>
                         </tr>
                     @endforeach
@@ -247,11 +247,36 @@
     }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
+{{-- <script src="https://cdn.jsdelivr.net/npm/table2excel@1.0.4/dist/table2excel.min.js"></script>
 <script>
     function exportExcel() {
+        document.querySelectorAll("#discountReportTable table td").forEach(td => {
+            td.setAttribute("data-tableexport-msonumberformat", "\\@");
+        });
+
         let table2excel = new Table2Excel();
         let fileName = 'Discount Report.xlsx';
         table2excel.export(document.querySelector("#discountReportTable table"), fileName);
     }
+</script> --}}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+function exportExcel() {
+    const table = document.querySelector("#discountReportTable table");
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.table_to_sheet(table, {
+        raw: false // Very important to preserve formats and text
+    });
+
+    // Optionally set column widths to prevent #######
+    const colWidths = new Array(table.rows[0].cells.length).fill({ wch: 30 });
+    ws['!cols'] = colWidths;
+
+    XLSX.utils.book_append_sheet(wb, ws, "Discount Report");
+
+    XLSX.writeFile(wb, "Discount_Report.xlsx");
+}
 </script>
+

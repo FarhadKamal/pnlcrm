@@ -350,8 +350,7 @@
                                     <small class="badge badge-info blink p-1 m-0 ">Waiting for Approval</small>
                                 @endif
                                 @if ($item->current_subStage == 'MANAGEMENT')
-                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for Managing
-                                        Director</small>
+                                    <small class="badge badge-info blink p-1 m-0 ">Waiting for CEO</small>
                                 @endif
                                 @if ($item->current_subStage == 'SUBMIT')
                                     <small class="badge badge-info blink p-1 m-0 ">Waiting for Submit</small>
@@ -397,7 +396,7 @@
                                         @if (App\Helpers\Helper::permissionCheck(Auth()->user()->id, 'dealTopApprove'))
                                             <a href="{{ route('quotationCheck', ['leadId' => $item->id]) }}">
                                                 <button type="button"
-                                                    class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">Managmement</button>
+                                                    class="btn btn-sm btn-danger  pt-1 pb-1 ps-2 pe-2 fs-06rem w-100">CEO</button>
                                             </a>
                                         @else
                                             <a href="{{ route('detailsLog', ['leadId' => $item->id]) }}">

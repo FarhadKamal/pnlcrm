@@ -177,14 +177,14 @@ class DeliveryController extends Controller
             //         $vatSum = $item->VatSum ?? null;
 
             //         if ($itemCode && $gTotal) {
-            //             $itemId = \App\Models\Items::where('new_code', $itemCode)->value('id');
+            //             $itemId = Items::where('new_code', $itemCode)->value('id');
             //             if ($itemId) {
             //                 PumpChoice::where('lead_id', $lead_id)
             //                     ->where('product_id', $itemId)
             //                     ->where('net_price', $gTotal)
             //                     ->update(['sap_vatsum' => $vatSum]);
             //             } else {
-            //                 $spareId = \App\Models\SpareItems::where('new_code', $itemCode)->value('id');
+            //                 $spareId = SpareItems::where('new_code', $itemCode)->value('id');
             //                 PumpChoice::where('lead_id', $lead_id)
             //                     ->where('product_id', $spareId)
             //                     ->where('net_price', $gTotal)

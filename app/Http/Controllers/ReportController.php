@@ -97,9 +97,12 @@ class ReportController extends Controller
                                     LEFT JOIN items ON items.id = pump_choices.product_id AND pump_choices.spare_parts = 0
                                     LEFT JOIN spare_items ON spare_items.id = pump_choices.product_id AND pump_choices.spare_parts = 1
                                     INNER JOIN brand_discounts ON brand_discounts.brand_name=COALESCE(items.brand_name, spare_items.brand_name)
-                                    INNER JOIN users ON users.assign_to = customers.assign_to
+                                    -- INNER JOIN users ON users.assign_to = customers.assign_to
+                                    INNER JOIN users ON users.id = leads.created_by
                                     WHERE leads.is_lost != 1 AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . '' . $brandCond . '
                                     ORDER BY leads.sap_invoice ASC');
+
+                                    // If Tagging change the report show the created by user instead of assign to user
 
             $data['salesPersons'] = User::get();
             $data['brands'] = BrandDiscount::get();

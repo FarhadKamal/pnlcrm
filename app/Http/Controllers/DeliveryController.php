@@ -112,11 +112,20 @@ class DeliveryController extends Controller
         $fyear = $y1 . "-" . $y2;
 
         // Duplicacy Check in the CRM 
-        $duplicate = Lead::where(['sap_invoice' => $inputSAP])->get();
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+        if ($currentMonth > 6) { // July to June
+            $startDate = $currentYear . "-07-01";
+            $endDate = ($currentYear + 1) . "-06-30";
+        } else {
+            $startDate = ($currentYear - 1) . "-07-01";
+            $endDate = $currentYear . "-06-30";
+        }
+        $duplicate = Lead::where('sap_invoice', $inputSAP)
+            ->whereBetween('invoice_date', [$startDate, $endDate])
+            ->get();
 
         // URL of the API endpoint
-        // $url = 'http://103.4.66.107:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
-        // $url = 'http://192.168.1.226:8989/api/verify_invoice.php?code=' . $inputSAP . '&year=' . $fyear;
         $url2 = 'http://192.168.1.226:8989/api/verify_invoice2.php?code=' . $inputSAP . '&year=' . $fyear;
         $getInvoiceInfo = json_decode(file_get_contents($url2));
 
@@ -125,17 +134,6 @@ class DeliveryController extends Controller
             'isDuplicate' => $duplicate
         ];
         // Make the request and get the response
-        // $rtnvalue = file_get_contents($url);
-
-        // if ($rtnvalue == 1) {
-        //     $response = [
-        //         'status' => 'gotSAP'
-        //     ];
-        // } else {
-        //     $response = [
-        //         'status' => 'notSAP'
-        //     ];
-        // }
         return response()->json($response);
     }
 
@@ -161,7 +159,7 @@ class DeliveryController extends Controller
             $lead_id = $request->leadId;
             $leadInfo->save();
 
-          
+
             // $response = Http::withHeaders([
             //     'Accept' => 'application/json',
             // ])->post(route('checkSAPInvoice'), [

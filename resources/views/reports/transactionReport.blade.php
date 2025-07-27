@@ -156,7 +156,7 @@
                     @endphp
                     @foreach ($reportData as $item)
                         @php
-                            $outStandingWithoutVatTax = $item->invoice_amount - $item->baseAmount - $item->otherAmount - $item->advanceAmount;
+                            $outStandingWithoutVatTax = $item->invoice_amount - $item->baseAmount - $item->otherAmount - $item->advanceAmount - $item->fractionAmount;
                             $outStandingTotal = $outStandingWithoutVatTax - ($item->vatAmount + $item->taxAmount);
                             $grandTotalOutstanding = $grandTotalOutstanding + $outStandingTotal;
                         @endphp

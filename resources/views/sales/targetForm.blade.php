@@ -88,7 +88,7 @@
                         <tr>
                             <td class="p-1 text-center" width="10%">Q1</td>
                             <td class="p-1" width="30%"><input type="number"
-                                    class="form-control fs-08rem p-1 text-end" min="1" max="100"
+                                    class="form-control fs-08rem p-1 text-end" min="1" max="100" step="any"
                                     name="q1Per" id="q1Per" onkeyup="calculateAll()" placeholder="%">
                             </td>
                             <td class="p-1 fw-bold" width="60%">
@@ -98,7 +98,7 @@
                         <tr>
                             <td class="p-1 text-center" width="10%">Q2</td>
                             <td class="p-1" width="30%"><input type="number"
-                                    class="form-control fs-08rem p-1 text-end" min="1" max="100"
+                                    class="form-control fs-08rem p-1 text-end" min="1" max="100" step="any"
                                     name="q2Per" id="q2Per" onkeyup="calculateAll()" placeholder="%"></td>
                             <td class="p-1 fw-bold" width="60%">
                                 <p id="q2Amount">0.00</p>
@@ -108,7 +108,7 @@
                             <td class="p-1 text-center" width="10%">Q3</td>
                             <td class="p-1" width="30%"><input type="number"
                                     class="form-control fs-08rem p-1 text-end" name="q3Per" min="1"
-                                    max="100" id="q3Per" onkeyup="calculateAll()" placeholder="%"></td>
+                                    max="100" step="any" id="q3Per" onkeyup="calculateAll()" placeholder="%"></td>
                             <td class="p-1 fw-bold" width="60%">
                                 <p id="q3Amount">0.00</p>
                             </td>
@@ -117,7 +117,7 @@
                             <td class="p-1 text-center" width="10%">Q4</td>
                             <td class="p-1" width="30%"><input type="number"
                                     class="form-control fs-08rem p-1 text-end" name="q4Per" min="1"
-                                    max="100" id="q4Per" onkeyup="calculateAll()" placeholder="%"></td>
+                                    max="100" step="any" id="q4Per" onkeyup="calculateAll()" placeholder="%"></td>
                             <td class="p-1 fw-bold" width="60%">
                                 <p id="q4Amount">0.00</p>
                             </td>
@@ -200,7 +200,7 @@
                                     <td class="p-1 text-center" width="20%">July</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="julPer" id="julPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="julAmount">0.00</span></td>
@@ -209,7 +209,7 @@
                                     <td class="p-1 text-center" width="20%">August</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="augPer" id="augPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="augAmount">0.00</span></td>
@@ -218,7 +218,7 @@
                                     <td class="p-1 text-center" width="20%">September</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="sepPer" id="sepPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="sepAmount">0.00</span></td>
@@ -236,7 +236,7 @@
                                     <td class="p-1 text-center" width="20%">October</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="octPer" id="octPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="octAmount">0.00</span></td>
@@ -245,7 +245,7 @@
                                     <td class="p-1 text-center" width="20%">November</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="novPer" id="novPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="novAmount">0.00</span></td>
@@ -254,7 +254,7 @@
                                     <td class="p-1 text-center" width="20%">December</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="decPer" id="decPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="decAmount">0.00</span></td>
@@ -272,7 +272,7 @@
                                     <td class="p-1 text-center" width="20%">January</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="janPer" id="janPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="janAmount">0.00</span></td>
@@ -281,7 +281,7 @@
                                     <td class="p-1 text-center" width="20%">February</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="febPer" id="febPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="febAmount">0.00</span></td>
@@ -290,7 +290,7 @@
                                     <td class="p-1 text-center" width="20%">March</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="marPer" id="marPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="marAmount">0.00</span></td>
@@ -307,7 +307,7 @@
                                     <td class="p-1 text-center" width="20%">April</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="aprPer" id="aprPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="aprAmount">0.00</span></td>
@@ -316,7 +316,7 @@
                                     <td class="p-1 text-center" width="20%">May</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="mayPer" id="mayPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="mayAmount">0.00</span></td>
@@ -325,7 +325,7 @@
                                     <td class="p-1 text-center" width="20%">June</td>
                                     <td class="p-1" width="20%"><input type="number"
                                             class="form-control fs-08rem p-1 text-end" name="junPer" id="junPer"
-                                            min="1" max="100" onkeyup="calculateMonth()"
+                                            min="1" max="100" step="any" onkeyup="calculateMonth()"
                                             placeholder="%">
                                     </td>
                                     <td class="p-1 fw-bold" width="60%"><span id="junAmount">0.00</span></td>

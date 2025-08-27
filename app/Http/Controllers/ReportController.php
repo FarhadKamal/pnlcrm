@@ -145,10 +145,10 @@ class ReportController extends Controller
             // $data['reportData'] = $this->outStandingNetDueQuery($filterDate, $userCond, $customerCond);
             // $executionTime = microtime(true) - $startTime;
             // echo ("Execution Time: " . $executionTime . " seconds");
-            
-            $startTime = microtime(true);
+
+            // $startTime = microtime(true);
             $data['reportData'] = $this->outStandingNetDueQueryOptimized($filterDate, $userCond, $customerCond);
-            $executionTime = microtime(true) - $startTime;
+            // $executionTime = microtime(true) - $startTime;
 
             // Now Divide the net due into different interval 
             // foreach ($data['reportData'] as $item) {
@@ -314,58 +314,80 @@ class ReportController extends Controller
         return $data;
     }
 
-    public function outStandingNetDueQueryOptimized($filterDate, $userCond, $customerCond)
-    {
-        $fetchData = DB::select('
-        SELECT 
-            customers.sap_id, 
-            customers.customer_name, 
+   public function outStandingNetDueQueryOptimized($filterDate, $userCond, $customerCond)
+{
+    $fetchData = DB::select('
+        SELECT
+            customers.id AS customer_id,
+            customers.sap_id,
+            customers.customer_name,
             users.user_name,
             users.assign_to,
-            
-            -- Total Net Price and Paid
-            COALESCE(SUM(pump_choices.net_price), 0) AS totalNetPrice,
-            COALESCE(SUM(CASE WHEN transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount END), 0) AS totalVerifiedPaid,
-            COALESCE(SUM(pump_choices.net_price), 0) - 
-            COALESCE(SUM(CASE WHEN transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount END), 0) AS netDue,
 
-            -- Interval Wise Due
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 30 THEN pump_choices.net_price ELSE 0 END) -
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 30 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin30,
+            -- Totals (no fan-out; built from per-lead aggregates)
+            COALESCE(SUM(lt.net_total), 0) AS totalNetPrice,
+            COALESCE(SUM(lt.pay_total), 0) AS totalVerifiedPaid,
 
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 30 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 60 THEN pump_choices.net_price ELSE 0 END) -
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 30 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 60 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin31_60,
+            -- Net due as-of date: sum of per-lead capped outstanding
+            SUM(GREATEST(lt.net_total - lt.pay_total, 0)) AS netDue,
 
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 60 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 90 THEN pump_choices.net_price ELSE 0 END) -
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 60 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 90 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin61_90,
+            -- Aging buckets (sum capped per-lead outstanding into the right bucket)
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", lt.invoice_date) BETWEEN 0 AND 30
+                     THEN GREATEST(lt.net_total - lt.pay_total, 0) ELSE 0 END) AS dueWithin30,
 
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 90 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 180 THEN pump_choices.net_price ELSE 0 END) -
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 90 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 180 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin91_180,
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", lt.invoice_date) BETWEEN 31 AND 60
+                     THEN GREATEST(lt.net_total - lt.pay_total, 0) ELSE 0 END) AS dueWithin31_60,
 
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 180 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 365 THEN pump_choices.net_price ELSE 0 END) -
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 180 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 365 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin180plus,
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", lt.invoice_date) BETWEEN 61 AND 90
+                     THEN GREATEST(lt.net_total - lt.pay_total, 0) ELSE 0 END) AS dueWithin61_90,
 
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 365 THEN pump_choices.net_price ELSE 0 END) -
-            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 365 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin365plus
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", lt.invoice_date) BETWEEN 91 AND 180
+                     THEN GREATEST(lt.net_total - lt.pay_total, 0) ELSE 0 END) AS dueWithin91_180,
+
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", lt.invoice_date) BETWEEN 181 AND 365
+                     THEN GREATEST(lt.net_total - lt.pay_total, 0) ELSE 0 END) AS dueWithin180plus,
+
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", lt.invoice_date) > 365
+                     THEN GREATEST(lt.net_total - lt.pay_total, 0) ELSE 0 END) AS dueWithin365plus
 
         FROM customers
         INNER JOIN users ON users.assign_to = customers.assign_to
-        INNER JOIN leads ON leads.customer_id = customers.id
-        INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
-        LEFT JOIN transactions ON transactions.lead_id = leads.id
-        
-        WHERE leads.is_outstanding = 1 
-          AND leads.is_lost != 1 
-          AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
+
+        -- Per-lead totals (prevents pump_choices × transactions multiplication)
+        INNER JOIN (
+            SELECT
+                l.id AS lead_id,
+                l.customer_id,
+                l.invoice_date,
+                SUM(pc.net_price) AS net_total,
+                COALESCE(p.pay_total, 0) AS pay_total
+            FROM leads l
+            INNER JOIN pump_choices pc ON pc.lead_id = l.id
+            LEFT JOIN (
+                SELECT t.lead_id, SUM(t.pay_amount) AS pay_total
+                FROM transactions t
+                WHERE t.is_verified = 1
+                  AND t.transaction_type = "base"
+                GROUP BY t.lead_id
+            ) p ON p.lead_id = l.id
+            WHERE l.is_outstanding = 1
+              AND l.is_lost != 1
+              AND DATE(l.invoice_date) <= DATE("' . $filterDate . '")
+            GROUP BY l.id, l.customer_id, l.invoice_date, p.pay_total
+        ) lt ON lt.customer_id = customers.id
+
+        WHERE 1=1
           ' . $userCond . '
           ' . $customerCond . '
 
-        GROUP BY customers.id, users.user_name, users.assign_to
+        GROUP BY customers.id, customers.sap_id, customers.customer_name, users.user_name, users.assign_to
         ORDER BY users.assign_to ASC, totalNetPrice DESC
     ');
 
-        return $fetchData;
-    }
+    return $fetchData;
+}
+
+
 
 
     public function targetSalesReport()

@@ -23,6 +23,7 @@ class ReportController extends Controller
 {
     public function __construct()
     {
+        ini_set('max_execution_time', 300);
         date_default_timezone_set('Asia/Dhaka');
     }
 
@@ -102,7 +103,7 @@ class ReportController extends Controller
                                     WHERE leads.is_lost != 1 AND leads.invoice_date BETWEEN "' . $startDate . '" AND "' . $endDate . '" ' . $userCond . '' . $brandCond . '
                                     ORDER BY leads.sap_invoice ASC');
 
-                                    // If Tagging change the report show the created by user instead of assign to user
+            // If Tagging change the report show the created by user instead of assign to user
 
             $data['salesPersons'] = User::get();
             $data['brands'] = BrandDiscount::get();
@@ -140,25 +141,32 @@ class ReportController extends Controller
             }
 
             $filterDate = date('Y-m-d', strtotime($request->filterDate));
-            $data['reportData'] = $this->outStandingNetDueQuery($filterDate, $userCond, $customerCond);
+            // $startTime = microtime(true);
+            // $data['reportData'] = $this->outStandingNetDueQuery($filterDate, $userCond, $customerCond);
+            // $executionTime = microtime(true) - $startTime;
+            // echo ("Execution Time: " . $executionTime . " seconds");
+            
+            $startTime = microtime(true);
+            $data['reportData'] = $this->outStandingNetDueQueryOptimized($filterDate, $userCond, $customerCond);
+            $executionTime = microtime(true) - $startTime;
 
             // Now Divide the net due into different interval 
-            foreach ($data['reportData'] as $item) {
-                $customerSAPID =  $item->sap_id;
-                $dueWithin30 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 0, 30);
-                $dueWithin31_60 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 30, 60);
-                $dueWithin61_90 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 60, 90);
-                $dueWithin91_180 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 90, 180);
-                $dueWithin180plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 180, 0);
-                $dueWithin365plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 365, 0);
+            // foreach ($data['reportData'] as $item) {
+            //     $customerSAPID =  $item->sap_id;
+            //     $dueWithin30 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 0, 30);
+            //     $dueWithin31_60 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 30, 60);
+            //     $dueWithin61_90 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 60, 90);
+            //     $dueWithin91_180 = $this->dueIntervalCalculation($customerSAPID, $filterDate, 90, 180);
+            //     $dueWithin180plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 180, 0);
+            //     $dueWithin365plus = $this->dueIntervalCalculation($customerSAPID, $filterDate, 365, 0);
 
-                $item->dueWithin30 = $dueWithin30[0]->netDue ?? 0;
-                $item->dueWithin31_60 = $dueWithin31_60[0]->netDue ?? 0;
-                $item->dueWithin61_90 = $dueWithin61_90[0]->netDue ?? 0;
-                $item->dueWithin91_180 = $dueWithin91_180[0]->netDue ?? 0;
-                $item->dueWithin180plus = $dueWithin180plus[0]->netDue ?? 0;
-                $item->dueWithin365plus = $dueWithin365plus[0]->netDue ?? 0;
-            }
+            //     $item->dueWithin30 = $dueWithin30[0]->netDue ?? 0;
+            //     $item->dueWithin31_60 = $dueWithin31_60[0]->netDue ?? 0;
+            //     $item->dueWithin61_90 = $dueWithin61_90[0]->netDue ?? 0;
+            //     $item->dueWithin91_180 = $dueWithin91_180[0]->netDue ?? 0;
+            //     $item->dueWithin180plus = $dueWithin180plus[0]->netDue ?? 0;
+            //     $item->dueWithin365plus = $dueWithin365plus[0]->netDue ?? 0;
+            // }
 
             $data['salesPersons'] = User::get();
             $data['customerList'] = Customer::get();
@@ -305,6 +313,60 @@ class ReportController extends Controller
 
         return $data;
     }
+
+    public function outStandingNetDueQueryOptimized($filterDate, $userCond, $customerCond)
+    {
+        $fetchData = DB::select('
+        SELECT 
+            customers.sap_id, 
+            customers.customer_name, 
+            users.user_name,
+            users.assign_to,
+            
+            -- Total Net Price and Paid
+            COALESCE(SUM(pump_choices.net_price), 0) AS totalNetPrice,
+            COALESCE(SUM(CASE WHEN transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount END), 0) AS totalVerifiedPaid,
+            COALESCE(SUM(pump_choices.net_price), 0) - 
+            COALESCE(SUM(CASE WHEN transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount END), 0) AS netDue,
+
+            -- Interval Wise Due
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 30 THEN pump_choices.net_price ELSE 0 END) -
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 30 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin30,
+
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 30 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 60 THEN pump_choices.net_price ELSE 0 END) -
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 30 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 60 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin31_60,
+
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 60 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 90 THEN pump_choices.net_price ELSE 0 END) -
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 60 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 90 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin61_90,
+
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 90 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 180 THEN pump_choices.net_price ELSE 0 END) -
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 90 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 180 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin91_180,
+
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 180 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 365 THEN pump_choices.net_price ELSE 0 END) -
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 180 AND DATEDIFF("' . $filterDate . '", leads.invoice_date) <= 365 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin180plus,
+
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 365 THEN pump_choices.net_price ELSE 0 END) -
+            SUM(CASE WHEN DATEDIFF("' . $filterDate . '", leads.invoice_date) > 365 AND transactions.is_verified = 1 AND transactions.transaction_type="base" THEN transactions.pay_amount ELSE 0 END) AS dueWithin365plus
+
+        FROM customers
+        INNER JOIN users ON users.assign_to = customers.assign_to
+        INNER JOIN leads ON leads.customer_id = customers.id
+        INNER JOIN pump_choices ON pump_choices.lead_id = leads.id
+        LEFT JOIN transactions ON transactions.lead_id = leads.id
+        
+        WHERE leads.is_outstanding = 1 
+          AND leads.is_lost != 1 
+          AND DATE(leads.invoice_date) <= DATE("' . $filterDate . '")
+          ' . $userCond . '
+          ' . $customerCond . '
+
+        GROUP BY customers.id, users.user_name, users.assign_to
+        ORDER BY users.assign_to ASC, totalNetPrice DESC
+    ');
+
+        return $fetchData;
+    }
+
 
     public function targetSalesReport()
     {
